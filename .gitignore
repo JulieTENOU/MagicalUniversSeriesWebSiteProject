@@ -1,0 +1,25 @@
+
+# Dossiers/fichiers de données MySQL
+/data/db/
+/db/
+*.ibd
+*.ibdata*
+*.sock
+*.pem
+*.key
+*.cert
+*.cnf
+*.index
+*.log
+*.tmp
+*.pool
+*.redo
+*.undo*
+
+# Binlogs MySQL
+binlog.*
+
+# Sauvegarde de session ou fichiers temporaires
+*.swp
+*.swo
+*.tmp

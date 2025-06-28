@@ -1,0 +1,54 @@
+const Sequelize = require("sequelize");
+const bcrypt = require("bcrypt");
+
+module.exports = function (sequelize, DataTypes) {
+  return sequelize.define(
+    "books",
+    {
+      ID_book: {
+        autoIncrement: true,
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+      },
+      ID_series: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "books",
+          key:"ID_series",
+        },
+      },
+      book_Name: {
+        type: DataTypes.STRING(500),
+        allowNull: false,
+      },
+      path: {
+        type: DataTypes.STRING(500),
+        allowNull: false,
+      },
+      image: {
+        type: DataTypes.STRING(500),
+        allowNull: false,
+      },
+    },
+    {
+      sequelize,
+      tableName: "books",
+      timestamps: false,
+      indexes: [
+        {
+          name: "PRIMARY",
+          unique: true,
+          using: "BTREE",
+          fields: [{ name: "ID_books" }],
+        },
+        {
+          name: "ID_series",
+          using: "BTREE",
+          fields: [{name: "ID_series"}]
+        }
+      ],
+    }
+  );
+};

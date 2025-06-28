@@ -1,0 +1,40 @@
+.d-flex{
+    display: flex;
+}
+.text-align-center{
+    text-align: center;
+}
+.justify-content-space-between{
+    justify-content: space-between;
+}
+.justify-content-space-arount{
+    justify-content: space-around;
+}
+.justify-content-space-evenly{
+    justify-content: space-evenly;
+}
+.justify-content-center{
+    justify-content:center
+}
+.justify-content-end{
+    justify-content: end;
+}
+.justify-content-start{
+    justify-content: start;
+}
+.row{
+    flex-direction: row;
+}
+
+#survie-{
+    --survieW:0px;
+    width: var(--survieW);
+    left:calc(100px - var(--survieW));
+}
+.label{
+    font-size: 1.2em !important;
+}
+
+.filter-white{
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);
+  }

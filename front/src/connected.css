@@ -1,0 +1,15 @@
+#idCard {
+  display: grid;
+}
+#idLeft {
+  position: sticky;
+  align-self: start;
+}
+#idRight {
+  position: sticky;
+  align-self: end;
+}
+#idBottom {
+  position: relative;
+  top: 50vh;
+}

@@ -1,0 +1,56 @@
+*{
+  margin:0;
+  padding:0;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.main{
+  width: 100%;
+  height: auto;
+  background-attachment: fixed;
+  background-size: cover;
+}
+ 
+.header{
+  position: absolute;
+  top:0px;
+}
+
+table{
+  border-collapse: collapse;
+}
+
+th, td{
+  border: 1px solid black;
+  padding: 10px;
+}
+.comp{ 
+  border: none !important;
+  margin: 0px !important;
+}
+
+tr{
+  height: 50px;
+}
+
+.diversName, .armureE{
+  width: 300px;
+}
+.important{
+  width: 350px;
+  height:10px !important;
+}
+.diversQ, .armeM{
+  width: 100px;
+}
+.armesName, .armureName{
+  width: 230px;
+}
+
+.armeP, .armeD, .armureCac, .armureD{
+  width: 150px;
+}
+
+tr{
+  height: 0vh;
+}
