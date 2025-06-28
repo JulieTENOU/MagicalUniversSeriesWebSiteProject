@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: mysql:8.0
+    container_name: dbMA
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./data/db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer
+    container_name: adminerMA
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy

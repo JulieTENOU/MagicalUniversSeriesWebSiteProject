@@ -23,3 +23,5 @@ binlog.*
 *.swp
 *.swo
 *.tmp
+
+.env
