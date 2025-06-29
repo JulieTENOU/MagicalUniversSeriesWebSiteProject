@@ -24,4 +24,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build docker-compose
-        run: docker-compose -f docker-compose.yml build
+        run: docker compose -f docker-compose.yml build
