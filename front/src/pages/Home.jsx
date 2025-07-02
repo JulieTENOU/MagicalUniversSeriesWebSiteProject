@@ -9,8 +9,10 @@ import HomeCompo from '../components/Home';
 
 function Home() {
 
-    const [isConnected, setIsConnected] = useContext(ConnexionContext)
-    console.log(isConnected)
+    
+    const {state: isConnected,setState: setIsConnected, loading} = useContext(ConnexionContext);
+    
+    console.log(isConnected);
     return (
         <div className='main'>
             <BG />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useContext } from 'react';
 //import bg from '../assets/img/bg.jpg';
 import '../index.css';
 import '../general.css';
@@ -10,13 +10,15 @@ import logoXalyt from '../assets/img/xalyt-couv-tmp.webp';
 import logoBeasts from "../assets/img/chèze.png";
 import logoReturn from "../assets/img/return.png"
 import { useNavigate } from 'react-router-dom';
+import { ConnexionContext } from '../components/provider.jsx';
 
 
 
 
 function ReadHome() {
     let navigate = useNavigate();
-    const [isConnected, setIsConnected] = useState(false)
+        const {state: isConnected, setState: setIsConnected, loading} = useContext(ConnexionContext);
+
     return (
         <div className='main'>
             <BG />

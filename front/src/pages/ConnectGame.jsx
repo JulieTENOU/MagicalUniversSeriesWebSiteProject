@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 import BG from "../components/Background";
 import Top from "../components/Header";
 import { ConnexionContext } from "../components/provider";
@@ -16,8 +16,9 @@ import Crystals from "../components/Crystals";
 import Creatures from "../components/Creatures";
 
 function ConnectGame() {
-  const [currentUser, setCurrentUser] = useContext(ConnexionContext);
-  console.log(currentUser.login.users_ID);
+ 
+  const {state: currentUser,setState: setCurrentUser, loading} = useContext(ConnexionContext);
+  console.log(currentUser.users_ID);
 
   const defaultCharacter = {
     ID_character: 0,
@@ -83,7 +84,7 @@ function ConnectGame() {
   );
 
   useEffect(() => {
-    fetch(`/characters/api/getOneCharacter/${currentUser.login.users_ID}`)
+    fetch(`/characters/api/getOneCharacter/${currentUser.users_ID}`)
       .then((res) => res.json())
       .then((data) => {
         const chara = data.data;
@@ -107,7 +108,7 @@ function ConnectGame() {
           err
         );
       });
-  }, [currentUser.login.users_ID]);
+  }, [currentUser.users_ID]);
 
   useEffect(() => {
     if (!character || character.ID_character === 0) {
@@ -843,7 +844,7 @@ function ConnectGame() {
             </div>
             <div style={{ height: "3em" }}>
               <h2 style={{ color: "whitesmoke" }}>
-                Welcom back {character.Name_character}
+                Welcome back {character.Name_character}
               </h2>
               <br />
             </div>

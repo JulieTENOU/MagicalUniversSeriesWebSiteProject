@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useContext } from 'react';
 import '../index.css';
 import '../general.css';
 import Btn from '../components/Btn';
@@ -7,11 +7,13 @@ import BG from '../components/Background';
 import logoReturn from "../assets/img/return.png"
 import { Navigate } from 'react-router-dom';
 import { Typography, Grid } from '@mui/material';
+import { ConnexionContext } from '../components/provider.jsx';
 
 
 function ChaptersXalyt1() {
 
-    const [isConnected, setIsConnected] = useState(false)
+        const {state: isConnected, setState: setIsConnected, loading} = useContext(ConnexionContext);
+
     return (
         <div className='main'>
             <BG />

@@ -8,52 +8,60 @@ import {
   DialogActions,
   Link,
 } from "@mui/material";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { ConnexionContext } from "./provider";
 import HomeCompo from "./Home";
 import Btn from "./Btn";
 
+
 export default function Connexion() {
-  const [currentUser, setCurrentUser] = useContext(ConnexionContext);
+  const navigate = useNavigate();
+  const {state :currentUser,setState: setCurrentUser, loading} = useContext(ConnexionContext);
   const [id, setId] = useState(null);
   const [pwd, setPwd] = useState(null);
   console.log(ConnexionContext);
+
+  useEffect(()=>{
+    if(currentUser){
+      navigate("/");
+    }
+  }, [currentUser]);
+  
   const handleConnexion = () => {
     const data = {
       users_email: id,
       users_password: pwd,
     };
-    console.log(data);
+    console.log("data before", data);
     fetch("api/signIn", {
       method: "POST",
       headers: {
         "content-type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(data),
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log("data after co", data);
         if (data.message) {
           alert("Invalid email or password!");
-        } else {
-          if (data.login.users_status === "a") {
-            setCurrentUser(data);
-            console.log("currentUser:" + currentUser);
-            console.log(currentUser);
-            console.log("Success:", data);
-            // window.location.href = "http://localhost:3003/"
-          } else if (data.login.users_status === "p") {
-            setCurrentUser(data);
-            console.log(currentUser);
+          return;
+        } 
+        const user = data.login
+
+          if (user.users_status === "a" || user.users_status === "p" || user.users_status === "r") {
+            setCurrentUser(user);
+            console.log("currentUser:", currentUser);
             console.log("Success:", data);
             // window.location.href = "http://localhost:3003/"
           } else {
-            console.log("Success:", data);
+            console.warn("Unknown user status:", user.users_status);
           }
-        }
       })
       .catch((error) => {
-        console.error(error);
+        console.error("Erreur pendant la connexion :", error);
       });
   };
 
@@ -82,14 +90,12 @@ export default function Connexion() {
           >
             <Btn
               path="/connexion"
-            //   style={{flex:1}}
               sx={{ textDecoration: "none", width:"100%", padding:0, borderRadius:"5px 5px 0 0",flex:1 }}
               msg={
                 <Typography
                   sx={{
                     width: "100%",
                     textAlign: "center",
-                    // borderRadius: "5px 0 0 0",
                     padding: "6px",
                     color: "white",
                     backgroundColor: " #3498DB ",
@@ -102,14 +108,12 @@ export default function Connexion() {
             />
             <Btn
               path="/inscription"
-            //   style={{flex:1}}
               sx={{ textDecoration: "none", width:"100%", padding:0, borderRadius:0, flex:1}}
               msg={
                 <Typography
                   sx={{
                     width: "100%",
                     textAlign: "center",
-                    // borderRadius: "0 5px 0 0",
                     padding: "6px",
                     color: "white",
                     backgroundColor: " #3498DB ",

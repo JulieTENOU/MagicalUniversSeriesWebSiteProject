@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import '../index.css';
 import '../general.css';
 import Top from '../components/Header.jsx';
@@ -8,7 +8,7 @@ import Inscription from "../components/Inscription.jsx";
 
 
 function InscriptionPage() {
-    const [isConnected, setIsConnected] = useContext(ConnexionContext)
+    const {state: isConnected, setState: setIsConnected, loading} = useContext(ConnexionContext);
     return (
         <div className='main'>
             <BG />

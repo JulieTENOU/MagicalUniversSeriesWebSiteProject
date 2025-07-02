@@ -2,7 +2,6 @@ import { Drawer, Box, IconButton, Divider, Button, Grid, List } from "@mui/mater
 import PsychologyAltOutlinedIcon from '@mui/icons-material/PsychologyAltOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from "react";
-import Pencil from '../assets/img/pencil-outline.svg';
 import ModifierDialogs from "./ModifierComp";
 
 

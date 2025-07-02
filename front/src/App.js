@@ -9,13 +9,11 @@ import ReadBook from "./pages/ReadBook";
 import ChaptersXalyt1 from "./pages/ReadChapters";
 import Connexion from "./pages/Connexion";
 import Inscription from "./pages/Inscription";
-import {ConnexionContext} from "./components/provider.jsx"
-import { useState } from "react";
+import MyProvider from "./components/provider.jsx"
 
 function App() {
-  const [isCo, setIsCo] = useState(false);
   return (
-    <ConnexionContext.Provider value={[isCo, setIsCo]}>
+    <MyProvider>
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -76,7 +74,7 @@ function App() {
           
         </Routes>
       </Router>
-    </ConnexionContext.Provider>
+      </MyProvider>
   );
 }
 export default App;

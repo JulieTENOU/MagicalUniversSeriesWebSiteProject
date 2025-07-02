@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import '../index.css';
 import '../general.css';
 import Btn from '../components/Btn';
@@ -8,14 +8,14 @@ import { ConnexionContext } from '../components/provider';
 
 
 export default function HomeCompo() {
-    const [currentUser, setCurrentUser] = useContext(ConnexionContext)
-    console.log(currentUser)
+    const {state: currentUser, setState: setCurrentUser, loading} = useContext(ConnexionContext);
+    console.log(currentUser);
     return (
         <div className='main'>
             <div style={{  fontSize: "2em", width: '100vw', display: 'flex', flexDirection: 'row', position: 'fixed',left:0, bottom: '40vh', justifyContent: 'space-around', alignItems: 'center', alignContent:'space-around' }}>
                 {currentUser ?
                 <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
-                    <h2 style={{color:'whitesmoke', position:'absolute', bottom: "25vh"}}>Welcom to your space <span>{currentUser.login.users_pseudo}</span></h2>
+                    <h2 style={{color:'whitesmoke', position:'absolute', bottom: "25vh"}}>Welcome to your space <span>{currentUser.users_pseudo}</span></h2>
                     <div style={{display:'flex', flexDirection:'row', justifyContent: 'space-between', position:'relative', marginInline:'15vw' }}>
                         <Btn path='/read' msg="Go to your books" src={Pile} height={'100px'} sx={{ color: "white", marginInline:'15vw' }} />
                         <Btn path='/jdr'  msg='Open your Holocom' src={logoMA} height={'100px'} width={'100px'} sx={{ color: "white", marginInline:'15vw' }} />
