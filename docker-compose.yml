@@ -1,4 +1,4 @@
-version: '3.9'
+version: '4.0'
 
 services:
   db:
@@ -10,9 +10,10 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - ./data/db:/var/lib/mysql
+    restart: always
     networks:
       - mu-network
 

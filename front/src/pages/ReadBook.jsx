@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useContext } from 'react';
 import { Box, Typography } from '@mui/material';
 import '../index.css';
 import '../general.css';
@@ -8,11 +8,13 @@ import BG from '../components/Background';
 import logoReturn from "../assets/img/return.png"
 import logoNext from "../assets/img/next.png"
 import { useNavigate } from 'react-router-dom';
+import { ConnexionContext } from '../components/provider.jsx';
 
 
 function ReadBook() {
     let navigate = useNavigate();
-    const [isConnected, setIsConnected] = useState(false)
+        const {state: isConnected, setState: setIsConnected, loading} = useContext(ConnexionContext);
+
     return (
         <div className='main'>
             <BG />

@@ -1,21 +1,21 @@
 const authConfig = require("../config/authKey");
 const jwt = require("jsonwebtoken");
 
-async function verifyToken (req, res, next) {
+
+module.exports = {
+ verifyToken: async function (req, res, next) {
   const token = req.session.token;
 
   if (!token) {
-    res.status(400).send("No token provided!");
-    res.redirect("/connexion");
+    return res.status(401).json({ message: "No token provided!" });
   }
-  await jwt.verify(token, authConfig.secret, async function (err, decoded) {
-    if (err) {
-      res.status(400).send("You are unauthorized to go further!");
-      res.redirect("/connexion");
-    }
-    req.users = decoded.users_email;
-    return next();
-  });
-};
 
-module.exports = verifyToken;
+  try {
+    const decoded = jwt.verify(token, authConfig.secret);
+    req.userId = decoded.id;
+    next();
+  } catch (err) {
+    return res.status(403).json({ message: "Invalid or expired token!" });
+  }
+}
+};

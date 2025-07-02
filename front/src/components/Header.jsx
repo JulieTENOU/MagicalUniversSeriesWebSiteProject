@@ -6,7 +6,8 @@ import { Link } from 'react-router-dom';
 import { ConnexionContext } from './provider';
 
 export default function Top() {
-    const [isConnected, setIsConnected] = useContext(ConnexionContext)
+    const {state: user, setState: setUser, loading} = useContext(ConnexionContext);
+    const isConnected = !!user;
     console.log(isConnected);
     return (
         
@@ -21,8 +22,14 @@ export default function Top() {
                         <Typography ><Link style={{ textDecoration: 'none', color: 'white' }} to="/jdr">M.A. Game</Link></Typography>
                         <Typography ><Link style={{ textDecoration: 'none', color: 'white' }} to='/read/lexicon'>Lexique Magique<br />Bestiaire</Link></Typography>
                         <Btn path='/' onClick={()=>{
-                            localStorage.removeItem("token");
-                            setIsConnected(false);
+                            fetch('/api/logout', {
+                                method: 'POST',
+                                credentials: 'include', 
+                            }).then(() => {
+                                localStorage.removeItem("token");
+                                setUser(null);
+                            });
+
                         }} msg={"Déconnexion"} />
 
                     </> : <Btn path={'/connexion'} msg={`Connexion`} msg2={`Inscription`} />}

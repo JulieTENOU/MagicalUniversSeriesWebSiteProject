@@ -42,7 +42,7 @@ ModifierTitle.propTypes = {
 };
 
 export default function ModifierDialogs(data) {
-  const [currentUser, setCurrentUser] = useContext(ConnexionContext);
+  const {state: currentUser, setState: setCurrentUser, loading} = useContext(ConnexionContext);
 
     console.log(data);
     const character = data.character;

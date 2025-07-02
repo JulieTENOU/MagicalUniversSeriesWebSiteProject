@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useContext } from 'react';
 import '../index.css';
 import '../general.css';
 import Btn from '../components/Btn';
@@ -6,11 +6,12 @@ import Top from '../components/Header';
 import BG from '../components/Background';
 import { useNavigate } from 'react-router-dom';
 
+import { ConnexionContext } from '../components/provider.jsx';
 
 function ReadMA() {
     let navigate = useNavigate();
+    const {state: isConnected, setState: setIsConnected, loading} = useContext(ConnexionContext);
 
-    const [isConnected, setIsConnected] = useState(false)
     return (
         <div className='main'>
             <BG />

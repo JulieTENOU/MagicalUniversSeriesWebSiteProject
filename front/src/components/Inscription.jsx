@@ -1,6 +1,5 @@
 import { Button, Box, Typography, DialogActions, DialogContent, DialogContentText, TextField, MenuItem } from "@mui/material";
 import Btn from "./Btn";
-import * as React from "react";
 import { useState } from "react";
 
 export default function Inscription() {

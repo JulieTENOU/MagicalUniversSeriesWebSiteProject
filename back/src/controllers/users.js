@@ -81,6 +81,17 @@ module.exports = {
       });
   },
 
+  //This function is for making session persistent
+  findOneById: async function (id) {
+  try {
+    const foundUser = await users.findByPk(id);
+    return foundUser;
+  } catch (error) {
+    console.error("Error in findOneById:", error);
+    return null;
+  }
+},
+
   // This function updates a user's information.
 
    update: async function (req, res) {
@@ -165,4 +176,7 @@ module.exports = {
   //         );
   //     });
   // },
+
+
+
 };

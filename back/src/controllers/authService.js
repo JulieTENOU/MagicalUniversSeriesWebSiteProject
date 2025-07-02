@@ -82,10 +82,14 @@ signIn: async function (req, res) {
 
     // Mot de passe correct → générer un token et envoyer la réponse
     const token = await jwt.sign(
-      { users_email: req.body.users_email },
+      { users_email: req.body.users_email,
+        id: login.users_ID
+       },
       authConfig.secret,
       { expiresIn: 3600 }
     );
+
+    req.session.token = token;
 
     return res.status(200).send({ login, token });
 
@@ -143,4 +147,16 @@ updatePassword: async function (req, res) {
     res.status(400).json({ message: "No data was provided." });
   }
 },
+
+ logout: async function (req, res) {
+  try {
+    req.session = null; 
+    res.clearCookie("MAGame-session");
+    res.status(200).send({ message: "Logged out successfully." });
+  } catch (err) {
+    res.status(500).send({ message: "Logout failed", error: err });
+  }
+}
+
+
 };

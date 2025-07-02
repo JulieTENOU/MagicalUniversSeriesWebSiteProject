@@ -1,14 +1,24 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import '../index.css';
 import '../general.css';
 import Top from '../components/Header';
 import BG from '../components/Background';
 import { ConnexionContext } from '../components/provider';
 import Connexion from "../components/Connexion.jsx";
+import { useNavigate } from 'react-router-dom';
 
 
 function ConnexionPage() {
-    const [isConnected, setIsConnected] = useContext(ConnexionContext)
+    const navigate = useNavigate();
+
+    const {state: currentUser,setState: setCurrentUser, loading} = useContext(ConnexionContext);
+    const isConnected = !!currentUser;
+    console.log(isConnected);
+    useEffect(()=> {
+        if(!loading && currentUser){
+            navigate("/")
+        }
+    })
     return (
         <div className='main'>
             <BG />
