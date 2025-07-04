@@ -2,10 +2,8 @@ import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
 export default function Btn(props) {
-  return (
-    <div style={{...props.style, flex:1}}>
-      <Link to={props.path} style={{textDecoration:"none", display:"block", width:"100%"}}>
-        <Button
+  const button = (
+<Button
           sx={{
             padding: 0,
             margin: 0,
@@ -36,12 +34,19 @@ export default function Btn(props) {
               height={props.height}
               width={props.width}
             />
-            {props.msg}
-            <br />
-            {props.msg2}
+           {props.msg}
+           {props.msg2 && <br/>}
+           {props.msg2}
           </div>
         </Button>
-      </Link>
+  );
+
+  return (
+    <div style={{...props.style, flex:1}}>
+      {props.path ? (
+      <Link to={props.path} style={{textDecoration:"none", display:"block", width:"100%"}}>
+        {button}
+      </Link>) : ( button)}
     </div>
   );
 }

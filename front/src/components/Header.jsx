@@ -1,8 +1,9 @@
-import { AppBar, Toolbar, Typography } from '@mui/material';
+import { AppBar, Toolbar } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
-import React, { useContext } from 'react';
+import LogoutIcon from '@mui/icons-material/Logout';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { useContext } from 'react';
 import Btn from './Btn';
-import { Link } from 'react-router-dom';
 import { ConnexionContext } from './provider';
 
 export default function Top() {
@@ -17,10 +18,12 @@ export default function Top() {
                     <Btn path='/' msg={<HomeIcon sx={{ color: 'white' }} />} />
                     <h2 style={{ color: 'white', backgroundColor: 'none' }}>Welcome to the magical univers</h2>
                     {isConnected ? <>
-                        <Typography ><Link style={{ textDecoration: 'none', color: 'white' }} to='/read/xalyt'>Xalyt Stories</Link></Typography>
-                        <Typography ><Link style={{ textDecoration: 'none', color: 'white' }} to='/read/MA'>M.A. Stories</Link></Typography>
-                        <Typography ><Link style={{ textDecoration: 'none', color: 'white' }} to="/jdr">M.A. Game</Link></Typography>
-                        <Typography ><Link style={{ textDecoration: 'none', color: 'white' }} to='/read/lexicon'>Lexique Magique<br />Bestiaire</Link></Typography>
+                        <Btn path='/read/xalyt' msg={"Xalyt Stories"} sx={{textDecoration: 'none', color: 'white' }}/>
+                        <Btn path='/read/ma' msg={"M.A. Stories"} sx={{textDecoration: 'none', color: 'white' }}/>
+                        <Btn path='/jdr' msg={"M.A. Game"} sx={{textDecoration: 'none', color: 'white' }}/>
+                        <Btn path='/read/lexicon' msg={"Lexique Magique"} msg2={"Bestiaire"} sx={{textDecoration: 'none', color: 'white' }}/>
+                        <Btn path='/settings' msg={<SettingsIcon sx={{color: "white"}}/>}/>
+                        
                         <Btn path='/' onClick={()=>{
                             fetch('/api/logout', {
                                 method: 'POST',
@@ -30,7 +33,7 @@ export default function Top() {
                                 setUser(null);
                             });
 
-                        }} msg={"Déconnexion"} />
+                        }} msg={<LogoutIcon sx={{ color: 'white' }} />}  sx={{textDecoration: 'none', color: 'white' }} />
 
                     </> : <Btn path={'/connexion'} msg={`Connexion`} msg2={`Inscription`} />}
 

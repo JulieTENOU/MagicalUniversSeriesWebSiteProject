@@ -26,12 +26,6 @@ export default function Inscription() {
         "\n status: " +
         data.users_status
     );
-    // if(
-    //     data[0] != null &&
-    //     data[1] != null &&
-    //     data[2] != null &&
-    //     data[3] != null
-    // ){
 
     fetch("api/register", {
       method: "POST",
@@ -86,7 +80,6 @@ export default function Inscription() {
                 sx={{
                   width: "100%",
                   textAlign: "center",
-                  // borderRadius: "5px 0 0 0",
                   padding: "6px",
                   color: "white",
                   backgroundColor: " #3498DB ",
@@ -124,24 +117,6 @@ export default function Inscription() {
             }
           />
         </Box>
-        {/* <form onSubmit={(e) => handleInscription(e)}>
-                    <label htmlFor="name">Pseudo</label>
-                    <input id="name" type="text" onChange={(e) => setName(e.target.value)} />
-                    <label htmlFor="mail">Email</label>
-                    <input id="mail" type="email" onChange={(e) => setId(e.target.value)} />
-                    <label htmlFor="password">Mot de passe</label>
-                    <input id="password" type="password" onChange={(e) => setPwd(e.target.value)} />
-                    <label htmlFor="status">Status</label>
-                    <select id="status" value={status || "r"} onChange={(e) => setStatus(e.target.value)}>
-                        <option value="r">Lecteur</option>
-                        <option value="p">Joueur</option>
-                    </select>
-                </form>
-                <DialogActions sx={{ textAlign: "center", justifyContent: 'center' }}>
-                    <Button onClick={(e) => { handleInscription(e) }}>
-                        S'inscrire
-                    </Button>
-                </DialogActions> */}
         <DialogContent>
           <DialogContentText>Pseudo</DialogContentText>
           <TextField

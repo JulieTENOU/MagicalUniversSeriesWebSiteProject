@@ -10,6 +10,8 @@ import ChaptersXalyt1 from "./pages/ReadChapters";
 import Connexion from "./pages/Connexion";
 import Inscription from "./pages/Inscription";
 import MyProvider from "./components/provider.jsx"
+import SettingsPage from "./pages/Settings.jsx"
+import NewCharacter from "./pages/NewCharacter.jsx"
 
 function App() {
   return (
@@ -71,6 +73,8 @@ function App() {
           {/* <Route path="/jdr" element={<JDR />} /> */}
           {/* <Route path="/jdr/connectGame" element={<ConnectGame />}/> */}
           <Route path="/jdr" element={<ConnectGame />}/>
+          <Route path="/settings" element={<SettingsPage/>}/>
+          <Route path="/create_character" element={<NewCharacter/>}/>
           
         </Routes>
       </Router>
