@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import "../index.css";
 import "../general.css";
@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { ConnexionContext } from "../components/provider.jsx";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import { useTheme } from "@mui/material/styles";
+import { useThemeMode } from "../context/ThemeContext.js";
 
 function ReadBook() {
   let navigate = useNavigate();
@@ -19,9 +21,19 @@ function ReadBook() {
     setState: setIsConnected,
     loading,
   } = useContext(ConnexionContext);
-  const [lightMode, setLightMode] = useState(false);
+  const {mode, defaultMode, changeTheme} = useThemeMode();
+  const [localReadingMode, setLocalReadingMode] = useState(mode);
 
   const isLastChapter = false;
+
+  const theme = useTheme();
+
+  useEffect(() => {
+    changeTheme(localReadingMode);
+    return () => {
+      changeTheme(defaultMode);
+    };
+  }, [localReadingMode, defaultMode, changeTheme]);
 
   return (
     <div className="main">
@@ -69,18 +81,14 @@ function ReadBook() {
       <Box sx={{ p: 5, mt: 5 }}>
         <div
           style={{
-            color: lightMode ? "#222" : "lightblue",
+            color: theme.custom.mycustomblur.text,
             display: "flex",
             flexDirection: "column",
             gap: "1rem",
-            backgroundColor: lightMode
-              ? "rgba(255, 255, 255, 0.7)"
-              : "rgba(0, 0, 0, 0.2)",
-            boxShadow: lightMode
-              ? "0 0 10px rgba(0,0,0,0.2)"
-              : "0 0 10px rgba(255,255,255,0.1)",
-            border: "solid gray 3px",
-            backdropFilter: "blur(20px)",
+            backgroundColor: theme.custom.mycustomblur.main,
+            boxShadow: theme.custom.mycustomblur.boxShadow,
+            border: theme.custom.mycustomblur.border,
+            backdropFilter: theme.custom.mycustomblur.blur,
             padding: "20px",
             borderRadius: "10px",
             maxWidth: "900px",
@@ -109,18 +117,20 @@ function ReadBook() {
   
   {/* Bouton à droite */}
   <Btn
-    onClick={() => setLightMode((prev) => !prev)}
+    onClick={() => {
+        setLocalReadingMode(mode ==="dark" ? "light" : "dark")
+    }}
     msg={
-      lightMode ? (
+      localReadingMode === "dark" ? (
         <DarkModeIcon sx={{ fontSize: 20, lineHeight: 1 }} />
       ) : (
         <LightModeIcon sx={{ fontSize: 20, lineHeight: 1 }} />
       )
     }
     sx={{
-      backgroundColor: lightMode ? "#222" : "#eee",
-      color: lightMode ? "white" : "black",
-      border: "1px solid gray",
+      backgroundColor: theme.custom.modeSwitchBtn.background,
+      color: theme.custom.modeSwitchBtn.color,
+      border: theme.custom.modeSwitchBtn.border,
       borderRadius: "50%",
       width: 36,
       height: 36,
@@ -133,7 +143,7 @@ function ReadBook() {
 {/* Titre centré */}
   <Typography
     variant="h4"
-    color={lightMode ? "black" : "whitesmoke"}
+    color={theme.custom.mycustomblur.text}
     style={{
       flex: 1,
       textAlign: "center",
@@ -144,7 +154,7 @@ function ReadBook() {
     Prologue
   </Typography>
 
-          <Typography color={lightMode ? "black" : "whitesmoke"} sx={{textAlign: "justify"}}>
+          <Typography color={theme.custom.mycustomblur.text} sx={{textAlign: "justify"}}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec nec
             tristique sapien. Fusce quis est ultrices, bibendum est viverra,
             aliquam felis. Quisque blandit pretium lacus, ut finibus libero

@@ -11,8 +11,12 @@ import { useState, useEffect } from "react";
 import Btn from "./Btn";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { useThemeMode } from "../context/ThemeContext";
+import { useTheme } from "@mui/material/styles";
+
 
 export default function Settings() {
+  const {changeTheme} = useThemeMode();
   const [activeTab, setActiveTab] = useState("identity");
 
   // Identité
@@ -76,11 +80,13 @@ export default function Settings() {
   };
 
   const handleSavePreferences = () => {
-    const data = { theme, language };
+    const data = { user_theme: theme, user_language: language };
     fetch("/api/preferences", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
+    }).then(() => {
+      changeTheme(theme);
     });
   };
 

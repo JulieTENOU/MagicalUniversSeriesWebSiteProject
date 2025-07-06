@@ -10,6 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import Pencil from '../assets/img/pencil-outline.svg';
+import { useTheme } from "@mui/material/styles";
 
 function ModifierTitle(props) {
   const { children, onClose, ...other } = props;
@@ -41,6 +42,7 @@ ModifierTitle.propTypes = {
 };
 
 export default function ModifierDialogs(data) {
+      const theme = useTheme();
     console.log(data);
     const inventaire = data.inventaire;
     const left = data.left;
@@ -292,7 +294,7 @@ export default function ModifierDialogs(data) {
   return (
     <div style={{position: 'relative', height:'0px'}}>
       <Button sx={{ position:'relative', display: 'flex', left:{left}, top:'-2.3vh' , border:'none'}} variant="outlined" onClick={handleClickOpen}>
-        <img src={Pencil} height={'15px'} class="filter-white" alt="Modifier" id='modifier'/>
+        <img src={Pencil} height={'15px'}  color={theme.custom.mycustomblur.text }  alt="Modifier" id='modifier'/>
       </Button>
       <Dialog
         onClose={handleClose}

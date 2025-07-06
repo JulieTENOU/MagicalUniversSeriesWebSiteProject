@@ -13,5 +13,6 @@ controller.books = require("./books");
 controller.chapters = require("./chapters");
 controller.series = require("./series");
 controller.book_parts = require("./book_parts");
+controller.preferences = require("./preferences");
 
 module.exports = controller;

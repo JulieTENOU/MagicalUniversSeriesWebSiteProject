@@ -64,6 +64,7 @@ const crystals = require('./src/routes/crystals');
 const creatures = require('./src/routes/creatures');
 const currentGauges = require('./src/routes/currentGauges');
 const draconiqueHeart = require('./src/routes/draconiqueHeart');
+const preferences = require('./src/routes/preferences');
 
 // This actually calls the route!
 app.use("/users", user);
@@ -85,6 +86,7 @@ app.use("/creatures", creatures);
 app.use("/gauges", currentGauges);
 app.use("/api", authService);
 app.use("/draconiqueHeart", draconiqueHeart)
+app.use('/api/preferences', preferences);
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${port}`)
