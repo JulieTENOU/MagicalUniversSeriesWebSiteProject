@@ -12,6 +12,8 @@ import Inscription from "./pages/Inscription";
 import MyProvider from "./components/provider.jsx"
 import SettingsPage from "./pages/Settings.jsx"
 import NewCharacter from "./pages/NewCharacter.jsx"
+import ForgottenPassWord from "./pages/ForgottenPassWord.jsx";
+import ResetPassWord from "./pages/ResetPassWord.jsx";
 
 function App() {
   return (
@@ -74,6 +76,8 @@ function App() {
           <Route path="/jdr/connectGame/:characterId" element={<ConnectGame />}/>
           {/* <Route path="/jdr" element={<ConnectGame />}/> */}
           <Route path="/settings" element={<SettingsPage/>}/>
+          <Route path="/forgotten_password" element={<ForgottenPassWord/>}/>
+          <Route path="/reset-password/:token" element={<ResetPassWord/>}/>
           <Route path="/jdr/create_character" element={<NewCharacter/>}/>
           
         </Routes>

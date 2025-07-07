@@ -7,8 +7,11 @@ const {verifyToken} = require("../middleware");
 router.post("/register", authService.create);
 router.post("/signIn", authService.signIn);
 router.post("/logout", authService.logout);
-router.post("/api/verifyEmail", authService.verifyEmail);
-router.put("/api/updatePwd/:users_ID", authService.updatePassword);
+router.post("/verifyEmail", authService.verifyEmail);
+router.put("/updatePwd/:users_ID", authService.updatePassword);
+router.post('/forgot-password', authService.forgotPassword);
+router.post('/reset-password/:token', authService.resetPassword);
+
 
 router.get("/me", verifyToken, async (req, res) => {
   try {

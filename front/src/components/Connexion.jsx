@@ -7,27 +7,33 @@ import {
   DialogContentText,
   DialogActions,
   Link,
+  backdropClasses,
 } from "@mui/material";
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ConnexionContext } from "./provider";
 import HomeCompo from "./Home";
 import Btn from "./Btn";
-
+import { useTheme } from "@mui/material/styles";
 
 export default function Connexion() {
+  const theme = useTheme();
   const navigate = useNavigate();
-  const {state :currentUser,setState: setCurrentUser, loading} = useContext(ConnexionContext);
+  const {
+    state: currentUser,
+    setState: setCurrentUser,
+    loading,
+  } = useContext(ConnexionContext);
   const [id, setId] = useState(null);
   const [pwd, setPwd] = useState(null);
   console.log(ConnexionContext);
 
-  useEffect(()=>{
-    if(currentUser){
+  useEffect(() => {
+    if (currentUser) {
       navigate("/");
     }
   }, [currentUser]);
-  
+
   const handleConnexion = () => {
     const data = {
       users_email: id,
@@ -48,17 +54,21 @@ export default function Connexion() {
         if (data.message) {
           alert("Invalid email or password!");
           return;
-        } 
-        const user = data.login
+        }
+        const user = data.login;
 
-          if (user.users_status === "a" || user.users_status === "p" || user.users_status === "r") {
-            setCurrentUser(user);
-            console.log("currentUser:", currentUser);
-            console.log("Success:", data);
-            // window.location.href = "http://localhost:3003/"
-          } else {
-            console.warn("Unknown user status:", user.users_status);
-          }
+        if (
+          user.users_status === "a" ||
+          user.users_status === "p" ||
+          user.users_status === "r"
+        ) {
+          setCurrentUser(user);
+          console.log("currentUser:", currentUser);
+          console.log("Success:", data);
+          // window.location.href = "http://localhost:3003/"
+        } else {
+          console.warn("Unknown user status:", user.users_status);
+        }
       })
       .catch((error) => {
         console.error("Erreur pendant la connexion :", error);
@@ -72,8 +82,8 @@ export default function Connexion() {
       ) : (
         <Box
           sx={{
-            backgroundColor: "whitesmoke",
-            color: "black",
+            backgroundColor: theme.custom.mymodal.main,
+            color: theme.custom.mymodal.text,
             borderRadius: "5px",
           }}
         >
@@ -90,15 +100,21 @@ export default function Connexion() {
           >
             <Btn
               path="/connexion"
-              sx={{ textDecoration: "none", width:"100%", padding:0, borderRadius:"5px 5px 0 0",flex:1 }}
+              sx={{
+                textDecoration: "none",
+                width: "100%",
+                padding: 0,
+                borderRadius: "5px 5px 0 0",
+                flex: 1,
+              }}
               msg={
                 <Typography
                   sx={{
                     width: "100%",
                     textAlign: "center",
                     padding: "6px",
-                    color: "white",
-                    backgroundColor: " #3498DB ",
+                    color: theme.custom.mymodal.text,
+                    backgroundColor: theme.custom.mymodal.button,
                     fontWeight: "bold",
                   }}
                 >
@@ -108,15 +124,21 @@ export default function Connexion() {
             />
             <Btn
               path="/inscription"
-              sx={{ textDecoration: "none", width:"100%", padding:0, borderRadius:0, flex:1}}
+              sx={{
+                textDecoration: "none",
+                width: "100%",
+                padding: 0,
+                borderRadius: 0,
+                flex: 1,
+              }}
               msg={
                 <Typography
                   sx={{
                     width: "100%",
                     textAlign: "center",
                     padding: "6px",
-                    color: "white",
-                    backgroundColor: " #3498DB ",
+                    color: theme.custom.mymodal.text,
+                    backgroundColor: theme.custom.mymodal.button,
                     fontWeight: "bold",
                   }}
                 >
@@ -126,23 +148,55 @@ export default function Connexion() {
             />
           </Box>
           <DialogContent>
-            <DialogContentText>Email</DialogContentText>
+            <DialogContentText
+              sx={{
+                backgroundColor: theme.custom.mymodal.main,
+                color: theme.custom.mymodal.text,
+              }}
+            >
+              Email
+            </DialogContentText>
             <TextField
+              sx={{
+                backgroundColor: theme.custom.mymodal.main,
+                color: theme.custom.mymodal.text,
+              }}
               id="mail"
               type="email"
               onChange={(e) => setId(e.target.value)}
             />
-            <DialogContentText>Mot de passe</DialogContentText>
+            <DialogContentText
+              sx={{
+                backgroundColor: theme.custom.mymodal.main,
+                color: theme.custom.mymodal.text,
+              }}
+            >
+              Mot de passe
+            </DialogContentText>
             <TextField
+              sx={{
+                backgroundColor: theme.custom.mymodal.main,
+                color: theme.custom.mymodal.text,
+              }}
               id="password"
               type="password"
               onChange={(e) => setPwd(e.target.value)}
             />
+            <Btn
+              sx={{
+                color: theme.custom.mymodal.text,
+                textDecoration:"underline"
+              }}
+              path="/forgotten_password"
+              msg={"Mot de passe oublié"}
+            />
           </DialogContent>
           <DialogActions sx={{ textAlign: "center", justifyContent: "center" }}>
             <Button
-              onClick={() => {
-                handleConnexion();
+              onClick={handleConnexion}
+              sx={{
+                color: theme.custom.mymodal.text,
+                backgroundColor: theme.custom.mymodal.button,
               }}
             >
               Se connecter
