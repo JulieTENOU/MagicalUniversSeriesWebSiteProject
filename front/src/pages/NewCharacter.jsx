@@ -20,7 +20,7 @@ function NewCharacter() {
         <div className='main'>
             <BG />
             <Top started={isConnected} />
-            <div style={{ width: '100vw', display: 'flex', flexDirection: 'row', position: 'fixed', bottom: '25vh', justifyContent: 'space-around', alignItems: 'center' }}>
+            <div style={{ width: '100vw', display: 'flex', flexDirection: 'row', position: 'fixed', bottom: '5vh', justifyContent: 'space-around', alignItems: 'center' }}>
                 <div style={{ color: 'white', textAlign: 'center' }}>
                     <CreateCharacter/>
                 </div>

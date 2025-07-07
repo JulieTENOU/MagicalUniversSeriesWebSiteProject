@@ -279,10 +279,12 @@ module.exports = {
          }
        })
        .catch((err) => {
-         res.status(500).send({
-           message: "Error retrieving accounts...",
-         });
-       });
+  console.error("FINDALL ERROR:", err);
+  res.status(500).send({
+    message: "Error retrieving accounts...",
+    error: err.message, // Ajoute ça pour voir l’erreur réelle !
+  });
+});
    },
 
   // This function find and returns one registered user based on one parameter.
@@ -319,6 +321,17 @@ module.exports = {
         });
       });
   },
+
+  findOneCharacterById: async function (req, res) {
+  const id = req.params.ID_character;
+  characters
+    .findOne({ where: { ID_character: id } })
+    .then((data) => {
+      if (data) res.status(200).send({ message: "Character found", data });
+      else res.status(404).send({ message: "No character found with this id." });
+    })
+    .catch((err) => res.status(500).send({ message: "Error retrieving character.", err }));
+},
 
   updateOneCharacter: async function (req, res){
     const character = req.params.Name_character;

@@ -70,11 +70,11 @@ function App() {
           <Route path="/read/MA/whats_to_know" element={<ReadHome />} />
           <Route path="/read/MA/NPC_stories" element={<ReadHome />} />
           <Route path="/read/lexicon" element={<ReadHome />} />
-          {/* <Route path="/jdr" element={<JDR />} /> */}
-          {/* <Route path="/jdr/connectGame" element={<ConnectGame />}/> */}
-          <Route path="/jdr" element={<ConnectGame />}/>
+          <Route path="/jdr" element={<JDR />} />
+          <Route path="/jdr/connectGame/:characterId" element={<ConnectGame />}/>
+          {/* <Route path="/jdr" element={<ConnectGame />}/> */}
           <Route path="/settings" element={<SettingsPage/>}/>
-          <Route path="/create_character" element={<NewCharacter/>}/>
+          <Route path="/jdr/create_character" element={<NewCharacter/>}/>
           
         </Routes>
       </Router>

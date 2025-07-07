@@ -14,9 +14,13 @@ import Combat from "../components/Combat";
 import Ingredients from "../components/Ingredients";
 import Crystals from "../components/Crystals";
 import Creatures from "../components/Creatures";
+import { useTheme } from "@mui/material/styles";
+import { useParams } from "react-router-dom";
+
 
 function ConnectGame() {
- 
+  const { characterId }= useParams();
+       const theme = useTheme();
   const {state: currentUser,setState: setCurrentUser, loading} = useContext(ConnexionContext);
   console.log(currentUser.users_ID);
 
@@ -84,7 +88,7 @@ function ConnectGame() {
   );
 
   useEffect(() => {
-    fetch(`/characters/api/getOneCharacter/${currentUser.users_ID}`)
+    fetch(`/characters/api/getOneCharacterById/${characterId}`)
       .then((res) => res.json())
       .then((data) => {
         const chara = data.data;
@@ -858,7 +862,8 @@ function ConnectGame() {
               padding: "10px",
               width: "25vw",
               fontWeight: "normal",
-              backdropFilter: "blur(10px)",
+           backgroundColor:theme.custom.mycustomblur.main, 
+           backdropFilter: theme.custom.mycustomblur.blur,
               color: "lightblue",
               display: "flex",
               flexDirection: "column",
@@ -872,64 +877,65 @@ function ConnectGame() {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "start",
+
               }}
             >
               <div id="idLeft" style={{ padding: "10px" }}>
-                <p>
+                <p style={{color: theme.custom.mycustomblur.text ,}}>
                   Nom : <span id="name">{character.Name_character}</span>
                 </p>
-                <p>
+                <p style={{color: theme.custom.mycustomblur.text ,}}>
                   Métier : <span id="job">{character.Metier_character}</span>{" "}
                 </p>
-                <p>
+                <p style={{color: theme.custom.mycustomblur.text ,}}>
                   Race : <span id="race">{character.Race_character}</span>{" "}
                 </p>
-                <p>
+                <p style={{color: theme.custom.mycustomblur.text ,}}>
                   Planète :{" "}
                   <span id="planet">{character.Planete_character}</span>{" "}
                 </p>
-                <p>
+                <p style={{color: theme.custom.mycustomblur.text ,}}>
                   Niveau : <span id="lvl">{character.Niveau_character}</span>{" "}
                 </p>
-                <p>
+                <p style={{color: theme.custom.mycustomblur.text ,}}>
                   Agence : <span id="agence">{character.Agence_character}</span>{" "}
                 </p>
               </div>
               <div id="idRight" style={{ paddingRight: "10px" }}>
-                <p>
+                <p style={{color: theme.custom.mycustomblur.text ,}}>
                   Age : <span id="age">{character.Age_character}</span> ans
                 </p>
-                <p>
+                <p style={{color: theme.custom.mycustomblur.text ,}}>
                   Taille : <span id="height">{character.Taille_character}</span>{" "}
                   cm
                 </p>
-                <p>
+                <p style={{color: theme.custom.mycustomblur.text ,}}>
                   Poids : <span id="pounds">{character.Poids_character}</span>{" "}
                   kg
                 </p>
-                <p>
+                <p style={{color: theme.custom.mycustomblur.text ,}}>
                   Sexe : <span id="sex">{character.Sexe_character}</span>{" "}
                 </p>
-                <p>
+                <p style={{color: theme.custom.mycustomblur.text ,}}>
                   Oeil droit :{" "}
                   <span id="rightEye">{character.OeilD_character}</span>
                 </p>
-                <p>
+                <p style={{color: theme.custom.mycustomblur.text ,}}>
                   Oeil gauche :{" "}
                   <span id="leftEye">{character.OeilG_character}</span>
                 </p>
-                <p>
+                <p style={{color: theme.custom.mycustomblur.text ,}}>
                   Cheveux : <span id="hair">{character.Cheveux_character}</span>
                 </p>
               </div>
             </div>
             <div id="idBottom" style={{ padding: "10px" }}>
-              <p>
+              <p style={{color: theme.custom.mycustomblur.text ,}}>
                 Signes distinctif :{" "}
                 <span id="particularity">{character.Signes_character}</span>
               </p>
               <br />
-              <p>
+              <p style={{color: theme.custom.mycustomblur.text ,}}>
                 Traits de caractère :{" "}
                 <span id="caracter">{character.Traits_character}</span>
               </p>

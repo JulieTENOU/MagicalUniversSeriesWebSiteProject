@@ -2,7 +2,7 @@ import axios from "axios";
 
 export function getStat() {
     return new Promise(resolve => {
-        axios.get("http://localhost:3333/")
+        axios.get("http://localhost:3333/characters/getAllCharacters")
         .then(res => res.status === 200 && res.data)
         .then(resolve)
         .catch(console.error)

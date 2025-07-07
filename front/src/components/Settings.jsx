@@ -16,6 +16,7 @@ import { useTheme } from "@mui/material/styles";
 
 
 export default function Settings() {
+  const currentTheme = useTheme();
   const {changeTheme} = useThemeMode();
   const [activeTab, setActiveTab] = useState("identity");
 
@@ -93,8 +94,8 @@ export default function Settings() {
   return (
     <Box
       sx={{
-        backgroundColor: "whitesmoke",
-        color: "black",
+        backgroundColor: currentTheme.custom.mymodal.main,
+        color: currentTheme.custom.mymodal.text,
         borderRadius: "5px",
         maxWidth: "600px",
         margin: "0 auto",
@@ -117,7 +118,7 @@ export default function Settings() {
                   width: "100%",
                   textAlign: "center",
                   padding: "6px",
-                  backgroundColor: " #3498DB ",
+                  backgroundColor: currentTheme.custom.mymodal.header,
                   fontWeight: "bold",
                   color: activeTab === key ? "white" : "grey",
                 }}
@@ -131,6 +132,7 @@ export default function Settings() {
               flex: 1,
               width: "100%",
               padding: 0,
+              backgroundColor:currentTheme.custom.mymodal.button,
               borderRadius:
                 key === "identity"
                   ? "5px 0 0 0"
@@ -146,13 +148,14 @@ export default function Settings() {
       <Box sx={{ padding: 3 }}>
         {activeTab === "identity" && (
           <>
-            <Typography variant="h6">Informations personnelles</Typography>
+            <Typography variant="h6" color={currentTheme.custom.mymodal.text}>Informations personnelles</Typography>
             <TextField
               label="Pseudo"
               value={pseudo}
               onChange={(e) => setPseudo(e.target.value)}
               fullWidth
               margin="normal"
+              sx={{color:currentTheme.custom.mymodal.text}}
             />
             <TextField
               label="Email"
@@ -161,6 +164,7 @@ export default function Settings() {
               onChange={(e) => setEmail(e.target.value)}
               fullWidth
               margin="normal"
+              sx={{color:currentTheme.custom.mymodal.text}}
             />
             <TextField
               label="Statut"
@@ -169,14 +173,15 @@ export default function Settings() {
               onChange={(e) => setStatus(e.target.value)}
               fullWidth
               margin="normal"
+              sx={{color:currentTheme.custom.mymodal.text}}
             >
-              <MenuItem value="r">Lecteur</MenuItem>
-              <MenuItem value="p">Joueur</MenuItem>
+              <MenuItem value="r" sx={{color:currentTheme.custom.mymodal.text}}>Lecteur</MenuItem>
+              <MenuItem value="p" sx={{color:currentTheme.custom.mymodal.text}}>Joueur</MenuItem>
             </TextField>
             <Button
               onClick={handleUpdateIdentity}
               variant="contained"
-              sx={{ mt: 2 }}
+              sx={{ mt: 2, color:currentTheme.custom.mymodal.text, backgroundColor:currentTheme.custom.mymodal.button}}
             >
               Mettre à jour
             </Button>
@@ -185,7 +190,7 @@ export default function Settings() {
 
         {activeTab === "security" && (
           <>
-            <Typography variant="h6">Sécurité du compte</Typography>
+            <Typography variant="h6" sx={{color:currentTheme.custom.mymodal.text}}>Sécurité du compte</Typography>
             <TextField
               label="Mot de passe actuel"
               type={showPwd.old ? "text" : "password"}
@@ -193,6 +198,7 @@ export default function Settings() {
               onChange={(e) => setOldPwd(e.target.value)}
               fullWidth
               margin="normal"
+              sx={{color:currentTheme.custom.mymodal.text}}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -201,6 +207,7 @@ export default function Settings() {
                         setShowPwd((prev) => ({ ...prev, old: !prev.old }))
                       }
                       edge="end"
+                      sx={{color:currentTheme.custom.mymodal.text,backgroundColor:currentTheme.custom.mymodal.button}}
                     >
                       {showPwd.old ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -215,6 +222,7 @@ export default function Settings() {
               onChange={(e) => setNewPwd(e.target.value)}
               fullWidth
               margin="normal"
+              sx={{color:currentTheme.custom.mymodal.text}}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -223,6 +231,7 @@ export default function Settings() {
                         setShowPwd((prev) => ({ ...prev, new: !prev.new }))
                       }
                       edge="end"
+                      sx={{color:currentTheme.custom.mymodal.text,backgroundColor:currentTheme.custom.mymodal.button}}
                     >
                       {showPwd.new ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -238,6 +247,7 @@ export default function Settings() {
               onPaste={(e) => e.preventDefault()} // 🚫 empêche le collage
               fullWidth
               margin="normal"
+             sx={{color:currentTheme.custom.mymodal.text}}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -249,6 +259,7 @@ export default function Settings() {
                         }))
                       }
                       edge="end"
+                      sx={{color:currentTheme.custom.mymodal.text,backgroundColor:currentTheme.custom.mymodal.button}}
                     >
                       {showPwd.confirm ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -260,7 +271,7 @@ export default function Settings() {
             <Button
               onClick={handleChangePassword}
               variant="contained"
-              sx={{ mt: 2 }}
+              sx={{ mt: 2, color:currentTheme.custom.mymodal.text,backgroundColor:currentTheme.custom.mymodal.button }}
             >
               Changer le mot de passe
             </Button>
@@ -277,9 +288,10 @@ export default function Settings() {
               onChange={(e) => setTheme(e.target.value)}
               fullWidth
               margin="normal"
+              sx={{color:currentTheme.custom.mymodal.text}}
             >
-              <MenuItem value="light">Clair</MenuItem>
-              <MenuItem value="dark">Sombre</MenuItem>
+              <MenuItem value="light" sx={{color:currentTheme.custom.mymodal.text}}>Clair</MenuItem>
+              <MenuItem value="dark" sx={{color:currentTheme.custom.mymodal.text}}>Sombre</MenuItem>
             </TextField>
             <TextField
               label="Langue"
@@ -288,14 +300,15 @@ export default function Settings() {
               onChange={(e) => setLanguage(e.target.value)}
               fullWidth
               margin="normal"
+             sx={{color:currentTheme.custom.mymodal.text}}
             >
-              <MenuItem value="fr">Français</MenuItem>
-              <MenuItem value="en">Anglais</MenuItem>
+              <MenuItem value="fr" sx={{color:currentTheme.custom.mymodal.text}}>Français</MenuItem>
+              <MenuItem value="en" sx={{color:currentTheme.custom.mymodal.text}}>Anglais</MenuItem>
             </TextField>
             <Button
               onClick={handleSavePreferences}
               variant="contained"
-              sx={{ mt: 2 }}
+              sx={{ mt: 2,color:currentTheme.custom.mymodal.text, backgroundColor:currentTheme.custom.mymodal.button}}
             >
               Enregistrer les préférences
             </Button>

@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState } from "react"
+import { createContext, useContext, useMemo, useState,useEffect, useCallback } from "react"
 import { getStat } from "../service"
 
 const AppContext = createContext();
@@ -6,21 +6,29 @@ const { Provider } = AppContext;
 
 const AppProvider = ({ children}) => {
     const [stats, setStats] = useState([]);
+    const [currentCharacter, setCurrentCharacter] = useState(null);
 
-    const fetchStat = () => {
+    const fetchStat = useCallback(() => {
         getStat().then(setStats)
-    }
+    },[]);
     // const addPost = (body) => {
     //     insertPost(body).then(setPosts)
     // }
+
+    useEffect(()=>{
+        fetchStat();
+    },[fetchStat]);
+
     const value = useMemo(() => {
         return {
             stats, 
-            fetchStat
+            fetchStat,
+            currentCharacter,
+            setCurrentCharacter,
             //, 
            // addPost
         }
-    }, [stats, fetchStat])
+    }, [stats, fetchStat, currentCharacter])
     return <Provider value={value}>{children}</Provider>
 }
 
