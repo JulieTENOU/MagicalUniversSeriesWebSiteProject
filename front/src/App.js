@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import ReadHome from "./pages/ReadHome";
 import ReadMA from "./pages/ReadMA";
 import ConnectGame from "./pages/ConnectGame";
+import ConnectGameMJ from "./pages/ConnectGameMJ";
 import JDR from "./pages/JDR.jsx";
 import ReadXalyt from "./pages/ReadXalyt";
 import ReadBook from "./pages/ReadBook";
@@ -79,6 +80,7 @@ function App() {
           <Route path="/forgotten_password" element={<ForgottenPassWord/>}/>
           <Route path="/reset-password/:token" element={<ResetPassWord/>}/>
           <Route path="/jdr/create_character" element={<NewCharacter/>}/>
+          <Route path="/jdr/connectGame/admin/:ids" element={<ConnectGameMJ/>}/>
           
         </Routes>
       </Router>

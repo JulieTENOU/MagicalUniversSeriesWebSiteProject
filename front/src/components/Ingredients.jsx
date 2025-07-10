@@ -114,8 +114,8 @@ export default function Ingredients(data) {
               >
                 Ingrédients
               </Typography>
-              <table>
-                <tbody>
+              <Table>
+                <TableBody>
                   {[...Array(15)].map((_, i) => {
                     const num = i + 1;
                     return (
@@ -129,8 +129,8 @@ export default function Ingredients(data) {
                       />
                     );
                   })}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </Grid>
         </Box>
