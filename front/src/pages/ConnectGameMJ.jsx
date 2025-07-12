@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 
+import Btn from "../components/Btn";
+
 function ConnectGameMJ() {
   const { ids } = useParams();
   const idArray = ids.split("&&");
@@ -100,11 +102,11 @@ function ConnectGameMJ() {
                     textAlign: "center",
                   }}
                 >
-                  <Table>
-                    <TableHead>
-                      <TableRow variant="head">
-                        <TableCell></TableCell>
-                        <TableCell>
+                  <Table sx={{border:"none"}}>
+                    <TableHead  sx={{border:"none"}}>
+                      <TableRow variant="head"  sx={{border:"none"}}>
+                        <TableCell  sx={{border:"none"}}></TableCell>
+                        <TableCell  sx={{border:"none"}}>
                           {" "}
                           <Typography
                             className="label"
@@ -116,7 +118,7 @@ function ConnectGameMJ() {
                             Mana Vital
                           </Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell  sx={{border:"none"}}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -127,7 +129,7 @@ function ConnectGameMJ() {
                             Stamina
                           </Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell  sx={{border:"none"}}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -138,7 +140,7 @@ function ConnectGameMJ() {
                             Mana Air
                           </Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell  sx={{border:"none"}}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -149,7 +151,7 @@ function ConnectGameMJ() {
                             Mana Eau
                           </Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell  sx={{border:"none"}}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -160,7 +162,7 @@ function ConnectGameMJ() {
                             Mana Terre
                           </Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell  sx={{border:"none"}}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -171,7 +173,7 @@ function ConnectGameMJ() {
                             Mana Feu
                           </Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell  sx={{border:"none"}}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -182,7 +184,7 @@ function ConnectGameMJ() {
                             Mana Volonté
                           </Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell  sx={{border:"none"}}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -195,11 +197,11 @@ function ConnectGameMJ() {
                         </TableCell>
                       </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody >
                       {characters.map((char) => (
-                        <TableRow key={char.ID_character}>
-                          <TableCell>{char.Name_character}</TableCell>
-                          <TableCell>
+                        <TableRow key={char.ID_character}  sx={{border:"none"}}>
+                          <TableCell  sx={{border:"none"}}>{char.Name_character}</TableCell>
+                          <TableCell  sx={{border:"none"}}>
                             <div
                               className="container"
                               style={{
@@ -236,7 +238,7 @@ function ConnectGameMJ() {
                               {char.ManaVital_character} points
                             </Typography>
                           </TableCell>
-                          <TableCell>
+                          <TableCell  sx={{border:"none"}}>
                             <div
                               className="container"
                               style={{
@@ -272,7 +274,7 @@ function ConnectGameMJ() {
                               {char.Stamina_character} points
                             </Typography>
                           </TableCell>
-                          <TableCell>
+                          <TableCell  sx={{border:"none"}}>
                             <LinearProgress
                               color="success"
                               id="manaAir"
@@ -298,7 +300,7 @@ function ConnectGameMJ() {
                               {char.ManaAir_character} points
                             </Typography>
                           </TableCell>
-                          <TableCell>
+                          <TableCell  sx={{border:"none"}}>
                             <LinearProgress
                               color="info"
                               id="manaAir"
@@ -323,7 +325,7 @@ function ConnectGameMJ() {
                             >
                               {char.ManaEau_character} points
                             </Typography></TableCell>
-                          <TableCell>
+                          <TableCell  sx={{border:"none"}}>
                             <LinearProgress
                               color="warning"
                               id="manaAir"
@@ -348,7 +350,7 @@ function ConnectGameMJ() {
                             >
                               {char.ManaTerre_character} points
                             </Typography></TableCell>
-                          <TableCell>
+                          <TableCell sx={{border:"none"}}>
                             <LinearProgress
                               color="error"
                               id="manaAir"
@@ -373,7 +375,7 @@ function ConnectGameMJ() {
                             >
                               {char.ManaFeu_character} points
                             </Typography></TableCell>
-                          <TableCell>
+                          <TableCell sx={{border:"none"}}>
                             <LinearProgress
                               id="manaAir"
                               variant="determinate"
@@ -397,7 +399,8 @@ function ConnectGameMJ() {
                             >
                               {char.ManaVolonte_character} points
                             </Typography></TableCell>
-                          <TableCell>
+                          <TableCell sx={{border:"none"}}>
+                            <Btn msg="Compétence"/>
                             {/* ici un input + bouton 👁 comme vu plus haut pour demander une stat spécifique */}
                           </TableCell>
                         </TableRow>

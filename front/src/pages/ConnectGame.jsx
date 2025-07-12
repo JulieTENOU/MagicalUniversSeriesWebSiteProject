@@ -17,11 +17,14 @@ import Creatures from "../components/Creatures";
 import { useTheme } from "@mui/material/styles";
 import { useParams } from "react-router-dom";
 
-
 function ConnectGame() {
-  const { characterId }= useParams();
-       const theme = useTheme();
-  const {state: currentUser,setState: setCurrentUser, loading} = useContext(ConnexionContext);
+  const { characterId } = useParams();
+  const theme = useTheme();
+  const {
+    state: currentUser,
+    setState: setCurrentUser,
+    loading,
+  } = useContext(ConnexionContext);
   console.log(currentUser.users_ID);
 
   const defaultCharacter = {
@@ -189,6 +192,7 @@ function ConnectGame() {
         console.warn("Mana inconnue : ", manaName);
     }
   }
+  console.log("character datas : ",character);
 
   return (
     <div className="main">
@@ -255,9 +259,9 @@ function ConnectGame() {
                   <Typography
                     variant="h6"
                     position={"fixed"}
-                    top={"37vh"}
-                    left={"33vw"}
-                    color={"white"}
+                    top={"45vh"}
+                    left={"35vw"}
+                    sx={{ color: theme.custom.mycustomblur.text }}
                   >
                     {currentManaAir} pts
                   </Typography>
@@ -282,6 +286,7 @@ function ConnectGame() {
                       position: "fixed",
                       left: "32vw",
                       top: "22vh",
+                      color: theme.custom.mycustomblur.text,
                     }}
                   >
                     <BtnAdd
@@ -300,7 +305,7 @@ function ConnectGame() {
                 </div>
                 <label
                   className="label"
-                  style={{ color: "white" }}
+                  style={{ color: theme.custom.mycustomblur.text }}
                   htmlFor="manaAir"
                 >
                   Air
@@ -334,9 +339,9 @@ function ConnectGame() {
                   <Typography
                     variant="h6"
                     position={"fixed"}
-                    top={"37vh"}
-                    left={"38vw"}
-                    color={"white"}
+                    top={"45vh"}
+                    left={"43vw"}
+                    sx={{ color: theme.custom.mycustomblur.text }}
                   >
                     {currentManaEau} pts
                   </Typography>
@@ -361,6 +366,7 @@ function ConnectGame() {
                       position: "fixed",
                       left: "37vw",
                       top: "22vh",
+                      color: theme.custom.mycustomblur.text,
                     }}
                   >
                     <BtnAdd
@@ -381,7 +387,7 @@ function ConnectGame() {
                 </div>
                 <label
                   className="label"
-                  style={{ color: "white" }}
+                  style={{ color: theme.custom.mycustomblur.text }}
                   htmlFor="manaEau"
                 >
                   Eau
@@ -415,9 +421,9 @@ function ConnectGame() {
                   <Typography
                     variant="h6"
                     position={"fixed"}
-                    left={"43vw"}
-                    top={"37vh"}
-                    color={"white"}
+                    left={"45vw"}
+                    top={"45vh"}
+                    sx={{ color: theme.custom.mycustomblur.text }}
                   >
                     {currentManaTerre} pts
                   </Typography>
@@ -462,7 +468,7 @@ function ConnectGame() {
                 </div>
                 <label
                   className="label"
-                  style={{ color: "white" }}
+                  style={{ color: theme.custom.mycustomblur.text }}
                   htmlFor="manaTerre"
                 >
                   Terre
@@ -496,9 +502,9 @@ function ConnectGame() {
                   <Typography
                     variant="h6"
                     position={"fixed"}
-                    left={"48vw"}
-                    top={"37vh"}
-                    color={"white"}
+                    left={"50vw"}
+                    top={"45vh"}
+                    sx={{ color: theme.custom.mycustomblur.text }}
                   >
                     {currentManaFeu} pts
                   </Typography>
@@ -543,7 +549,7 @@ function ConnectGame() {
                 </div>
                 <label
                   className="label"
-                  style={{ color: "white" }}
+                  style={{ color: theme.custom.mycustomblur.text }}
                   htmlFor="manaFeu"
                 >
                   Feu
@@ -577,9 +583,10 @@ function ConnectGame() {
                   <Typography
                     variant="h6"
                     position={"fixed"}
-                    left={"53vw"}
-                    top={"37vh"}
-                    color={"white"}
+                    // postion={"relative"}
+                    left={"58vw"}
+                    top={"45vh"}
+                    sx={{ color: theme.custom.mycustomblur.text }}
                   >
                     {currentManaVolonte} pts
                   </Typography>
@@ -623,7 +630,7 @@ function ConnectGame() {
                 </div>
                 <label
                   className="label"
-                  style={{ color: "white" }}
+                  style={{ color: theme.custom.mycustomblur.text }}
                   htmlFor="manaVolonte"
                 >
                   Volonté
@@ -634,8 +641,8 @@ function ConnectGame() {
                   className="container"
                   style={{
                     position: "fixed",
-                    top: "46vh",
-                    left: "1vw",
+                    bottom: "-12vh",
+                    left: "30vw",
                     width: "200px",
                     height: "300px",
                   }}
@@ -646,7 +653,8 @@ function ConnectGame() {
                     position={"fixed"}
                     left={"4vw"}
                     top={"42vh"}
-                    color={"white"}
+                    
+                    sx={{color:theme.custom.mycustomblur.text}}
                     textAlign={"center"}
                   >
                     Mana Vital
@@ -696,8 +704,8 @@ function ConnectGame() {
                   style={{
                     position: "fixed",
                     display: "flex",
-                    left: "2vw",
-                    top: "65vh",
+                    left: "33vw",
+                    bottom: "5vh",
                     flexDirection: "row",
                     justifyContent: "center",
                     width: "auto",
@@ -708,7 +716,7 @@ function ConnectGame() {
                     style={{
                       position: "fixed",
                       display: "flex",
-                      left: "5vw",
+                      left: "45vw",
                       top: "15vh",
                       flexDirection: "column",
                       justifyContent: "center",
@@ -720,8 +728,8 @@ function ConnectGame() {
                       id="tram"
                       style={{
                         position: "fixed",
-                        left: "1vw",
-                        top: "60vh",
+                        left: "30vw",
+                        bottom: "10vh",
                         height: "18px",
                         width: "200px",
                         background: "none",
@@ -737,8 +745,7 @@ function ConnectGame() {
                           background: "linear-gradient(to left, grey, black",
                           borderLeft: "solid white 1px",
                         }}
-                      />{" "}
-                      {/*left=200px-width */}
+                      />
                       <div
                         id="survie+"
                         style={{
@@ -755,7 +762,8 @@ function ConnectGame() {
                   </div>
                   <Typography
                     className="label"
-                    style={{ color: "white" }}
+                    
+                    sx={{color:theme.custom.mycustomblur.text}}
                     id="manaVolonte"
                   >
                     Etat transitionnel
@@ -765,8 +773,8 @@ function ConnectGame() {
                   className="container"
                   style={{
                     position: "fixed",
-                    top: "46vh",
-                    left: " 15vw",
+                    bottom: "-12vh",
+                    left: "50vw",
                     width: "200px",
                     height: "300px",
                   }}
@@ -777,7 +785,8 @@ function ConnectGame() {
                     position={"fixed"}
                     left={" 18vw"}
                     top={"42vh"}
-                    color={"white"}
+                    
+                    sx={{color:theme.custom.mycustomblur.text}}
                     textAlign={"center"}
                   >
                     Stamina
@@ -823,11 +832,11 @@ function ConnectGame() {
                     />
                   </div>
                 </div>
-                <div style={{ position: "fixed", top: "60vh", left: "16vw" }}>
+                <div style={{ position: "fixed", bottom: "5vh", left: "53vw" }}>
                   <p
                     contentEditable="true"
                     style={{
-                      color: " #1abc9c ",
+                      color:theme.custom.mycustomblur.text,
                       fontSize: "1.3em",
                       border: "solid whitesmoke 1px",
                       borderRadius: "5px",
@@ -840,14 +849,15 @@ function ConnectGame() {
                     ...................
                     <br />
                   </p>
-                  <Typography style={{ color: "white" }} id="chance">
+                  <Typography 
+                    sx={{color:theme.custom.mycustomblur.text}} id="chance">
                     Chance
                   </Typography>
                 </div>
               </div>
             </div>
-            <div style={{ height: "3em" }}>
-              <h2 style={{ color: "whitesmoke" }}>
+            <div style={{ height: "3em", position:"fixed", left:"2vw", top:"12vh" }}>
+              <h2 style={{ color: theme.custom.mycustomblur.text }}>
                 Welcome back {character.Name_character}
               </h2>
               <br />
@@ -858,12 +868,13 @@ function ConnectGame() {
             id="idCard"
             style={{
               position: "fixed",
+              top: "17vh",
               borderRadius: "5px",
               padding: "10px",
               width: "25vw",
               fontWeight: "normal",
-           backgroundColor:theme.custom.mycustomblur.main, 
-           backdropFilter: theme.custom.mycustomblur.blur,
+              backgroundColor: theme.custom.mycustomblur.main,
+              backdropFilter: theme.custom.mycustomblur.blur,
               color: "lightblue",
               display: "flex",
               flexDirection: "column",
@@ -877,65 +888,64 @@ function ConnectGame() {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "start",
-
               }}
             >
               <div id="idLeft" style={{ padding: "10px" }}>
-                <p style={{color: theme.custom.mycustomblur.text ,}}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
                   Nom : <span id="name">{character.Name_character}</span>
                 </p>
-                <p style={{color: theme.custom.mycustomblur.text ,}}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
                   Métier : <span id="job">{character.Metier_character}</span>{" "}
                 </p>
-                <p style={{color: theme.custom.mycustomblur.text ,}}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
                   Race : <span id="race">{character.Race_character}</span>{" "}
                 </p>
-                <p style={{color: theme.custom.mycustomblur.text ,}}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
                   Planète :{" "}
                   <span id="planet">{character.Planete_character}</span>{" "}
                 </p>
-                <p style={{color: theme.custom.mycustomblur.text ,}}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
                   Niveau : <span id="lvl">{character.Niveau_character}</span>{" "}
                 </p>
-                <p style={{color: theme.custom.mycustomblur.text ,}}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
                   Agence : <span id="agence">{character.Agence_character}</span>{" "}
                 </p>
               </div>
               <div id="idRight" style={{ paddingRight: "10px" }}>
-                <p style={{color: theme.custom.mycustomblur.text ,}}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
                   Age : <span id="age">{character.Age_character}</span> ans
                 </p>
-                <p style={{color: theme.custom.mycustomblur.text ,}}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
                   Taille : <span id="height">{character.Taille_character}</span>{" "}
                   cm
                 </p>
-                <p style={{color: theme.custom.mycustomblur.text ,}}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
                   Poids : <span id="pounds">{character.Poids_character}</span>{" "}
                   kg
                 </p>
-                <p style={{color: theme.custom.mycustomblur.text ,}}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
                   Sexe : <span id="sex">{character.Sexe_character}</span>{" "}
                 </p>
-                <p style={{color: theme.custom.mycustomblur.text ,}}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
                   Oeil droit :{" "}
                   <span id="rightEye">{character.OeilD_character}</span>
                 </p>
-                <p style={{color: theme.custom.mycustomblur.text ,}}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
                   Oeil gauche :{" "}
                   <span id="leftEye">{character.OeilG_character}</span>
                 </p>
-                <p style={{color: theme.custom.mycustomblur.text ,}}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
                   Cheveux : <span id="hair">{character.Cheveux_character}</span>
                 </p>
               </div>
             </div>
             <div id="idBottom" style={{ padding: "10px" }}>
-              <p style={{color: theme.custom.mycustomblur.text ,}}>
+              <p style={{ color: theme.custom.mycustomblur.text }}>
                 Signes distinctif :{" "}
                 <span id="particularity">{character.Signes_character}</span>
               </p>
               <br />
-              <p style={{color: theme.custom.mycustomblur.text ,}}>
+              <p style={{ color: theme.custom.mycustomblur.text }}>
                 Traits de caractère :{" "}
                 <span id="caracter">{character.Traits_character}</span>
               </p>
