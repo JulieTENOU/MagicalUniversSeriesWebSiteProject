@@ -1,6 +1,6 @@
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
-
+import backgroundImage from "../assets/img/generated-bg.png"
 
 export default function BG() {
     const particlesInit = async (main) => {
@@ -9,7 +9,7 @@ export default function BG() {
     }
     return (
         //particles.js container
-        <div style={{ backgroundImage:`url('https://img2.goodfon.com/original/1920x1080/3/5c/peyzazh-zvezdnoe-nebo-zvezdy.jpg')`, position:"fixed", width:'100%', height:'100%', backgroundSize:'cover'}}>
+        <div style={{ backgroundImage:`url(${backgroundImage})`, position:"fixed", width:'100%', height:'100%', backgroundSize:'cover'}}>
 
         <Particles id="tsparticles" init={particlesInit} className="particlesBG"options={
             //configuration for the object
