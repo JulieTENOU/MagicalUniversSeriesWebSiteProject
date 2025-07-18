@@ -65,6 +65,14 @@ const creatures = require('./src/routes/creatures');
 const currentGauges = require('./src/routes/currentGauges');
 const draconiqueHeart = require('./src/routes/draconiqueHeart');
 const preferences = require('./src/routes/preferences');
+const competences = require('./src/routes/competences');
+const races = require('./src/routes/races');
+const planete = require('./src/routes/planete');
+const metiers = require('./src/routes/metiers');
+const energies = require('./src/routes/energies');
+const bonus_carac = require('./src/routes/bonus_carac');
+const bonus_energies = require('./src/routes/bonus_energies');
+const agences = require('./src/routes/agences');
 
 // This actually calls the route!
 app.use("/users", user);
@@ -87,6 +95,14 @@ app.use("/gauges", currentGauges);
 app.use("/api", authService);
 app.use("/draconiqueHeart", draconiqueHeart)
 app.use('/api/preferences', preferences);
+app.use('/api/competences', competences);
+app.use('/api/races', races);
+app.use('/api/planete', planete);
+app.use('/api/metiers', metiers);
+app.use('/api/energies', energies);
+app.use('/api/bonus_carac', bonus_carac);
+app.use('/api/bonus_energies', bonus_energies);
+app.use('/api/agences', agences);
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${port}`)
