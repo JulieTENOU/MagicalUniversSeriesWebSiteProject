@@ -235,7 +235,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      Zombique_character: {
+      Zombik_character: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
@@ -251,7 +251,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      Gnomique_character: {
+      Gnomik_character: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
@@ -291,11 +291,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      Courtes_character: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      Longues_character: {
+      Tranchantes_character: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
@@ -443,7 +439,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      AuraLectrice_character: {
+      Aura_character: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },

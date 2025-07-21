@@ -17,6 +17,7 @@ import {
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 
 import Btn from "../components/Btn";
+import DynamicSkillSelector from "../components/DynamicSkillSelector";
 
 function ConnectGameMJ() {
   const { ids } = useParams();
@@ -39,6 +40,41 @@ function ConnectGameMJ() {
       )
     ).then((list) => setCharacters(list.filter(Boolean)));
   }, [ids]);
+
+  const [selectorVisibleFor, setSelectorVisibleFor] = useState(null); // contient l’ID du joueur sélectionné
+  const [skillScores, setSkillScores] = useState({});
+
+  const [allCompetences, setAllCompetences] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/competences/findAllComp")
+      .then((res) => res.json())
+      .then(setAllCompetences)
+      .catch(console.error);
+  }, []);
+
+  const handleFinalSelection = (charId, path) => {
+    const selectedId = path.at(-1);
+    const comp = allCompetences.find((c) => c.id === selectedId);
+    console.log("Compétence sélectionnée :", comp);
+
+    if (!comp?.code) return;
+
+    const fieldName = `${comp.code}_character`;
+    const char = characters.find((c) => c.ID_character === charId);
+    if (!char) return;
+
+    const valeur = char[fieldName] ?? "N/A";
+
+    setSkillScores((prev) => ({
+      ...prev,
+      [charId]: { valeur, label: comp.nom },
+    }));
+
+    setSelectorVisibleFor(null); // ferme le sélecteur après sélection
+    console.log("Champ utilisé :", fieldName, "| Valeur :", valeur);
+
+  };
 
   return (
     <div className="main">
@@ -102,11 +138,11 @@ function ConnectGameMJ() {
                     textAlign: "center",
                   }}
                 >
-                  <Table sx={{border:"none"}}>
-                    <TableHead  sx={{border:"none"}}>
-                      <TableRow variant="head"  sx={{border:"none"}}>
-                        <TableCell  sx={{border:"none"}}></TableCell>
-                        <TableCell  sx={{border:"none"}}>
+                  <Table sx={{ border: "none" }}>
+                    <TableHead sx={{ border: "none" }}>
+                      <TableRow variant="head" sx={{ border: "none" }}>
+                        <TableCell sx={{ border: "none" }}></TableCell>
+                        <TableCell sx={{ border: "none" }}>
                           {" "}
                           <Typography
                             className="label"
@@ -118,7 +154,7 @@ function ConnectGameMJ() {
                             Mana Vital
                           </Typography>
                         </TableCell>
-                        <TableCell  sx={{border:"none"}}>
+                        <TableCell sx={{ border: "none" }}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -129,7 +165,7 @@ function ConnectGameMJ() {
                             Stamina
                           </Typography>
                         </TableCell>
-                        <TableCell  sx={{border:"none"}}>
+                        <TableCell sx={{ border: "none" }}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -140,7 +176,7 @@ function ConnectGameMJ() {
                             Mana Air
                           </Typography>
                         </TableCell>
-                        <TableCell  sx={{border:"none"}}>
+                        <TableCell sx={{ border: "none" }}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -151,7 +187,7 @@ function ConnectGameMJ() {
                             Mana Eau
                           </Typography>
                         </TableCell>
-                        <TableCell  sx={{border:"none"}}>
+                        <TableCell sx={{ border: "none" }}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -162,7 +198,7 @@ function ConnectGameMJ() {
                             Mana Terre
                           </Typography>
                         </TableCell>
-                        <TableCell  sx={{border:"none"}}>
+                        <TableCell sx={{ border: "none" }}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -173,7 +209,7 @@ function ConnectGameMJ() {
                             Mana Feu
                           </Typography>
                         </TableCell>
-                        <TableCell  sx={{border:"none"}}>
+                        <TableCell sx={{ border: "none" }}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -184,7 +220,7 @@ function ConnectGameMJ() {
                             Mana Volonté
                           </Typography>
                         </TableCell>
-                        <TableCell  sx={{border:"none"}}>
+                        <TableCell sx={{ border: "none" }}>
                           <Typography
                             className="label"
                             variant="h5"
@@ -197,11 +233,16 @@ function ConnectGameMJ() {
                         </TableCell>
                       </TableRow>
                     </TableHead>
-                    <TableBody >
+                    <TableBody>
                       {characters.map((char) => (
-                        <TableRow key={char.ID_character}  sx={{border:"none"}}>
-                          <TableCell  sx={{border:"none"}}>{char.Name_character}</TableCell>
-                          <TableCell  sx={{border:"none"}}>
+                        <TableRow
+                          key={char.ID_character}
+                          sx={{ border: "none" }}
+                        >
+                          <TableCell sx={{ border: "none" }}>
+                            {char.Name_character}
+                          </TableCell>
+                          <TableCell sx={{ border: "none" }}>
                             <div
                               className="container"
                               style={{
@@ -238,7 +279,7 @@ function ConnectGameMJ() {
                               {char.ManaVital_character} points
                             </Typography>
                           </TableCell>
-                          <TableCell  sx={{border:"none"}}>
+                          <TableCell sx={{ border: "none" }}>
                             <div
                               className="container"
                               style={{
@@ -274,7 +315,7 @@ function ConnectGameMJ() {
                               {char.Stamina_character} points
                             </Typography>
                           </TableCell>
-                          <TableCell  sx={{border:"none"}}>
+                          <TableCell sx={{ border: "none" }}>
                             <LinearProgress
                               color="success"
                               id="manaAir"
@@ -300,7 +341,7 @@ function ConnectGameMJ() {
                               {char.ManaAir_character} points
                             </Typography>
                           </TableCell>
-                          <TableCell  sx={{border:"none"}}>
+                          <TableCell sx={{ border: "none" }}>
                             <LinearProgress
                               color="info"
                               id="manaAir"
@@ -324,14 +365,16 @@ function ConnectGameMJ() {
                               textAlign={"center"}
                             >
                               {char.ManaEau_character} points
-                            </Typography></TableCell>
-                          <TableCell  sx={{border:"none"}}>
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ border: "none" }}>
                             <LinearProgress
                               color="warning"
                               id="manaAir"
                               variant="determinate"
                               value={
-                                (char.ManaTerre_character / char.maxManaTerre) * 100
+                                (char.ManaTerre_character / char.maxManaTerre) *
+                                100
                               }
                               sx={{
                                 height: "5px",
@@ -349,8 +392,9 @@ function ConnectGameMJ() {
                               textAlign={"center"}
                             >
                               {char.ManaTerre_character} points
-                            </Typography></TableCell>
-                          <TableCell sx={{border:"none"}}>
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ border: "none" }}>
                             <LinearProgress
                               color="error"
                               id="manaAir"
@@ -374,13 +418,16 @@ function ConnectGameMJ() {
                               textAlign={"center"}
                             >
                               {char.ManaFeu_character} points
-                            </Typography></TableCell>
-                          <TableCell sx={{border:"none"}}>
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ border: "none" }}>
                             <LinearProgress
                               id="manaAir"
                               variant="determinate"
                               value={
-                                (char.ManaVolonte_character / char.maxManaVolonte) * 100
+                                (char.ManaVolonte_character /
+                                  char.maxManaVolonte) *
+                                100
                               }
                               sx={{
                                 height: "5px",
@@ -398,10 +445,39 @@ function ConnectGameMJ() {
                               textAlign={"center"}
                             >
                               {char.ManaVolonte_character} points
-                            </Typography></TableCell>
-                          <TableCell sx={{border:"none"}}>
-                            <Btn msg="Compétence"/>
-                            {/* ici un input + bouton 👁 comme vu plus haut pour demander une stat spécifique */}
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ border: "none" }}>
+                            <Btn
+                              onClick={() =>
+                                setSelectorVisibleFor(
+                                  selectorVisibleFor === char.ID_character
+                                    ? null
+                                    : char.ID_character
+                                )
+                              }
+                              msg="Compétence"
+                            />
+
+                            {selectorVisibleFor === char.ID_character && (
+                              <DynamicSkillSelector
+                                onFinalSelect={(path) =>
+                                  handleFinalSelection(char.ID_character, path)
+                                }
+                              />
+                            )}
+
+                            {skillScores[char.ID_character] && (
+                              <h2
+                                style={{
+                                  marginTop: "8px",
+                                  fontSize: "1.2rem",
+                                  color: "white",
+                                }}
+                              >
+                                {skillScores[char.ID_character].label} : {skillScores[char.ID_character].valeur}
+                              </h2>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))}

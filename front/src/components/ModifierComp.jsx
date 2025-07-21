@@ -363,7 +363,7 @@ export default function ModifierDialogs(data) {
     };
   } else if (name ==='aura'){
     newDatas = {
-      AuraLectrice_character: text,
+      Aura_character: text,
     };
   } else if (name ==='magieAstrale'){
     newDatas = {

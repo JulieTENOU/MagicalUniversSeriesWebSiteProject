@@ -1,28 +1,25 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../models").sequelize;
-const  competences = require("../models/competences")(sequelize, DataTypes);
+const competences = require("../models/competences")(sequelize, DataTypes);
 
-module.exports = {  
-  create: async function (req, res){
+module.exports = {
+  create: async function (req, res) {
     console.log(req.body);
-    if(req.body){
-      try{
-        let{
-          id,
-          nom,
-          parent_id,
-        } = req.body;
-        
+    if (req.body) {
+      try {
+        let { id, nom, parent_id, code } = req.body;
+
         const newComp = await competences.create({
           id,
           nom,
           parent_id,
+          code,
         });
-        return res.status(201).send({newComp});
-      } catch (error){
-        return res.status(400).send({error: error.message});
+        return res.status(201).send({ newComp });
+      } catch (error) {
+        return res.status(400).send({ error: error.message });
       }
-    }else{
+    } else {
       res.status(500).json(response);
     }
   },
@@ -76,39 +73,54 @@ module.exports = {
       });
   },
 
+  findByParentId: async function (req, res) {
+    const parentId = req.query.parent_id;
+
+    competences
+      .findAll({
+        where: {
+          parent_id: parentId === "null" ? null : parentId,
+        },
+      })
+      .then((data) => {
+        res.status(200).json(data);
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: "Erreur lors de la récupération des compétences enfants.",
+          error: err.message,
+        });
+      });
+  },
+
   // This function updates a user's information.
 
-   update: async function (req, res) {
-   // console.log(req)
+  update: async function (req, res) {
+    // console.log(req)
     const id = req.params.id;
     console.log(id);
-     competences
-       .findOne({
+    competences
+      .findOne({
         where: {
           id: id,
-         },
-       })
-       .then(async (response) => {
+        },
+      })
+      .then(async (response) => {
         // We update the book
-             const {
-              id,
-              nom,
-              parent_id,
-             } = req.body;
-             const compUpdate = {
-              id,
-              nom,
-              parent_id,
-             };
-             response.update(compUpdate);
-             res.send(response);
-         }
-       )
-       .catch((err) => {
-         res
-           .status(404)
-           .send("We were unable to update your competence because " + err);
-       });
-   },
-
+        const { id, nom, parent_id, code, } = req.body;
+        const compUpdate = {
+          id,
+          nom,
+          parent_id,
+          code,
+        };
+        response.update(compUpdate);
+        res.send(response);
+      })
+      .catch((err) => {
+        res
+          .status(404)
+          .send("We were unable to update your competence because " + err);
+      });
+  },
 };
