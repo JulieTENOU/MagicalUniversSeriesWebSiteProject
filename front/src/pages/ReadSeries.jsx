@@ -1,38 +1,37 @@
 import { useContext, useEffect, useState } from 'react';
 import '../index.css';
 import '../general.css';
-import Btn from '../components/Btn';
-import Top from '../components/Header';
-import BG from '../components/Background';
+import Btn from '../components/Btn.jsx';
+import Top from '../components/Header.jsx';
+import BG from '../components/Background.jsx';
 import logoReturn from "../assets/img/return.png";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ConnexionContext } from '../components/provider.jsx';
 
-function ReadHome() {
+function ReadSeries() {
   const navigate = useNavigate();
+  const { serie } = useParams(); // ← récupère "xalyt" ou "ma", etc.
   const { state: isConnected } = useContext(ConnexionContext);
-
-  const [seriesList, setSeriesList] = useState([]);
+  const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    const fetchSeries = async () => {
+    const fetchBooks = async () => {
       try {
-        const res = await fetch("http://localhost:3333/series/findAllSeries");
+        const res = await fetch(`http://localhost:3333/books/getBySerie/${serie}`);
         const data = await res.json();
-        setSeriesList(data);
-      } catch (error) {
-        console.error("Erreur lors du chargement des séries :", error);
+        setBooks(data);
+      } catch (err) {
+        console.error("Erreur de chargement des tomes :", err);
       }
     };
 
-    fetchSeries();
-  }, []);
+    fetchBooks();
+  }, [serie]);
 
   return (
     <div className='main'>
       <BG />
       <Top started={isConnected} />
-
       <div style={{
         width: '100vw',
         display: 'flex',
@@ -50,12 +49,12 @@ function ReadHome() {
           sx={{ color: 'whitesmoke' }}
         />
 
-        {seriesList.map(serie => (
+        {books.map((book) => (
           <Btn
-            key={serie.ID_series}
-            path={`/read/${serie.path}`}
-            msg={`Go to ${serie.series_title}`}
-            src={serie.image}
+            key={book.ID_book}
+            path={`/read/${serie}/${book.path}`}
+            msg={book.book_Name}
+            src={book.image}
             sx={{ color: 'whitesmoke' }}
           />
         ))}
@@ -64,4 +63,4 @@ function ReadHome() {
   );
 }
 
-export default ReadHome;
+export default ReadSeries;

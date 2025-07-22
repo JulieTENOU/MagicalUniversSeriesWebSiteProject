@@ -76,16 +76,10 @@ const agences = require('./src/routes/agences');
 
 // This actually calls the route!
 app.use("/users", user);
+app.use("/chapters", chapters);
 app.use("/books", books);
-app.use("/read/xalyt/parts", book_parts);
-app.use("/read/MA/parts", book_parts);
-app.use("/read/xalyt/chapters", chapters);
-app.use("/read/xalyt/1/chapters", chapters);
-app.use("/read/xalyt/2/chapters", chapters);
-app.use("/read/xalyt/3/chapters", chapters);
-app.use("/read/MA/chapters", chapters);
-app.use("/read/MA/1/chapters", chapters);
 app.use("/series", series);
+app.use("/book_parts", book_parts);
 app.use("/characters", characters);
 app.use("/inventories", inventories);
 app.use("/ingredients", ingredients);

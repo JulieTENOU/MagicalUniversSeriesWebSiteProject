@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const bcrypt = require("bcrypt");
 
 module.exports = function (sequelize, DataTypes) {
-  return sequelize.define(
+  const Chapter = sequelize.define(
     "chapters",
     {
       ID_chapter: {
@@ -16,7 +16,7 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false,
         references: {
           model: "books",
-          key:"ID_book",
+          key: "ID_book",
         },
       },
       title_chapter: {
@@ -39,9 +39,13 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.STRING(150),
         allowNull: false,
       },
-      book_part: {
+      ID_part: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+          model: "book_parts",
+          key: "ID_part",
+        },
       },
     },
     {
@@ -58,9 +62,22 @@ module.exports = function (sequelize, DataTypes) {
         {
           name: "ID_book",
           using: "BTREE",
-          fields: [{name: "ID_book"}]
-        }
+          fields: [{ name: "ID_book" }],
+        },
       ],
     }
   );
+
+  Chapter.associate = function (models) {
+    Chapter.belongsTo(models.books, {
+      foreignKey: "ID_book",
+    });
+
+    Chapter.belongsTo(models.book_parts, {
+      foreignKey: "ID_part",
+      as: "part", 
+    });
+  };
+
+  return Chapter;
 };

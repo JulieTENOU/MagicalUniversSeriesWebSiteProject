@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define(
-    "book_parts",
+    "competences",
     {
       id: {
         autoIncrement: true,
