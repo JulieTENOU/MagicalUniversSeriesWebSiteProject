@@ -57,7 +57,7 @@ export function ThemeProvider({ children }) {
   const [defaultMode, setDefaultMode] = useState(mode); // valeur de la DB au chargement
 
   useEffect(() => {
-    fetch("/api/preferences", { credentials: "include" })
+    fetch(`/api/preferences`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
         if (data.user_theme) {

@@ -20,7 +20,7 @@ const MyProvider = ({children}) => {
 
 
     useEffect(() => {
-    fetch("/api/me", {
+    fetch(`/api/me`, {
       method: "GET",
       credentials: "include", // ⚠️ nécéssaire pour envoyer le cookie de session
     })

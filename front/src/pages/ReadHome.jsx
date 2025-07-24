@@ -17,7 +17,7 @@ function ReadHome() {
   useEffect(() => {
     const fetchSeries = async () => {
       try {
-        const res = await fetch("http://localhost:3333/series/findAllSeries");
+        const res = await fetch(`/series/findAllSeries`);
         const data = await res.json();
         setSeriesList(data);
       } catch (error) {

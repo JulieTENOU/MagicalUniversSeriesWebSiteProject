@@ -17,7 +17,7 @@ function ReadSeries() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const res = await fetch(`http://localhost:3333/books/getBySerie/${serie}`);
+        const res = await fetch(`/books/getBySerie/${serie}`);
         const data = await res.json();
         setBooks(data);
       } catch (err) {

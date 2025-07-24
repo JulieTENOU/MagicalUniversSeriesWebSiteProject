@@ -40,7 +40,7 @@ export default function Connexion() {
       users_password: pwd,
     };
     console.log("data before", data);
-    fetch("api/signIn", {
+    fetch(`api/signIn`, {
       method: "POST",
       headers: {
         "content-type": "application/json",

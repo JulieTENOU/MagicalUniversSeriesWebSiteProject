@@ -24,7 +24,7 @@ function ReadBook() {
     const fetchChapter = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3333/chapters/getByPath/${serie}/${book}/${chapter}`
+          `/chapters/getByPath/${serie}/${book}/${chapter}`
         );
       console.log("✔️ Chapitre reçu :", res.data);
         setCurrentChapter(res.data);

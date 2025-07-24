@@ -38,7 +38,7 @@ export default function Inscription() {
         data.users_status
     );
 
-    fetch("api/register", {
+    fetch(`api/register`, {
       method: "POST",
       headers: {
         "content-type": "application/json",

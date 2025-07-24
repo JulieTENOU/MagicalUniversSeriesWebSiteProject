@@ -24,7 +24,7 @@ function ChaptersList() {
       try {
         // Récupère les chapitres
         const chaptersRes = await axios.get(
-          `http://localhost:3333/chapters/getAllByBookPath/${serie}/${book}`
+          `/chapters/getAllByBookPath/${serie}/${book}`
         );
         const chaptersData = chaptersRes.data;
 

@@ -47,7 +47,7 @@ function ConnectGameMJ() {
   const [allCompetences, setAllCompetences] = useState([]);
 
   useEffect(() => {
-    fetch("/api/competences/findAllComp")
+    fetch(`/api/competences/findAllComp`)
       .then((res) => res.json())
       .then(setAllCompetences)
       .catch(console.error);

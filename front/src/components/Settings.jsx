@@ -41,7 +41,7 @@ export default function Settings() {
 
   // Charger les données utilisateur (exemple)
   useEffect(() => {
-    fetch("/api/me", { credentials: "include" })
+    fetch(`/api/me`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
         console.log("Datas: ", data);
@@ -57,7 +57,7 @@ export default function Settings() {
       email,
       status,
     };
-    fetch("/api/update-identity", {
+    fetch(`/api/update-identity`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
@@ -73,7 +73,7 @@ export default function Settings() {
       old_password: oldPwd,
       new_password: newPwd,
     };
-    fetch("/api/change-password", {
+    fetch(`/api/change-password`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
@@ -82,7 +82,7 @@ export default function Settings() {
 
   const handleSavePreferences = () => {
     const data = { user_theme: theme, user_language: language };
-    fetch("/api/preferences", {
+    fetch(`/api/preferences`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
