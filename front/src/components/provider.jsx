@@ -1,50 +1,52 @@
-import React, {createContext, useState, useEffect} from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import AppProvider from "../context";
-// import { useLocation } from "react-router-dom";
 
 export const ConnexionContext = createContext(null);
 
 const { Provider } = ConnexionContext;
 
+const MyProvider = ({ children }) => {
+  const [state, setState] = useState(undefined);  // undefined tant que pas chargé
+  const [loading, setLoading] = useState(true);   // loading général
 
-// const PUBLIC_ROUTES = [
-//   "/connexion",
-//   "/inscription",
-//   "/forgotten_password",
-// ];
-
-const MyProvider = ({children}) => {
-    const [state, setState] = useState(null);
-    const [loading, setLoading] = useState(true); // Pour éviter les flashes
-    // const location = useLocation();
-
-
-    useEffect(() => {
-    fetch(`/api/me`, {
-      method: "GET",
-      credentials: "include", // ⚠️ nécéssaire pour envoyer le cookie de session
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Not logged in");
-        return res.json();
-      })
-      .then((user) => {
-        setState(user); // même structure que lors du login
-      })
-      .catch(() => {
-        setState(null); // pas connecté
-      })
-      .finally(()=> setLoading(false));
+  // Chargement initial au mount
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/api/me`, { method: "GET", credentials: "include" })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => setState(data))
+      .catch(() => setState(null))
+      .finally(() => setLoading(false));
   }, []);
-  
-  // Si tu es sur une page PUBLIQUE, ne bloque pas le rendu
-  // const isPublic = PUBLIC_ROUTES.includes(location.pathname);
 
-      if(loading /*&& !isPublic*/) return <div>Chargement...</div>
+  // refreshUser pour recharger l'utilisateur depuis n'importe où
+  const refreshUser = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/me`, { method: "GET", credentials: "include" });
+      if (!res.ok) throw new Error("Not logged in");
+      const data = await res.json();
+      setState(data);
+    } catch {
+      // Ici, NE PAS faire setState(null) pour éviter la déco fantôme
+    }
+  }, []);
 
-    return <AppProvider><Provider value={{state, setState, loading}}>{children}</Provider></AppProvider>;
+  // Logout explicite
+  const logout = useCallback(() => {
+    setState(null);
+  }, []);
+
+  if (loading) return <div>Chargement...</div>;
+
+  return (
+    <AppProvider>
+      <Provider value={{ state, setState, loading, refreshUser, logout }}>
+        {children}
+      </Provider>
+    </AppProvider>
+  );
 };
 
-MyProvider.context= ConnexionContext;
+MyProvider.context = ConnexionContext;
 
 export default MyProvider;
