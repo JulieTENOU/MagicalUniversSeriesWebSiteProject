@@ -5,8 +5,8 @@ const  verifyToken  = require("../middleware/index");
 
 
 router.post("/createDraconiqueHeart", draconiqueHeart.create);
-router.get("/api/getOneDraconique/:Name_character", draconiqueHeart.findOneDraconique);
+router.get("/getOneDraconique/:Name_character", draconiqueHeart.findOneDraconique);
 router.get("/findAll", draconiqueHeart.findAll);
-router.put("/api/updateDraconique/:Name_character", draconiqueHeart.updateOneDraconique);
+router.put("/updateDraconique/:Name_character", draconiqueHeart.updateOneDraconique);
 
 module.exports = router;

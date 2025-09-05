@@ -10,7 +10,7 @@ module.exports = {
       try{
         let{
           ID_creatures,
-          creatures_name_character,
+          Name_character,
           creature1,
           creature2,
           creature3,
@@ -30,7 +30,7 @@ module.exports = {
         } = req.body;
         const newCreatures = await creatures.create({
           ID_creatures,
-          creatures_name_character,
+          Name_character,
           creature1,
           creature2,
           creature3,
@@ -85,7 +85,7 @@ module.exports = {
     creatures
       .findOne({
         where: {
-          creatures_name_character: character,
+          Name_character: character,
         },
       })
       .then(async (data) => {
@@ -107,7 +107,7 @@ module.exports = {
         console.log("Error Server 500");
         console.log(err);
         res.status(500).send({
-          message: `Error retrieving your inventory`,
+          message: `Error retrieving your creatures.`,
         });
       });
   },
@@ -119,7 +119,7 @@ module.exports = {
    creatures
    .findOne({
     where: {
-      creatures_name_character: character,
+      Name_character: character,
     },
   })
      .then((response) => {

@@ -18,7 +18,7 @@ export default function Combat(data) {
         setIsDrawerOpen(false);
       };
       useEffect(() => {
-        fetch(`/inventories/api/getOneInventories/${character.ID_character}`)
+        fetch(`/api/inventories/getOneInventories/${character.Name_character}`)
           .then((res) => res.json())
           .then((data) => {
             console.log(data.data);
@@ -27,7 +27,7 @@ export default function Combat(data) {
           .catch((error)=>{
             console.error("Error:", error);
           });
-      }, [character.ID_character]);
+      }, [character.Name_character]);
     return (
         <div>
             <IconButton size='large' edge='start' color='inherit' aria-label='logo' onClick={() => setIsDrawerOpen(true)} sx={{ width: '50px', position: 'fixed', right: "0vw", top:'27vh' }} >

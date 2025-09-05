@@ -4,7 +4,7 @@ const { metiers } = require("../controllers");
 const  verifyToken  = require("../middleware/index");
 
 router.post("/createJob", metiers.create);
-router.get("/api/getOneJob", metiers.findOne);
+router.get("/getOneJob", metiers.findOne);
 router.get("/findAllJobs", metiers.findAll);
-router.put("/api/updateJob/:metier_id", metiers.update);
+router.put("/updateJob/:metier_id", metiers.update);
 module.exports = router;

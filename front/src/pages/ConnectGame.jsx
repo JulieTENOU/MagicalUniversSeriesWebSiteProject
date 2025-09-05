@@ -56,13 +56,19 @@ function ConnectGame() {
   const [character, setCharacter] = useState(defaultCharacter);
 
   const [maxManaAir, setMaxManaAir] = useState(character.ManaAir_character);
+  
+  console.log("maxManaAir: ", maxManaAir);
   const [currentManaAir, setCurrentManaAir] = useState(
     character.ManaAir_character
   );
+  
+  console.log("currentManaAir: ", currentManaAir);
   const [maxManaEau, setMaxManaEau] = useState(character.ManaEau_character);
+  console.log("maxManaEau: ", maxManaEau);
   const [currentManaEau, setCurrentManaEau] = useState(
     character.ManaEau_character
   );
+  console.log("currentManaEau: ", currentManaEau);
   const [maxManaTerre, setMaxManaTerre] = useState(
     character.ManaTerre_character
   );
@@ -130,10 +136,10 @@ function ConnectGame() {
       return;
     }
 
-    fetch(`/gauges/api/getOneGauges/${character.ID_character}`) // permet d'aller chercher un URL spécifique
+    fetch(`/api/gauges/getOneGauges/${character.Name_character}`) // permet d'aller chercher un URL spécifique
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.data);
+        console.log("data: ", data);
         const gauges = data.data;
         setCurrentManaAir(gauges.currentManaAir);
         console.log(currentManaAir);

@@ -29,7 +29,7 @@ export default function Creatures(data) {
         setIsDrawerOpen(false);
       };
       useEffect(() => {
-        fetch(`/creatures/api/getOneCreatures/${character.ID_character}`)
+        fetch(`/api/creatures/getOneCreatures/${character.Name_character}`)
           .then((res) => res.json())
           .then((data) => {
             console.log(data.data);

@@ -11,7 +11,7 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false,
         primaryKey: true,
       },
-      inventory_name_character: {
+      Name_character: {
         type: DataTypes.STRING(30),
         allowNull: false,
         references: {

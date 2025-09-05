@@ -133,7 +133,7 @@ export default function BG() {
         
         />
 
-        <image src='/src/assets/img/bg.jpg'/>
+        <img src='/src/assets/img/bg.jpg' alt=""/>
         </div>
     )
 }

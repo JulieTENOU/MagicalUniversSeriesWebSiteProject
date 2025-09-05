@@ -33,7 +33,7 @@ export default function Crystals(data) {
     setIsDrawerOpen(false);
   };
   useEffect(() => {
-    fetch(`/crystals/api/getOneCrystals/${character.ID_character}`)
+    fetch(`/api/crystals/getOneCrystals/${character.Name_character}`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data.data);
@@ -42,7 +42,7 @@ export default function Crystals(data) {
       .catch((error) => {
         console.error("Error:", error);
       });
-  }, [character.ID_character]);
+  }, [character.Name_character]);
 
   return (
     <div>

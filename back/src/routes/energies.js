@@ -4,7 +4,7 @@ const { energies } = require("../controllers");
 const  verifyToken  = require("../middleware/index");
 
 router.post("/createEnergy", energies.create);
-router.get("/api/getOneEnergy", energies.findOne);
+router.get("/getOneEnergy", energies.findOne);
 router.get("/findAllEnergies", energies.findAll);
-router.put("/api/updateRace/:id", energies.update);
+router.put("/updateRace/:id", energies.update);
 module.exports = router;

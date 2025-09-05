@@ -1474,7 +1474,7 @@ export default function SideMenu(character) {
                   color: theme.custom.mycustomblur.text,
                 }}
               >
-                Armes
+                Combat
               </Button>
               {isWeapons && (
                 <div
@@ -1608,7 +1608,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Armes d'Hast
+                          Armes d'hast
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1636,7 +1636,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Lames courtes
+                          Tranchantes
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1645,12 +1645,12 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          {perso.Courtes_character}
+                          {perso.Tranchantes_character}
                           <ModifierDialogs
                             character={character}
-                            name={"courtes"}
+                            name={"tranchantes"}
                             left={"40%"}
-                            dataToUpdate={"Lames courtes"}
+                            dataToUpdate={"Tranchantes"}
                           />
                         </TableCell>
                       </TableRow>
@@ -1664,7 +1664,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Lames longues
+                          Contondantes
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1673,12 +1673,12 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          {perso.Longues_character}
+                          {perso.Contondantes_character}
                           <ModifierDialogs
                             character={character}
-                            name={"longues"}
+                            name={"contondantes"}
                             left={"40%"}
-                            dataToUpdate={"Lames longues"}
+                            dataToUpdate={"Contondantes"}
                           />
                         </TableCell>
                       </TableRow>
@@ -2305,7 +2305,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Magico-tech
+                          Magico-Tech
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2757,7 +2757,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Psy Interne
+                                Animaturgie
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2766,102 +2766,12 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                {perso.PsyInt_character}
+                                {perso.Animaturgie_character}
                                 <ModifierDialogs
                                   character={character}
-                                  name={"psyInt"}
+                                  name={"Animaturgie"}
                                   left={"40%"}
-                                  dataToUpdate={"Magie Psy Interne"}
-                                />
-                              </TableCell>
-                            </TableRow>
-                            <TableRow
-                              sx={{
-                                border: theme.custom.mycustomblur.tableborder,
-                              }}
-                            >
-                              <TableCell
-                                sx={{
-                                  color: theme.custom.mycustomblur.text,
-                                  border: theme.custom.mycustomblur.tableborder,
-                                }}
-                                className="comp"
-                              >
-                                Psy Personnel
-                              </TableCell>
-                              <TableCell
-                                sx={{
-                                  color: theme.custom.mycustomblur.text,
-                                  border: theme.custom.mycustomblur.tableborder,
-                                }}
-                                className="comp"
-                              >
-                                {perso.PsyPerso_character}
-                                <ModifierDialogs
-                                  character={character}
-                                  name={"psyPerso"}
-                                  left={"40%"}
-                                  dataToUpdate={"Magie Psy Personnel"}
-                                />
-                              </TableCell>
-                            </TableRow>
-                            <TableRow
-                              sx={{
-                                border: theme.custom.mycustomblur.tableborder,
-                              }}
-                            >
-                              <TableCell
-                                sx={{
-                                  color: theme.custom.mycustomblur.text,
-                                  border: theme.custom.mycustomblur.tableborder,
-                                }}
-                                className="comp"
-                              >
-                                Psy Externe
-                              </TableCell>
-                              <TableCell
-                                sx={{
-                                  color: theme.custom.mycustomblur.text,
-                                  border: theme.custom.mycustomblur.tableborder,
-                                }}
-                                className="comp"
-                              >
-                                {perso.PsyExt_character}
-                                <ModifierDialogs
-                                  character={character}
-                                  name={"PsyExt"}
-                                  left={"40%"}
-                                  dataToUpdate={"Magie Psy Externe"}
-                                />
-                              </TableCell>
-                            </TableRow>
-                            <TableRow
-                              sx={{
-                                border: theme.custom.mycustomblur.tableborder,
-                              }}
-                            >
-                              <TableCell
-                                sx={{
-                                  color: theme.custom.mycustomblur.text,
-                                  border: theme.custom.mycustomblur.tableborder,
-                                }}
-                                className="comp"
-                              >
-                                Psy Interpersonnel
-                              </TableCell>
-                              <TableCell
-                                sx={{
-                                  color: theme.custom.mycustomblur.text,
-                                  border: theme.custom.mycustomblur.tableborder,
-                                }}
-                                className="comp"
-                              >
-                                {perso.PsyInterperso_character}
-                                <ModifierDialogs
-                                  character={character}
-                                  name={"PsyInterperso"}
-                                  left={"40%"}
-                                  dataToUpdate={"Magie Psy Interpersonnel"}
+                                  dataToUpdate={"Animaturgie"}
                                 />
                               </TableCell>
                             </TableRow>
@@ -3231,7 +3141,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Magie draconique
+                                Magie Draconique
                               </TableCell>
                               <TableCell
                                 sx={{

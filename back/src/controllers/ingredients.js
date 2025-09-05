@@ -10,7 +10,7 @@ module.exports = {
       try{
         let{
           ID_ingredients,
-          ingredients_name_character,
+          Name_character,
           ingredient1,
           ingredient1Quantite,
           ingredient2,
@@ -45,7 +45,7 @@ module.exports = {
         } = req.body;
         const newInventory = await ingredients.create({
           ID_ingredients,
-          ingredients_name_character,
+          Name_character,
           ingredient1,
           ingredient1Quantite,
           ingredient2,
@@ -115,7 +115,7 @@ module.exports = {
     ingredients
       .findOne({
         where: {
-          ingredients_name_character: character,
+          Name_character: character,
         },
       })
       .then(async (data) => {
@@ -129,7 +129,7 @@ module.exports = {
         } else {
           console.log("find one ingredients Error 404");
           res.status(404).send({
-            message: `Cannot find your inventory.`,
+            message: `Cannot find your ingredients.`,
           });
         }
       })
@@ -149,7 +149,7 @@ module.exports = {
    ingredients
    .findOne({
     where: {
-      ingredients_name_character: character,
+      Name_character: character,
     },
   })
      .then((response) => {

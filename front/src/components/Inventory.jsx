@@ -15,7 +15,7 @@ import { useTheme } from "@mui/material/styles";
 
 function InventoryRow({ label, nameKey, quantityKey, data, theme }) {
   const name = data?.[nameKey] ?? "—";
-  const quantity = data?.[quantityKey] ?? "—";
+  const quantity = quantityKey ? (data?.[quantityKey] ?? "—") : null;
   return (
     <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
       <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
@@ -27,6 +27,7 @@ function InventoryRow({ label, nameKey, quantityKey, data, theme }) {
           dataToUpdate={label}
         />
       </TableCell>
+      {quantity != null &&
       <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
         {quantity}
         <ModifierDialogs
@@ -36,7 +37,9 @@ function InventoryRow({ label, nameKey, quantityKey, data, theme }) {
           dataToUpdate={`quantité de ${label}`}
         />
       </TableCell>
+      }
     </TableRow>
+    
   );
 }
 
@@ -54,13 +57,13 @@ export default function Inventory(data) {
     setIsDrawerOpen(false);
   };
   useEffect(() => {
-    fetch(`/inventories/api/getOneInventories/${character.ID_character}`)
+    fetch(`/api/inventories/getOneInventories/${character.Name_character}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.data);
+        console.log(data);
         setInventaires(data.data);
       });
-  }, [character.ID_character]);
+  }, [character.Name_character]);
 
   return (
     <div>
@@ -120,9 +123,9 @@ export default function Inventory(data) {
                       {[...Array(10)].map((_, i) => (
                         <InventoryRow
                           key={i}
-                          label={`divers ligne ${i + 1}`}
-                          nameKey={`divers${i + 1}_inventory`}
-                          quantityKey={`divers${i + 1}Quantite`}
+                          label={`important ligne ${i + 1}`}
+                          nameKey={`important${i + 1}`}
+                          quantityKey={null}
                           data={inventaires}
                           theme={theme}
                         />

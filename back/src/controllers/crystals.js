@@ -26,7 +26,7 @@ module.exports = {
         crystal_feu,
         crystal_or,
         crystal_ID,
-        crystals_name_character,
+        Name_character,
         } = req.body;
         const newCrystals = await crystals.create({
           crystal_verre,
@@ -46,7 +46,7 @@ module.exports = {
           crystal_feu,
           crystal_or,
           crystal_ID,
-          crystals_name_character,
+          Name_character,
         });
         return res.status(201).send({newCrystals});
       } catch (error){
@@ -86,7 +86,7 @@ module.exports = {
     crystals
       .findOne({
         where: {
-          crystals_name_character: character,
+          Name_character: character,
         },
       })
       .then(async (data) => {
@@ -120,7 +120,7 @@ module.exports = {
    crystals
    .findOne({
     where: {
-      crystals_name_character: character,
+      Name_character: character,
     },
   })
      .then((response) => {

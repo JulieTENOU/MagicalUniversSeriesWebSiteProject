@@ -5,8 +5,8 @@ const  verifyToken  = require("../middleware/index");
 
 
 router.post("/createCurrentGauges", currentGauges.create);
-router.get("/api/getOneGauges/:Name_character", currentGauges.findOneGauges);
+router.get("/getOneGauges/:Name_character", currentGauges.findOneGauges);
 router.get("/findAll", currentGauges.findAll);
-router.put("/api/updateGauges/:Name_character", currentGauges.updateOneGauges);
+router.put("/updateGauges/:Name_character", currentGauges.updateOneGauges);
 
 module.exports = router;

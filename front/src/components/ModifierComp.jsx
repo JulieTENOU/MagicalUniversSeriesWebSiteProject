@@ -249,13 +249,13 @@ export default function ModifierDialogs(data) {
     newDatas = {
       ArmesHast_character: text,
     };
-  } else if (name ==='courtes'){
+  } else if (name ==='tranchantes'){
     newDatas = {
-      Courtes_character: text,
+      Tranchantes_character: text,
     };
-  } else if (name ==='longues'){
+  } else if (name ==='contondantes'){
     newDatas = {
-      Longues_character: text,
+      Contondantes_character: text,
     };
   } else if (name ==='esquive'){
     newDatas = {
@@ -317,21 +317,9 @@ export default function ModifierDialogs(data) {
     newDatas = {
       Crea_character: text,
     };
-  } else if (name ==='psyInt'){
+  } else if (name ==='animaturgie'){
     newDatas = {
-      PsyInt_character: text,
-    };
-  } else if (name ==='psyPerso'){
-    newDatas = {
-      PsyPerso_character: text,
-    };
-  }  else if (name ==='psyExt'){
-    newDatas = {
-      PsyExt_character: text,
-    };
-  } else if (name ==='psyInterperso'){
-    newDatas = {
-      PsyInterperso_character: text,
+      Animaturgie_character: text,
     };
   } else if (name ==='vie'){
     newDatas = {
