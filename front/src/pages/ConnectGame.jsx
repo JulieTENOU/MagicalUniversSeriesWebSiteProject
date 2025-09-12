@@ -16,6 +16,11 @@ import Crystals from "../components/Crystals";
 import Creatures from "../components/Creatures";
 import { useTheme } from "@mui/material/styles";
 import { useParams } from "react-router-dom";
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import WaterDropIcon from '@mui/icons-material/WaterDrop';
+import AirIcon from '@mui/icons-material/Air';
+import GrassIcon from '@mui/icons-material/Grass';
+import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
 
 function ConnectGame() {
   const { characterId } = useParams();
@@ -269,6 +274,8 @@ function ConnectGame() {
                     left={"35vw"}
                     sx={{ color: theme.custom.mycustomblur.text }}
                   >
+                    <AirIcon/>
+                    <br/>
                     {currentManaAir} pts
                   </Typography>
                   <LinearProgress
@@ -309,13 +316,6 @@ function ConnectGame() {
                     />
                   </div>
                 </div>
-                <label
-                  className="label"
-                  style={{ color: theme.custom.mycustomblur.text }}
-                  htmlFor="manaAir"
-                >
-                  Air
-                </label>
               </div>
               <br />
               <div
@@ -346,9 +346,10 @@ function ConnectGame() {
                     variant="h6"
                     position={"fixed"}
                     top={"45vh"}
-                    left={"43vw"}
+                    left={"40vw"}
                     sx={{ color: theme.custom.mycustomblur.text }}
-                  >
+                  > <WaterDropIcon/>
+                  <br/>
                     {currentManaEau} pts
                   </Typography>
                   <LinearProgress
@@ -391,13 +392,6 @@ function ConnectGame() {
                     />
                   </div>
                 </div>
-                <label
-                  className="label"
-                  style={{ color: theme.custom.mycustomblur.text }}
-                  htmlFor="manaEau"
-                >
-                  Eau
-                </label>
               </div>
               <br />
               <div
@@ -431,6 +425,8 @@ function ConnectGame() {
                     top={"45vh"}
                     sx={{ color: theme.custom.mycustomblur.text }}
                   >
+                    <GrassIcon/>
+                    <br/>
                     {currentManaTerre} pts
                   </Typography>
                   <LinearProgress
@@ -472,13 +468,6 @@ function ConnectGame() {
                     />
                   </div>
                 </div>
-                <label
-                  className="label"
-                  style={{ color: theme.custom.mycustomblur.text }}
-                  htmlFor="manaTerre"
-                >
-                  Terre
-                </label>
               </div>
               <br />
               <div
@@ -512,7 +501,7 @@ function ConnectGame() {
                     top={"45vh"}
                     sx={{ color: theme.custom.mycustomblur.text }}
                   >
-                    {currentManaFeu} pts
+                   <LocalFireDepartmentIcon/> <br/> {currentManaFeu} pts
                   </Typography>
                   <LinearProgress
                     color="error"
@@ -553,13 +542,6 @@ function ConnectGame() {
                     />
                   </div>
                 </div>
-                <label
-                  className="label"
-                  style={{ color: theme.custom.mycustomblur.text }}
-                  htmlFor="manaFeu"
-                >
-                  Feu
-                </label>
               </div>
               <br />
               <div
@@ -590,10 +572,12 @@ function ConnectGame() {
                     variant="h6"
                     position={"fixed"}
                     // postion={"relative"}
-                    left={"58vw"}
+                    left={"55vw"}
                     top={"45vh"}
                     sx={{ color: theme.custom.mycustomblur.text }}
                   >
+                    <SelfImprovementIcon/>
+                    <br/>
                     {currentManaVolonte} pts
                   </Typography>
                   <LinearProgress
@@ -634,13 +618,6 @@ function ConnectGame() {
                     />
                   </div>
                 </div>
-                <label
-                  className="label"
-                  style={{ color: theme.custom.mycustomblur.text }}
-                  htmlFor="manaVolonte"
-                >
-                  Volonté
-                </label>
               </div>
               <div width={"250px"}>
                 <div
@@ -686,8 +663,8 @@ function ConnectGame() {
                       display: "flex",
                       flexDirection: "row",
                       position: "fixed",
-                      left: "3vw",
-                      top: "50vh",
+                      left: "32vw",
+                      bottom: "1vh",
                     }}
                   >
                     <BtnAdd
@@ -818,8 +795,8 @@ function ConnectGame() {
                       display: "flex",
                       flexDirection: "row",
                       position: "fixed",
-                      left: "17vw",
-                      top: "50vh",
+                      left: "52.5vw",
+                      bottom: "1vh",
                     }}
                   >
                     <BtnAdd

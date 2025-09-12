@@ -1,6 +1,7 @@
 import { Box, Typography, Button, MenuItem, TextField } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Btn from "./Btn";
+import Dice3D from "./Dice3D";
 
 export default function CreationPersonnage({ theme }) {
   const [activeTab, setActiveTab] = useState("identite");
@@ -49,8 +50,18 @@ export default function CreationPersonnage({ theme }) {
   const attributs = [
     { label: "Force", value: force, setValue: setForce, die: 20 },
     { label: "Dextérité", value: dexte, setValue: setDexte, die: 20 },
-    { label: "Résistance", value: resistance, setValue: setResistance, die: 20 },
-    { label: "Résilience", value: resilience, setValue: setResilience, die: 20 },
+    {
+      label: "Résistance",
+      value: resistance,
+      setValue: setResistance,
+      die: 20,
+    },
+    {
+      label: "Résilience",
+      value: resilience,
+      setValue: setResilience,
+      die: 20,
+    },
     { label: "Intelligence", value: intell, setValue: setIntell, die: 20 },
     { label: "Charisme", value: charisme, setValue: setCharisme, die: 20 },
     { label: "Chance", value: chance, setValue: setChance, die: 20 },
@@ -62,7 +73,12 @@ export default function CreationPersonnage({ theme }) {
     { label: "Mana Terre", value: manaTerre, setValue: setManaTerre, die: 100 },
     { label: "Mana Feu", value: manaFeu, setValue: setManaFeu, die: 100 },
     { label: "Mana Air", value: manaAir, setValue: setManaAir, die: 100 },
-    { label: "Mana Volonté", value: manaVolonte, setValue: setManaVolonte, die: 100 },
+    {
+      label: "Mana Volonté",
+      value: manaVolonte,
+      setValue: setManaVolonte,
+      die: 100,
+    },
   ];
 
   // --- Dynamic Select options from API ---
@@ -198,6 +214,7 @@ export default function CreationPersonnage({ theme }) {
     alert("Données du perso :\n" + JSON.stringify(data, null, 2));
   };
 
+  const dieRef = useRef(null);
   // --- RENDER ---
   return (
     <Box
@@ -487,9 +504,10 @@ export default function CreationPersonnage({ theme }) {
                   />
                   <Button
                     variant="outlined"
-                    // ==> Tu mettras ici ta nouvelle logique de “roll” custom
                     onClick={() => {
-                      // ex: setForce(Math.ceil(Math.random() * 20))
+                      const roll = Math.ceil(Math.random() * attr.die);
+                      attr.setValue(roll);
+                      dieRef.current?.roll(roll);
                     }}
                   >
                     {`Lancer D${attr.die}`}
@@ -519,9 +537,10 @@ export default function CreationPersonnage({ theme }) {
                   />
                   <Button
                     variant="outlined"
-                    // ==> Nouvelle logique “roll” ici aussi
                     onClick={() => {
-                      // ex: setStamina(Math.ceil(Math.random() * 100))
+                      const roll = Math.ceil(Math.random() * res.die);
+                      res.setValue(roll);
+                      dieRef.current?.roll(roll);
                     }}
                   >
                     {`Lancer D${res.die}`}
@@ -559,28 +578,37 @@ export default function CreationPersonnage({ theme }) {
         <Box
           sx={{
             flex: 1,
-            minWidth: 170,
+            minWidth: 220,
             maxWidth: 220,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent: "flex-start",
-            pt: 4,
+            // justifyContent: "flex-start",
+            pt: 2,
             visibility:
               activeTab === "attributs" || activeTab === "ressources"
                 ? "visible"
                 : "hidden",
             height:
               activeTab === "attributs" || activeTab === "ressources"
-                ? undefined
+                ? 280
                 : 0,
             border: "2px dashed #3a3a4a",
             borderRadius: 2,
+            position: "relative",
           }}
         >
           <Typography variant="subtitle1" sx={{ mb: 1 }}>
-            Dé en cours de création (à venir)
+            Dé en cours de test
           </Typography>
+          <Dice3D 
+            key={activeTab}
+            ref={dieRef} 
+            sides={activeTab === "ressources" ? 100 : 20} 
+            size={200} 
+            color="#eeeeee"
+            background="#0b102a"
+            onRollEnd={(v)=>console.log(v)}/>
         </Box>
       </Box>
     </Box>
