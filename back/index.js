@@ -33,11 +33,17 @@ app.use(
 // We need to set up the cookie requirement for the authenticated token
 const authConfig = require("./src/config/authKey");
 const cookieSession = require("cookie-session");
+
+app.set('trust proxy', 1); 
+
 app.use(
   cookieSession({
     name: "MAGame-session",
     secret: authConfig.secret,
     httpOnly: true,
+    maxAge: 1000*60*60*24*30,
+    sameSite: 'none',
+    secure: false,
   })
 );
 
