@@ -10,7 +10,7 @@ module.exports = {
       try{
         let{
         inventory_ID,
-        inventory_name_character,
+        Name_character,
         arme1Name,
         arme1Damage,
         arme1Scope,
@@ -69,7 +69,7 @@ module.exports = {
         } = req.body;
         const newInventory = await inventories.create({
           inventory_ID,
-          inventory_name_character,
+          Name_character,
           arme1Name,
           arme1Damage,
           arme1Scope,
@@ -163,7 +163,7 @@ module.exports = {
     inventories
       .findOne({
         where: {
-          inventory_name_character: character,
+          Name_character: character,
         },
       })
       .then(async (data) => {
@@ -197,7 +197,7 @@ module.exports = {
    inventories
    .findOne({
     where: {
-      inventory_name_character: character,
+      Name_character: character,
     },
   })
      .then((response) => {

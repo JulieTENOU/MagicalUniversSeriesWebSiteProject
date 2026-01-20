@@ -1,15 +1,16 @@
-import { Drawer, Box, IconButton, Grid, Typography } from "@mui/material";
+import { Drawer, Box, IconButton, Grid, Typography, Table, TableBody, TableCell, TableHead, TableRow  } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
 import ModifierDialogs from "./ModifierCrystals";
 import Crystal from "../assets/img/icons8-crystal.svg";
+import { useTheme } from "@mui/material/styles";
 
-function CrystalRow({ label, field, crystals }) {
+function CrystalRow({ label, field, crystals, theme }) {
   const value = crystals?.[field] ?? "—";
   return (
-    <tr>
-      <td>{label}</td>
-      <td className="diversQ comp">
+    <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+      <TableCell  sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder,  }}>{label}</TableCell>
+      <TableCell  sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder,  }} className="diversQ comp">
         {value}
         <ModifierDialogs
           inventaire={crystals}
@@ -17,12 +18,13 @@ function CrystalRow({ label, field, crystals }) {
           left={"40%"}
           dataToUpdate={label.toLowerCase()}
         />
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 }
 
 export default function Crystals(data) {
+      const theme = useTheme();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const character = data.data;
   console.log(character);
@@ -31,7 +33,7 @@ export default function Crystals(data) {
     setIsDrawerOpen(false);
   };
   useEffect(() => {
-    fetch(`/crystals/api/getOneCrystals/${character.ID_character}`)
+    fetch(`/api/crystals/getOneCrystals/${character.Name_character}`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data.data);
@@ -40,7 +42,7 @@ export default function Crystals(data) {
       .catch((error) => {
         console.error("Error:", error);
       });
-  }, [character.ID_character]);
+  }, [character.Name_character]);
 
   return (
     <div>
@@ -68,7 +70,8 @@ export default function Crystals(data) {
         BackdropProps={{ style: { backdropFilter: "none", opacity: 0 } }}
         PaperProps={{
           sx: {
-            backgroundColor: "transparent",
+           backgroundColor:theme.custom.mycustomblur.main, 
+           backdropFilter: theme.custom.mycustomblur.blur,
             top: "5vh",
             textAlign: "center",
             width: "40%",
@@ -90,108 +93,124 @@ export default function Crystals(data) {
             <div
               style={{
                 textAlign: "left",
-                color: "whitesmoke",
+               color: theme.custom.mycustomblur.text ,
                 marginInline: "5px",
                 marginBlock: "15px",
               }}
             >
               <Typography
                 variant="h6"
-                sx={{ color: "whitesmoke", textAlign: "center" }}
+                sx={{ color: theme.custom.mycustomblur.text , textAlign: "center" }}
               >
                 Crystaux
               </Typography>
 
-              <table>
-                <thead>
-                  <tr>
-                    <td>Nom du crystal</td>
-                    <td>Quantité</td>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                    <TableCell  sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder,  }} variant="head">Nom du crystal</TableCell>
+                    <TableCell  sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder,  }} variant="head">Quantité</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
                   <CrystalRow
                     label="Crystal de verre"
                     field="crystal_verre"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Crystal-plasma"
                     field="crystal_plasma"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Crystal d'eau"
                     field="crystal_eau"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Lapis-Lazuli"
                     field="lapis"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Diamants Violets"
                     field="diams_violet"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Diamants Verts"
                     field="diams_vert"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Diamants Turquoises"
                     field="diams_turquoise"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Diamants Carmins"
                     field="diams_carmin"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Diamants Ocres"
                     field="diams_ocre"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Billes Arc-en-Ciel"
                     field="bille_arc"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Crystal Angélique"
                     field="crystal_ange"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Crystal Démonique"
                     field="crystal_dem"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Crystal Liquide"
                     field="crystal_liquide"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Pierre de Lune"
                     field="pierre_lune"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Crystal de Feu"
                     field="crystal_feu"
                     crystals={crystals}
+                    theme={theme}
                   />
                   <CrystalRow
                     label="Crystal d'Or"
                     field="crystal_or"
                     crystals={crystals}
+                    theme={theme}
                   />
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </Grid>
         </Box>
@@ -199,7 +218,7 @@ export default function Crystals(data) {
           onClick={handleDrawerClose}
           sx={{ position: "fixed", right: "0vw", top: "36vh" }}
         >
-          <CloseIcon sx={{ color: "whitesmoke" }} />
+          <CloseIcon sx={{color:theme.custom.mycustomblur.text }}/>
         </IconButton>
       </Drawer>
     </div>

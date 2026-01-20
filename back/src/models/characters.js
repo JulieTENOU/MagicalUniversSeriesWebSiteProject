@@ -235,7 +235,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      Zombique_character: {
+      Zombik_character: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
@@ -251,7 +251,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      Gnomique_character: {
+      Gnomik_character: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
@@ -291,13 +291,13 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      Courtes_character: {
+      Tranchantes_character: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
       },
-      Longues_character: {
+      Contondantes_character: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
       },
       Esquive_character: {
         type: DataTypes.INTEGER,
@@ -328,6 +328,10 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: true,
       },
       Deguisement_character: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      Equitation_character: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
@@ -431,10 +435,6 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      PsyInt_character: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
       Instinct_character: {
         type: DataTypes.INTEGER,
         allowNull: true,
@@ -443,7 +443,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      AuraLectrice_character: {
+      Aura_character: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
@@ -459,11 +459,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      PsyExt_character: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      PsyInterperso_character: {
+      Animaturgie_character: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },

@@ -1,0 +1,41 @@
+const Sequelize = require("sequelize");
+const bcrypt = require("bcrypt");
+
+module.exports = function (sequelize, DataTypes) {
+  return sequelize.define(
+    "competences",
+    {
+      id: {
+        autoIncrement: true,
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+      },
+      nom: {
+        type: DataTypes.STRING(30),
+        allowNull: false,
+      },
+      parent_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      code: {
+        type: DataTypes.STRING(50),
+        allowNull: true,
+      },
+    },
+    {
+      sequelize,
+      tableName: "competences",
+      timestamps: false,
+      indexes: [
+        {
+          name: "PRIMARY",
+          unique: true,
+          using: "BTREE",
+          fields: [{ name: "id" }],
+        },
+      ],
+    }
+  );
+};

@@ -1,16 +1,17 @@
-import { Drawer, Box, IconButton, Grid, Typography } from "@mui/material";
+import { Drawer, Box, IconButton, Grid, Typography, TableRow, TableCell, Table, TableBody, TableHead } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
 import ModifierDialogs from "./ModifierIngredients";
 import Ingredient from "../assets/img/icons8-potion.svg";
+import { useTheme } from "@mui/material/styles";
 
-function IngredientRow({ label, nameKey, quantityKey, ingredients }) {
+function IngredientRow({ label, nameKey, quantityKey, ingredients, theme }) {
   const name = ingredients?.[nameKey] ?? "—";
   const quantity = ingredients?.[quantityKey] ?? "—";
 
   return (
-    <tr>
-      <td className="diversName">
+    <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+      <TableCell  sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder,  }}  className="diversName">
         {name}
         <ModifierDialogs
           inventaire={ingredients}
@@ -18,8 +19,8 @@ function IngredientRow({ label, nameKey, quantityKey, ingredients }) {
           left="80%"
           dataToUpdate={label}
         />
-      </td>
-      <td className="diversQ">
+      </TableCell>
+      <TableCell  sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder,  }}  className="diversQ">
         {quantity}
         <ModifierDialogs
           inventaire={ingredients}
@@ -27,12 +28,13 @@ function IngredientRow({ label, nameKey, quantityKey, ingredients }) {
           left="40%"
           dataToUpdate={`quantité de ${label}`}
         />
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 }
 
 export default function Ingredients(data) {
+      const theme = useTheme();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const character = data.data;
   console.log(character);
@@ -78,7 +80,8 @@ export default function Ingredients(data) {
         BackdropProps={{ style: { backdropFilter: "none", opacity: 0 } }}
         PaperProps={{
           sx: {
-            backgroundColor: "transparent",
+           backgroundColor:theme.custom.mycustomblur.main, 
+           backdropFilter: theme.custom.mycustomblur.blur,
             top: "5vh",
             textAlign: "center",
             width: "40%",
@@ -107,12 +110,12 @@ export default function Ingredients(data) {
             >
               <Typography
                 variant="h6"
-                sx={{ color: "whitesmoke", textAlign: "center" }}
+                sx={{ color: theme.custom.mycustomblur.text , textAlign: "center" }}
               >
                 Ingrédients
               </Typography>
-              <table>
-                <tbody>
+              <Table>
+                <TableBody>
                   {[...Array(15)].map((_, i) => {
                     const num = i + 1;
                     return (
@@ -122,11 +125,12 @@ export default function Ingredients(data) {
                         nameKey={`ingredient${num}`}
                         quantityKey={`ingredient${num}Quantite`}
                         ingredients={ingredients}
+                        theme={theme}
                       />
                     );
                   })}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </Grid>
         </Box>
@@ -134,7 +138,7 @@ export default function Ingredients(data) {
           onClick={handleDrawerClose}
           sx={{ position: "fixed", right: "0vw", top: "45vh" }}
         >
-          <CloseIcon sx={{ color: "whitesmoke" }} />
+           <CloseIcon sx={{color:theme.custom.mycustomblur.text }}/>
         </IconButton>
       </Drawer>
     </div>

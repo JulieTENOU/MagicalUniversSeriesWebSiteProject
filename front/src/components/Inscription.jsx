@@ -1,8 +1,19 @@
-import { Button, Box, Typography, DialogActions, DialogContent, DialogContentText, TextField, MenuItem } from "@mui/material";
+import {
+  Button,
+  Box,
+  Typography,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  TextField,
+  MenuItem,
+} from "@mui/material";
 import Btn from "./Btn";
 import { useState } from "react";
+import { useTheme } from "@mui/material/styles";
 
 export default function Inscription() {
+  const theme = useTheme();
   const [id, setId] = useState(null);
   const [pwd, setPwd] = useState(null);
   const [status, setStatus] = useState(null);
@@ -26,14 +37,8 @@ export default function Inscription() {
         "\n status: " +
         data.users_status
     );
-    // if(
-    //     data[0] != null &&
-    //     data[1] != null &&
-    //     data[2] != null &&
-    //     data[3] != null
-    // ){
 
-    fetch("api/register", {
+    fetch(`api/register`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -55,8 +60,8 @@ export default function Inscription() {
     <div>
       <Box
         sx={{
-          backgroundColor: "whitesmoke",
-          color: "black",
+          backgroundColor: theme.custom.mymodal.main,
+          color: theme.custom.mymodal.text,
           borderRadius: "5px",
         }}
       >
@@ -86,10 +91,9 @@ export default function Inscription() {
                 sx={{
                   width: "100%",
                   textAlign: "center",
-                  // borderRadius: "5px 0 0 0",
                   padding: "6px",
-                  color: "white",
-                  backgroundColor: " #3498DB ",
+                  color: theme.custom.mymodal.text,
+                  backgroundColor: theme.custom.mymodal.button,
                   fontWeight: "bold",
                 }}
               >
@@ -114,8 +118,8 @@ export default function Inscription() {
                   textAlign: "center",
                   // borderRadius: "0 5px 0 0",
                   padding: "6px",
-                  color: "white",
-                  backgroundColor: " #3498DB ",
+                  color: theme.custom.mymodal.text,
+                  backgroundColor: theme.custom.mymodal.button,
                   fontWeight: "bold",
                 }}
               >
@@ -124,27 +128,20 @@ export default function Inscription() {
             }
           />
         </Box>
-        {/* <form onSubmit={(e) => handleInscription(e)}>
-                    <label htmlFor="name">Pseudo</label>
-                    <input id="name" type="text" onChange={(e) => setName(e.target.value)} />
-                    <label htmlFor="mail">Email</label>
-                    <input id="mail" type="email" onChange={(e) => setId(e.target.value)} />
-                    <label htmlFor="password">Mot de passe</label>
-                    <input id="password" type="password" onChange={(e) => setPwd(e.target.value)} />
-                    <label htmlFor="status">Status</label>
-                    <select id="status" value={status || "r"} onChange={(e) => setStatus(e.target.value)}>
-                        <option value="r">Lecteur</option>
-                        <option value="p">Joueur</option>
-                    </select>
-                </form>
-                <DialogActions sx={{ textAlign: "center", justifyContent: 'center' }}>
-                    <Button onClick={(e) => { handleInscription(e) }}>
-                        S'inscrire
-                    </Button>
-                </DialogActions> */}
         <DialogContent>
-          <DialogContentText>Pseudo</DialogContentText>
+          <DialogContentText
+            sx={{
+              backgroundColor: theme.custom.mymodal.main,
+              color: theme.custom.mymodal.text,
+            }}
+          >
+            Pseudo
+          </DialogContentText>
           <TextField
+            sx={{
+              backgroundColor: theme.custom.mymodal.main,
+              color: theme.custom.mymodal.text,
+            }}
             id="name"
             type="text"
             value={name}
@@ -152,8 +149,19 @@ export default function Inscription() {
             fullWidth
           />
 
-          <DialogContentText>Email</DialogContentText>
+          <DialogContentText
+            sx={{
+              backgroundColor: theme.custom.mymodal.main,
+              color: theme.custom.mymodal.text,
+            }}
+          >
+            Email
+          </DialogContentText>
           <TextField
+            sx={{
+              backgroundColor: theme.custom.mymodal.main,
+              color: theme.custom.mymodal.text,
+            }}
             id="mail"
             type="email"
             value={id}
@@ -161,8 +169,19 @@ export default function Inscription() {
             fullWidth
           />
 
-          <DialogContentText>Mot de passe</DialogContentText>
+          <DialogContentText
+            sx={{
+              backgroundColor: theme.custom.mymodal.main,
+              color: theme.custom.mymodal.text,
+            }}
+          >
+            Mot de passe
+          </DialogContentText>
           <TextField
+            sx={{
+              backgroundColor: theme.custom.mymodal.main,
+              color: theme.custom.mymodal.text,
+            }}
             id="password"
             type="password"
             value={pwd}
@@ -170,21 +189,56 @@ export default function Inscription() {
             fullWidth
           />
 
-          <DialogContentText>Status</DialogContentText>
+          <DialogContentText
+            sx={{
+              backgroundColor: theme.custom.mymodal.main,
+              color: theme.custom.mymodal.text,
+            }}
+          >
+            Status
+          </DialogContentText>
           <TextField
+            sx={{
+              backgroundColor: theme.custom.mymodal.main,
+              color: theme.custom.mymodal.text,
+            }}
             id="status"
             select
             value={status || "r"}
             onChange={(e) => setStatus(e.target.value)}
             fullWidth
           >
-            <MenuItem value="r">Lecteur</MenuItem>
-            <MenuItem value="p">Joueur</MenuItem>
+            <MenuItem
+              sx={{
+                backgroundColor: theme.custom.mymodal.main,
+                color: theme.custom.mymodal.text,
+              }}
+              value="r"
+            >
+              Lecteur
+            </MenuItem>
+            <MenuItem
+              sx={{
+                backgroundColor: theme.custom.mymodal.main,
+                color: theme.custom.mymodal.text,
+              }}
+              value="p"
+            >
+              Joueur
+            </MenuItem>
           </TextField>
         </DialogContent>
 
         <DialogActions sx={{ textAlign: "center", justifyContent: "center" }}>
-          <Button onClick={handleInscription}>S'inscrire</Button>
+          <Button
+            onClick={handleInscription}
+            sx={{
+              color: theme.custom.mymodal.text,
+              backgroundColor: theme.custom.mymodal.button,
+            }}
+          >
+            S'inscrire
+          </Button>
         </DialogActions>
       </Box>
     </div>

@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const bcrypt = require("bcrypt");
 
 module.exports = function (sequelize, DataTypes) {
-  return sequelize.define(
+  const Book = sequelize.define(
     "books",
     {
       ID_book: {
@@ -15,8 +15,8 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "books",
-          key:"ID_series",
+          model: "series",
+          key: "ID_series",
         },
       },
       book_Name: {
@@ -46,9 +46,24 @@ module.exports = function (sequelize, DataTypes) {
         {
           name: "ID_series",
           using: "BTREE",
-          fields: [{name: "ID_series"}]
-        }
+          fields: [{ name: "ID_series" }],
+        },
       ],
     }
   );
+  Book.associate = function (models) {
+    Book.belongsTo(models.series, {
+      foreignKey: "ID_series",
+    });
+
+    Book.hasMany(models.chapters, {
+      foreignKey: "ID_book",
+    });
+
+    Book.hasMany(models.book_parts, {
+      foreignKey: "ID_book",
+    });
+  };
+
+  return Book;
 };

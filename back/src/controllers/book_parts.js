@@ -1,138 +1,94 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../models").sequelize;
-const bcrypt = require("bcrypt");
-const  book_parts = require("../models/book_parts")(sequelize, DataTypes);
+const { book_parts } = require("../models");
 
-module.exports = {  
-  create: async function (req, res){
-    console.log(req.body);
-    if(req.body){
-      try{
-        let{
-          ID_book,
-          ID_part,
-          part_name,
-        } = req.body;
-        
-        const newBook = await books.create({
-          ID_book,
-          ID_part,
-          part_name,
-        });
-        return res.status(201).send({newBook});
-      } catch (error){
-        return res.status(400).send({error: error.message});
+module.exports = {
+  create: async function (req, res) {
+    try {
+      const { ID_book, part_name } = req.body;
+
+      if (!ID_book || !part_name) {
+        return res.status(400).json({ message: "Champs manquants." });
       }
-    }else{
-      res.status(500).json(response);
+
+      const newPart = await book_parts.create({
+        ID_book,
+        part_name,
+      });
+
+      res.status(201).json(newPart);
+    } catch (error) {
+      console.error(error);
+      res.status(400).json({ error: error.message });
     }
   },
 
-  // This function find and returns all the users registered.
-
   findAll: async function (req, res) {
-    book_parts
-      .findAll(req.params)
-      .then((data) => {
-        if (data) {
-          res.send(data);
-        } else {
-          res.status(404).send({
-            message: "No book created yet!",
-          });
-        }
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: "Error retrieving books...",
-        });
-      });
+    try {
+      const data = await book_parts.findAll();
+      if (!data || data.length === 0) {
+        return res.status(404).json({ message: "Aucune partie trouvée." });
+      }
+      res.status(200).json(data);
+    } catch (err) {
+      res.status(500).json({ message: "Erreur serveur." });
+    }
   },
-
-  // This function find and returns one registered user based on one parameter.
 
   findOne: async function (req, res) {
-    const id = req.params.ID_book;
-    books
-      .findOne({
-        where: {
-          ID_book: id,
-        },
-      })
-      .then(async (data) => {
-        if (data) {
-          res.status(200).send({
-            message: `Successfully connected to your book`,
-          });
-        } else {
-          res.status(404).send({
-            message: `Cannot find book with id=${id}.`,
-          });
-        }
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: "Error retrieving book with id=" + id,
-        });
+    const id = req.params.ID_part;
+    try {
+      const part = await book_parts.findOne({
+        where: { ID_part: id }
       });
+
+      if (!part) {
+        return res.status(404).json({ message: `Partie introuvable avec l'ID ${id}.` });
+      }
+
+      res.status(200).json(part);
+    } catch (err) {
+      res.status(500).json({ message: "Erreur serveur." });
+    }
   },
 
-  // This function updates a user's information.
+  getByBook: async function (req, res) {
+    const { bookId } = req.params;
 
-   update: async function (req, res) {
-   // console.log(req)
-    const id = req.params.ID_book;
-    console.log(id);
-     book_parts
-       .findOne({
-        where: {
-          ID_book: id,
-         },
-       })
-       .then(async (response) => {
-        // We update the book
-             const {
-              ID_book,
-              ID_part,
-              part_name,
-             } = req.body;
-             const partUpdate = {
-              ID_book,
-              ID_part,
-              part_name,
-             };
-             response.update(partUpdate);
-             res.send(response);
-         }
-       )
-       .catch((err) => {
-         res
-           .status(404)
-           .send("We were unable to update your book because " + err);
-       });
-   },
+    try {
+      const parts = await book_parts.findAll({
+        where: { ID_book: bookId },
+        order: [["ID_part", "ASC"]],
+      });
 
-  // This function deletes a user.
+      if (!parts || parts.length === 0) {
+        return res.status(404).json({ message: "Aucune partie trouvée pour ce livre." });
+      }
 
-  // delete: async function (req, res) {
-  //   const email = req.user;
-  //   users
-  //     .findOne({
-  //       where: {
-  //         userEmail: email,
-  //       },
-  //     })
-  //     .then((response) => {
-  //       response.destroy();
-  //       res.send("Profil has been deleted succesfully!");
-  //     })
-  //     .catch((err) => {
-  //       res
-  //         .status(404)
-  //         .send(
-  //           "We were unable to delete your profil. Please feel free to retry! Justification: " +
-  //             err
-  //         );
-  //     });
-  // },
+      res.status(200).json(parts);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Erreur serveur." });
+    }
+  },
+
+  update: async function (req, res) {
+    const id = req.params.ID_part;
+
+    try {
+      const part = await book_parts.findOne({ where: { ID_part: id } });
+
+      if (!part) {
+        return res.status(404).json({ message: "Partie non trouvée." });
+      }
+
+      const { ID_book, part_name } = req.body;
+
+      await part.update({ ID_book, part_name });
+
+      res.status(200).json(part);
+    } catch (err) {
+      res.status(500).json({ message: "Erreur lors de la mise à jour." });
+    }
+  },
 };

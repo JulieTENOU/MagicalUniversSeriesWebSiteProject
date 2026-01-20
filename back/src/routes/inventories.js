@@ -5,8 +5,8 @@ const  verifyToken  = require("../middleware/index");
 
 
 router.post("/createInventories", inventories.createInventory);
-router.get("/api/getOneInventories/:Name_character", inventories.findOneInventory);
+router.get("/getOneInventories/:Name_character", inventories.findOneInventory);
 // router.get("/findAllCharacters", characters.findAll);
-router.put("/api/updateInventory/:Name_character", inventories.updateOneInventory);
+router.put("/updateInventory/:Name_character", inventories.updateOneInventory);
 
 module.exports = router;

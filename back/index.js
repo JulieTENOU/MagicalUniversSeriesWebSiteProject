@@ -33,11 +33,17 @@ app.use(
 // We need to set up the cookie requirement for the authenticated token
 const authConfig = require("./src/config/authKey");
 const cookieSession = require("cookie-session");
+
+app.set('trust proxy', 1); 
+
 app.use(
   cookieSession({
     name: "MAGame-session",
     secret: authConfig.secret,
     httpOnly: true,
+    maxAge: 1000*60*60*24*30,
+    sameSite: 'none',
+    secure: false,
   })
 );
 
@@ -64,27 +70,39 @@ const crystals = require('./src/routes/crystals');
 const creatures = require('./src/routes/creatures');
 const currentGauges = require('./src/routes/currentGauges');
 const draconiqueHeart = require('./src/routes/draconiqueHeart');
+const preferences = require('./src/routes/preferences');
+const competences = require('./src/routes/competences');
+const races = require('./src/routes/races');
+const planete = require('./src/routes/planete');
+const metiers = require('./src/routes/metiers');
+const energies = require('./src/routes/energies');
+const bonus_carac = require('./src/routes/bonus_carac');
+const bonus_energies = require('./src/routes/bonus_energies');
+const agences = require('./src/routes/agences');
 
 // This actually calls the route!
 app.use("/users", user);
+app.use("/chapters", chapters);
 app.use("/books", books);
-app.use("/read/xalyt/parts", book_parts);
-app.use("/read/MA/parts", book_parts);
-app.use("/read/xalyt/chapters", chapters);
-app.use("/read/xalyt/1/chapters", chapters);
-app.use("/read/xalyt/2/chapters", chapters);
-app.use("/read/xalyt/3/chapters", chapters);
-app.use("/read/MA/chapters", chapters);
-app.use("/read/MA/1/chapters", chapters);
 app.use("/series", series);
+app.use("/book_parts", book_parts);
 app.use("/characters", characters);
-app.use("/inventories", inventories);
-app.use("/ingredients", ingredients);
-app.use("/crystals", crystals);
-app.use("/creatures", creatures);
-app.use("/gauges", currentGauges);
+app.use("/api/inventories", inventories);
+app.use("/api/ingredients", ingredients);
+app.use("/api/crystals", crystals);
+app.use("/api/creatures", creatures);
+app.use("/api/gauges", currentGauges);
 app.use("/api", authService);
-app.use("/draconiqueHeart", draconiqueHeart)
+app.use("/api/draconiqueHeart", draconiqueHeart)
+app.use('/api/preferences', preferences);
+app.use('/api/competences', competences);
+app.use('/api/races', races);
+app.use('/api/planete', planete);
+app.use('/api/metiers', metiers);
+app.use('/api/energies', energies);
+app.use('/api/bonus_carac', bonus_carac);
+app.use('/api/bonus_energies', bonus_energies);
+app.use('/api/agences', agences);
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${port}`)

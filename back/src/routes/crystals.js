@@ -5,8 +5,8 @@ const  verifyToken  = require("../middleware/index");
 
 
 router.post("/createCrystals", crystals.createCrystals);
-router.get("/api/getOneCrystals/:Name_character", crystals.findOneCrystals);
+router.get("/getOneCrystals/:Name_character", crystals.findOneCrystals);
 // router.get("/findAllCharacters", characters.findAll);
-router.put("/api/updateCrystals/:Name_character", crystals.updateOneCrystals);
+router.put("/updateCrystals/:Name_character", crystals.updateOneCrystals);
 
 module.exports = router;

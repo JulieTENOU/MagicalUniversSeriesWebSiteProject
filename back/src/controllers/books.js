@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../models").sequelize;
 const bcrypt = require("bcrypt");
-const books = require("../models/books")(sequelize, DataTypes);
+const { books, series } = require("../models"); 
 
 module.exports = {  
   create: async function (req, res){
@@ -82,7 +82,68 @@ module.exports = {
       });
   },
 
-  // This function updates a user's information.
+  getBookByPath: async function (req, res) {
+  const { serie, book } = req.params;
+
+  try {
+    const result = await books.findOne({
+      where: { path: book },
+      include: [
+        {
+          model: series,
+          where: { path: serie }
+        }
+      ]
+    });
+
+    if (!result) {
+      return res.status(404).json({ message: "Livre non trouvé." });
+    }
+
+    res.status(200).json({
+      id: result.ID_book,
+      name: result.book_Name,
+      image: result.image,
+      path: result.path,
+      series: {
+        title: result.series.series_title,
+        path: result.series.path,
+        image: result.series.image
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Erreur serveur." });
+  }
+},
+
+getBooksBySerie: async function (req, res) {
+  const { serie } = req.params;
+
+  try {
+    const result = await books.findAll({
+      include: [
+        {
+          model: series,
+          where: { path: serie },
+          attributes: ['series_title', 'path', 'image']
+        }
+      ],
+      order: [['ID_book', 'ASC']]
+    });
+
+    if (!result || result.length === 0) {
+      return res.status(404).json({ message: "Aucun tome trouvé." });
+    }
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Erreur serveur." });
+  }
+},
+
+  // This function updates a book's information.
 
    update: async function (req, res) {
    // console.log(req)

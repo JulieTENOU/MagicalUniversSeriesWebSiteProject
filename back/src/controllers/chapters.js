@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../models").sequelize;
 const bcrypt = require("bcrypt");
-const chapters = require("../models/chapters")(sequelize, DataTypes);
+const { chapters, books, series, book_parts } = require("../models");
 
 module.exports = {  
   create: async function (req, res){
@@ -131,6 +131,102 @@ module.exports = {
            .send("We were unable to update your book because " + err);
        });
    },
+
+getChapterByPath: async function (req, res) {
+  const { serie, book, chapter } = req.params;
+
+  try {
+    const foundBook = await books.findOne({
+      where: { path: book },
+      include: [{ model: series, where: { path: serie } }],
+    });
+
+    if (!foundBook) {
+      return res.status(404).json({ message: "Livre introuvable." });
+    }
+
+    const foundChapter = await chapters.findOne({
+      where: {
+        ID_book: foundBook.ID_book,
+        path: chapter, // ici on suppose que `path` est simple, ex: "0"
+      },
+      include: [
+        {
+          model: books,
+          include: [{ model: series }],
+        },
+        {
+          model: book_parts,
+          as: "part",
+          attributes: ['part_name'],
+          required: false
+        }
+      ],
+    });
+
+    if (!foundChapter) {
+      return res.status(404).json({ message: "Chapitre non trouvé." });
+    }
+
+    res.status(200).json({
+      id: foundChapter.ID_chapter,
+      title: foundChapter.title_chapter,
+      content: foundChapter.content_chapter,
+      path: foundChapter.path,
+      prev: foundChapter.path_prev,
+      next: foundChapter.path_next,
+      book: {
+        name: foundChapter.book?.book_Name,
+        image: foundChapter.book?.image,
+        path: foundChapter.book?.path,
+      },
+      part: foundChapter.part?.part_name ?? null,
+      series: {
+        title: foundChapter.book?.series?.series_title,
+        image: foundChapter.book?.series?.image,
+        path: foundChapter.book?.series?.path,
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Erreur serveur." });
+  }
+},
+
+
+getChaptersByBookPath: async function (req, res) {
+  const { serie, book } = req.params;
+  try {
+    // Trouve le livre pour avoir l'ID
+    const foundBook = await books.findOne({
+      where: { path: book },
+      include: [{
+        model: series,
+        where: { path: serie }
+      }]
+    });
+
+    if (!foundBook) {
+      return res.status(404).json({ message: "Livre introuvable" });
+    }
+
+    // Récupère les chapitres
+    const chaptersList = await chapters.findAll({
+      where: { ID_book: foundBook.ID_book },
+      include: [{model: book_parts, as: "part", attributes: ["part_name"]}], // si association définie
+      order: [['ID_chapter', 'ASC']]
+    });
+    console.log(JSON.stringify(chaptersList, null, 2));
+
+    res.status(200).json(chaptersList);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+
+},
+
 
   // This function deletes a user.
 

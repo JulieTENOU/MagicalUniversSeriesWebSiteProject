@@ -5,8 +5,8 @@ const  verifyToken  = require("../middleware/index");
 
 
 router.post("/createIngredients", ingredients.createIngredients);
-router.get("/api/getOneIngredients/:Name_character", ingredients.findOneIngredients);
+router.get("/getOneIngredients/:Name_character", ingredients.findOneIngredients);
 // router.get("/findAllCharacters", characters.findAll);
-router.put("/api/updateIngredients/:Name_character", ingredients.updateOneIngredients);
+router.put("/updateIngredients/:Name_character", ingredients.updateOneIngredients);
 
 module.exports = router;

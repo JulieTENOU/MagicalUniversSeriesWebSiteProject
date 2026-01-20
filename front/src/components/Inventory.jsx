@@ -5,19 +5,20 @@ import {
   Divider,
   Button,
   Grid,
-  List,
+  List, Table, TableBody, TableCell, TableHead, TableRow  
 } from "@mui/material";
 import CardTravelIcon from "@mui/icons-material/CardTravel";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
 import ModifierDialogs from "./ModifierInventory";
+import { useTheme } from "@mui/material/styles";
 
-function InventoryRow({ label, nameKey, quantityKey, data }) {
+function InventoryRow({ label, nameKey, quantityKey, data, theme }) {
   const name = data?.[nameKey] ?? "—";
-  const quantity = data?.[quantityKey] ?? "—";
+  const quantity = quantityKey ? (data?.[quantityKey] ?? "—") : null;
   return (
-    <tr>
-      <td className="diversName">
+    <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+      <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
         {name}
         <ModifierDialogs
           inventaire={data}
@@ -25,8 +26,9 @@ function InventoryRow({ label, nameKey, quantityKey, data }) {
           left="80%"
           dataToUpdate={label}
         />
-      </td>
-      <td className="diversQ">
+      </TableCell>
+      {quantity != null &&
+      <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
         {quantity}
         <ModifierDialogs
           inventaire={data}
@@ -34,12 +36,15 @@ function InventoryRow({ label, nameKey, quantityKey, data }) {
           left="40%"
           dataToUpdate={`quantité de ${label}`}
         />
-      </td>
-    </tr>
+      </TableCell>
+      }
+    </TableRow>
+    
   );
 }
 
 export default function Inventory(data) {
+      const theme = useTheme();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const character = data.data;
   console.log(character);
@@ -52,13 +57,13 @@ export default function Inventory(data) {
     setIsDrawerOpen(false);
   };
   useEffect(() => {
-    fetch(`/inventories/api/getOneInventories/${character.ID_character}`)
+    fetch(`/api/inventories/getOneInventories/${character.Name_character}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.data);
+        console.log(data);
         setInventaires(data.data);
       });
-  }, [character.ID_character]);
+  }, [character.Name_character]);
 
   return (
     <div>
@@ -77,7 +82,8 @@ export default function Inventory(data) {
         BackdropProps={{ style: { backdropFilter: "none", opacity: 0 } }}
         PaperProps={{
           sx: {
-            backgroundColor: "transparent",
+           backgroundColor:theme.custom.mycustomblur.main, 
+           backdropFilter: theme.custom.mycustomblur.blur,
             top: "5vh",
             textAlign: "center",
             width: "40%",
@@ -100,7 +106,7 @@ export default function Inventory(data) {
               <Button
                 variant="h6"
                 onClick={() => setIsImportant(!isImportant)}
-                sx={{ color: "whitesmoke" }}
+                sx={{color: theme.custom.mycustomblur.text , }}
               >
                 Importants
               </Button>
@@ -108,23 +114,24 @@ export default function Inventory(data) {
                 <div
                   style={{
                     textAlign: "left",
-                    color: "whitesmoke",
+                   color: theme.custom.mycustomblur.text ,
                     marginInline: "5px",
                   }}
                 >
-                  <table>
-                    <tbody>
+                  <Table>
+                    <TableBody>
                       {[...Array(10)].map((_, i) => (
                         <InventoryRow
                           key={i}
-                          label={`divers ligne ${i + 1}`}
-                          nameKey={`divers${i + 1}_inventory`}
-                          quantityKey={`divers${i + 1}Quantite`}
+                          label={`important ligne ${i + 1}`}
+                          nameKey={`important${i + 1}`}
+                          quantityKey={null}
                           data={inventaires}
+                          theme={theme}
                         />
                       ))}
-                    </tbody>
-                  </table>
+                    </TableBody>
+                  </Table>
                 </div>
               )}
             </List>
@@ -133,7 +140,7 @@ export default function Inventory(data) {
               <Button
                 variant="h6"
                 onClick={() => setRepas(!repas)}
-                sx={{ color: "whitesmoke" }}
+                sx={{ color: theme.custom.mycustomblur.text ,}}
               >
                 Repas
               </Button>
@@ -141,7 +148,7 @@ export default function Inventory(data) {
                 <div
                   style={{
                     textAlign: "left",
-                    color: "whitesmoke",
+                    color: theme.custom.mycustomblur.text ,
                     marginInline: "5px",
                   }}
                 >
@@ -167,7 +174,7 @@ export default function Inventory(data) {
               <Button
                 variant="h6"
                 onClick={() => setArgent(!argent)}
-                sx={{ color: "whitesmoke" }}
+                sx={{ color: theme.custom.mycustomblur.text , }}
               >
                 Monnaie
               </Button>
@@ -177,14 +184,14 @@ export default function Inventory(data) {
                   spacing={2}
                   style={{
                     textAlign: "left",
-                    color: "whitesmoke",
+                    color: theme.custom.mycustomblur.text ,
                     marginLeft: "5px",
                   }}
                 >
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td className="important comp">
+                  <Table>
+                    <TableBody>
+                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="important comp">
                           Pièces de Platine Universelles :{" "}
                           <span>{inventaires?.PPU ?? 0}</span>
                           <ModifierDialogs
@@ -193,10 +200,10 @@ export default function Inventory(data) {
                             left={"80%"}
                             dataToUpdate={"PPU"}
                           />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="important comp">
+                        </TableCell>
+                      </TableRow>
+                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="important comp" >
                           {" "}
                           Pièces d'Or Universelles :{" "}
                           <span>{inventaires?.POU ?? 0}</span>
@@ -206,10 +213,10 @@ export default function Inventory(data) {
                             left={"80%"}
                             dataToUpdate={"POU"}
                           />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="important comp">
+                        </TableCell>
+                      </TableRow>
+                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="important comp">
                           Pièces d'Argent Universelles :{" "}
                           <span>{inventaires?.PAU ?? 0}</span>
                           <ModifierDialogs
@@ -218,10 +225,10 @@ export default function Inventory(data) {
                             left={"80%"}
                             dataToUpdate={"PAU"}
                           />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
                 </Grid>
               )}
             </List>
@@ -230,7 +237,7 @@ export default function Inventory(data) {
               <Button
                 variant="h6"
                 onClick={() => setDivers(!divers)}
-                sx={{ color: "whitesmoke" }}
+                sx={{ color: theme.custom.mycustomblur.text , }}
               >
                 Divers
               </Button>
@@ -238,18 +245,18 @@ export default function Inventory(data) {
                 <div
                   style={{
                     textAlign: "left",
-                    color: "whitesmoke",
+                    color: theme.custom.mycustomblur.text ,
                     marginInline: "5px",
                   }}
                 >
-                  <table>
-                    <thead>
-                      <th>Nom/Appelation</th>
-                      <th>Quantité</th>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td className="diversName">
+                  <Table>
+                    <TableHead>
+                      <TableCell  sx={{ border: theme.custom.mycustomblur.tableborder, }} variant="head">Nom/Appelation</TableCell>
+                      <TableCell  sx={{ border: theme.custom.mycustomblur.tableborder, }} variant="head">Quantité</TableCell>
+                    </TableHead>
+                    <TableBody>
+                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
                           {inventaires?.divers1_inventory ?? "Auncun objet"}
                           <ModifierDialogs
                             inventaire={inventaires}
@@ -257,8 +264,8 @@ export default function Inventory(data) {
                             left={"80%"}
                             dataToUpdate={"divers ligne 1"}
                           />
-                        </td>
-                        <td className="diversQ">
+                        </TableCell>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
                           {inventaires?.divers1Quantite ?? "Aucun objet"}
                           <span>
                             <ModifierDialogs
@@ -268,10 +275,10 @@ export default function Inventory(data) {
                               dataToUpdate={"quantité de divers ligne 1"}
                             />
                           </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="diversName">
+                        </TableCell>
+                      </TableRow>
+                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
                           {inventaires?.divers2_inventory ?? "Aucun objet"}
                           <ModifierDialogs
                             inventaire={inventaires}
@@ -279,8 +286,8 @@ export default function Inventory(data) {
                             left={"80%"}
                             dataToUpdate={"divers ligne 2"}
                           />
-                        </td>
-                        <td className="diversQ">
+                        </TableCell>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
                           {inventaires?.divers2Quantite ?? "Aucun objet"}
                           <span>
                             <ModifierDialogs
@@ -290,10 +297,10 @@ export default function Inventory(data) {
                               dataToUpdate={"quantité de divers ligne 2"}
                             />
                           </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="diversName">
+                        </TableCell>
+                      </TableRow>
+                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
                           {inventaires?.divers3_inventory ?? "Aucun objet"}
                           <ModifierDialogs
                             inventaire={inventaires}
@@ -301,8 +308,8 @@ export default function Inventory(data) {
                             left={"80%"}
                             dataToUpdate={"divers ligne 3"}
                           />
-                        </td>
-                        <td className="diversQ">
+                        </TableCell>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
                           {inventaires?.divers3Quantite ?? "Aucun objet"}
                           <span>
                             <ModifierDialogs
@@ -312,10 +319,10 @@ export default function Inventory(data) {
                               dataToUpdate={"quantité de divers ligne 3"}
                             />
                           </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="diversName">
+                        </TableCell>
+                      </TableRow>
+                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
                           {inventaires?.divers4_inventory ?? "Aucun objet"}
                           <ModifierDialogs
                             inventaire={inventaires}
@@ -323,8 +330,8 @@ export default function Inventory(data) {
                             left={"80%"}
                             dataToUpdate={"divers ligne 4"}
                           />
-                        </td>
-                        <td className="diversQ">
+                        </TableCell>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
                           {inventaires?.divers4Quantite ?? "Aucun objet"}
                           <span>
                             <ModifierDialogs
@@ -334,10 +341,10 @@ export default function Inventory(data) {
                               dataToUpdate={"quantité de divers ligne 4"}
                             />
                           </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="diversName">
+                        </TableCell>
+                      </TableRow>
+                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
                           {inventaires?.divers5_inventory ?? "Aucun objet"}
                           <ModifierDialogs
                             inventaire={inventaires}
@@ -345,8 +352,8 @@ export default function Inventory(data) {
                             left={"80%"}
                             dataToUpdate={"divers ligne 5"}
                           />
-                        </td>
-                        <td className="diversQ">
+                        </TableCell>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
                           {inventaires?.divers5Quantite ?? "Aucun objet"}
                           <span>
                             <ModifierDialogs
@@ -356,10 +363,10 @@ export default function Inventory(data) {
                               dataToUpdate={"quantité de divers ligne 5"}
                             />
                           </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="diversName">
+                        </TableCell>
+                      </TableRow>
+                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
                           {inventaires?.divers6_inventory ?? "Aucun objet"}
                           <ModifierDialogs
                             inventaire={inventaires}
@@ -367,8 +374,8 @@ export default function Inventory(data) {
                             left={"80%"}
                             dataToUpdate={"divers ligne 6"}
                           />
-                        </td>
-                        <td className="diversQ">
+                        </TableCell>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
                           {inventaires?.divers6Quantite ?? "Aucun objet"}
                           <span>
                             <ModifierDialogs
@@ -378,10 +385,10 @@ export default function Inventory(data) {
                               dataToUpdate={"quantité de divers ligne 6"}
                             />
                           </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="diversName">
+                        </TableCell>
+                      </TableRow>
+                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
                           {inventaires?.divers7_inventory ?? "Aucun objet"}
                           <ModifierDialogs
                             inventaire={inventaires}
@@ -389,8 +396,8 @@ export default function Inventory(data) {
                             left={"80%"}
                             dataToUpdate={"divers ligne 7"}
                           />
-                        </td>
-                        <td className="diversQ">
+                        </TableCell>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
                           {inventaires?.divers7Quantite ?? "Aucun objet"}
                           <span>
                             <ModifierDialogs
@@ -400,10 +407,10 @@ export default function Inventory(data) {
                               dataToUpdate={"quantité de divers ligne 7"}
                             />
                           </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="diversName">
+                        </TableCell>
+                      </TableRow>
+                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
                           {inventaires?.divers8_inventory ?? "Aucun objet"}
                           <ModifierDialogs
                             inventaire={inventaires}
@@ -411,8 +418,8 @@ export default function Inventory(data) {
                             left={"80%"}
                             dataToUpdate={"divers ligne 8"}
                           />
-                        </td>
-                        <td className="diversQ">
+                        </TableCell>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
                           {inventaires?.divers8Quantite ?? "Aucun objet"}
                           <span>
                             <ModifierDialogs
@@ -422,10 +429,10 @@ export default function Inventory(data) {
                               dataToUpdate={"quantité de divers ligne 8"}
                             />
                           </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="diversName">
+                        </TableCell>
+                      </TableRow>
+                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
                           {inventaires?.divers9_inventory ?? "Aucun objet"}
                           <ModifierDialogs
                             inventaire={inventaires}
@@ -433,8 +440,8 @@ export default function Inventory(data) {
                             left={"80%"}
                             dataToUpdate={"divers ligne 9"}
                           />
-                        </td>
-                        <td className="diversQ">
+                        </TableCell>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
                           {inventaires?.divers9Quantite ?? "Aucun objet"}
                           <span>
                             <ModifierDialogs
@@ -444,10 +451,10 @@ export default function Inventory(data) {
                               dataToUpdate={"quantité de divers ligne 9"}
                             />
                           </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="diversName">
+                        </TableCell>
+                      </TableRow>
+                      <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
                           {inventaires?.divers10_inventory ?? "Aucun objet"}
                           <ModifierDialogs
                             inventaire={inventaires}
@@ -455,8 +462,8 @@ export default function Inventory(data) {
                             left={"80%"}
                             dataToUpdate={"divers ligne 10"}
                           />
-                        </td>
-                        <td className="diversQ">
+                        </TableCell>
+                        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
                           {inventaires?.divers10Quantite ?? "Aucun objet"}
                           <span>
                             <ModifierDialogs
@@ -466,10 +473,10 @@ export default function Inventory(data) {
                               dataToUpdate={"quantité de divers ligne 10"}
                             />
                           </span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
                   <Divider />
                 </div>
               )}
@@ -480,7 +487,7 @@ export default function Inventory(data) {
           onClick={handleDrawerClose}
           sx={{ position: "fixed", right: "0vw", top: "18vh" }}
         >
-          <CloseIcon sx={{ color: "whitesmoke" }} />
+          <CloseIcon sx={{ color: theme.custom.mycustomblur.text , }} />
         </IconButton>
       </Drawer>
     </div>

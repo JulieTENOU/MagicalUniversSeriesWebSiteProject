@@ -28,6 +28,14 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.STRING(1),
         allowNull: false,
       },
+      users_reset_token: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+      },
+      users_reset_expires: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
     {
       sequelize,

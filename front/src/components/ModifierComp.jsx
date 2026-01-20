@@ -11,6 +11,7 @@ import TextField from '@mui/material/TextField';
 import { useState, useContext } from 'react';
 import { ConnexionContext } from '../components/provider';
 import Pencil from '../assets/img/pencil-outline.svg';
+import { useTheme } from "@mui/material/styles";
 
 function ModifierTitle(props) {
   const { children, onClose, ...other } = props;
@@ -42,6 +43,8 @@ ModifierTitle.propTypes = {
 };
 
 export default function ModifierDialogs(data) {
+    const theme = useTheme();
+
   const {state: currentUser, setState: setCurrentUser, loading} = useContext(ConnexionContext);
 
     console.log(data);
@@ -246,13 +249,13 @@ export default function ModifierDialogs(data) {
     newDatas = {
       ArmesHast_character: text,
     };
-  } else if (name ==='courtes'){
+  } else if (name ==='tranchantes'){
     newDatas = {
-      Courtes_character: text,
+      Tranchantes_character: text,
     };
-  } else if (name ==='longues'){
+  } else if (name ==='contondantes'){
     newDatas = {
-      Longues_character: text,
+      Contondantes_character: text,
     };
   } else if (name ==='esquive'){
     newDatas = {
@@ -314,21 +317,9 @@ export default function ModifierDialogs(data) {
     newDatas = {
       Crea_character: text,
     };
-  } else if (name ==='psyInt'){
+  } else if (name ==='animaturgie'){
     newDatas = {
-      PsyInt_character: text,
-    };
-  } else if (name ==='psyPerso'){
-    newDatas = {
-      PsyPerso_character: text,
-    };
-  }  else if (name ==='psyExt'){
-    newDatas = {
-      PsyExt_character: text,
-    };
-  } else if (name ==='psyInterperso'){
-    newDatas = {
-      PsyInterperso_character: text,
+      Animaturgie_character: text,
     };
   } else if (name ==='vie'){
     newDatas = {
@@ -360,7 +351,7 @@ export default function ModifierDialogs(data) {
     };
   } else if (name ==='aura'){
     newDatas = {
-      AuraLectrice_character: text,
+      Aura_character: text,
     };
   } else if (name ==='magieAstrale'){
     newDatas = {
@@ -395,7 +386,7 @@ export default function ModifierDialogs(data) {
   return (
     <div style={{position: 'relative', height:'0px'}}>
       <Button sx={{ position:'relative', display: 'flex', left:{left}, top:'-2.3vh', border:'none'}} variant="outlined" onClick={handleClickOpen}>
-        <img src={Pencil} height={'15px'} class="filter-white" alt="Modifier" id='modifier'/>
+        <img src={Pencil} color={theme.custom.mycustomblur.text}  height={'15px'} alt="Modifier" id='modifier'/>
       </Button>
       <Dialog
         onClose={handleClose}
