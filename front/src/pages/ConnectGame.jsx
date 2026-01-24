@@ -31,7 +31,7 @@ function ConnectGame() {
     loading,
   } = useContext(ConnexionContext);
   console.log(currentUser.users_ID);
-
+  
   const defaultCharacter = {
     ID_character: 0,
     Name_character: "Visiteur",
@@ -60,62 +60,85 @@ function ConnectGame() {
 
   const [character, setCharacter] = useState(defaultCharacter);
 
-  const [maxManaAir, setMaxManaAir] = useState(character.ManaAir_character);
+  // const [maxManaAir, setMaxManaAir] = useState(character.ManaAir_character);
   
-  console.log("maxManaAir: ", maxManaAir);
-  const [currentManaAir, setCurrentManaAir] = useState(
-    character.ManaAir_character
-  );
+  // console.log("maxManaAir: ", maxManaAir);
+  // const [currentManaAir, setCurrentManaAir] = useState(
+  //   character.ManaAir_character
+  // );
   
-  console.log("currentManaAir: ", currentManaAir);
-  const [maxManaEau, setMaxManaEau] = useState(character.ManaEau_character);
-  console.log("maxManaEau: ", maxManaEau);
-  const [currentManaEau, setCurrentManaEau] = useState(
-    character.ManaEau_character
-  );
-  console.log("currentManaEau: ", currentManaEau);
-  const [maxManaTerre, setMaxManaTerre] = useState(
-    character.ManaTerre_character
-  );
-  const [currentManaTerre, setCurrentManaTerre] = useState(
-    character.ManaTerre_character
-  );
-  const [maxManaFeu, setMaxManaFeu] = useState(character.ManaFeu_character);
-  const [currentManaFeu, setCurrentManaFeu] = useState(
-    character.ManaFeu_character
-  );
-  const [maxManaVolonte, setMaxManaVolonte] = useState(
-    character.ManaVolonte_character
-  );
-  const [currentManaVolonte, setCurrentManaVolonte] = useState(
-    character.ManaVolonte_character
-  );
-  const [maxManaVital, setMaxManaVital] = useState(
-    character.ManaVital_character
-  );
-  const [currentManaVital, setCurrentManaVital] = useState(
-    character.ManaVital_character
-  );
-  const [maxStamina, setMaxStamina] = useState(character.Stamina_character);
-  const [currentStamina, setCurrentStamina] = useState(
-    character.Stamina_character
-  );
+  // console.log("currentManaAir: ", currentManaAir);
+  // const [maxManaEau, setMaxManaEau] = useState(character.ManaEau_character);
+  // console.log("maxManaEau: ", maxManaEau);
+  // const [currentManaEau, setCurrentManaEau] = useState(
+  //   character.ManaEau_character
+  // );
+  // console.log("currentManaEau: ", currentManaEau);
+  // const [maxManaTerre, setMaxManaTerre] = useState(
+  //   character.ManaTerre_character
+  // );
+  // const [currentManaTerre, setCurrentManaTerre] = useState(
+  //   character.ManaTerre_character
+  // );
+  // const [maxManaFeu, setMaxManaFeu] = useState(character.ManaFeu_character);
+  // const [currentManaFeu, setCurrentManaFeu] = useState(
+  //   character.ManaFeu_character
+  // );
+  // const [maxManaVolonte, setMaxManaVolonte] = useState(
+  //   character.ManaVolonte_character
+  // );
+  // const [currentManaVolonte, setCurrentManaVolonte] = useState(
+  //   character.ManaVolonte_character
+  // );
+  // const [maxManaVital, setMaxManaVital] = useState(
+  //   character.ManaVital_character
+  // );
+  // const [currentManaVital, setCurrentManaVital] = useState(
+  //   character.ManaVital_character
+  // );
+  // const [maxStamina, setMaxStamina] = useState(character.Stamina_character);
+  // const [currentStamina, setCurrentStamina] = useState(
+  //   character.Stamina_character
+  // );
+
+  const [maxGauges, setMaxGauges] = useState({
+  ManaAir: defaultCharacter.ManaAir_character,
+  ManaEau: defaultCharacter.ManaEau_character,
+  ManaTerre: defaultCharacter.ManaTerre_character,
+  ManaFeu: defaultCharacter.ManaFeu_character,
+  ManaVolonte: defaultCharacter.ManaVolonte_character,
+  ManaVital: defaultCharacter.ManaVital_character,
+  Stamina: defaultCharacter.Stamina_character,
+});
+
+const [currentGauges, setCurrentGauges] = useState({
+  currentManaAir: defaultCharacter.ManaAir_character,     // fallback temporaire
+  currentManaEau: defaultCharacter.ManaEau_character,
+  currentManaTerre: defaultCharacter.ManaTerre_character,
+  currentManaFeu: defaultCharacter.ManaFeu_character,
+  currentManaVolonte: defaultCharacter.ManaVolonte_character,
+  currentManaVital: defaultCharacter.ManaVital_character,
+  currentStamina: defaultCharacter.Stamina_character,
+});
+
 
   useEffect(() => {
-    fetch(`/characters/api/getOneCharacterById/${characterId}`)
+    fetch(`/api/characters/getOneCharacterById/${characterId}`)
       .then((res) => res.json())
       .then((data) => {
         const chara = data.data;
         if (chara && chara.ID_character) {
           console.log("Personnage trouvé :", chara);
-          setCharacter(chara);
-          setMaxManaAir(chara.ManaAir_character);
-          setMaxManaEau(chara.ManaEau_character);
-          setMaxManaTerre(chara.ManaTerre_character);
-          setMaxManaFeu(chara.ManaFeu_character);
-          setMaxManaVolonte(chara.ManaVolonte_character);
-          setMaxManaVital(chara.ManaVital_character);
-          setMaxStamina(chara.Stamina_character);
+            setCharacter(chara);
+            setMaxGauges({
+              ManaAir: chara.ManaAir_character,
+              ManaEau: chara.ManaEau_character,
+              ManaTerre: chara.ManaTerre_character,
+              ManaFeu: chara.ManaFeu_character,
+              ManaVolonte: chara.ManaVolonte_character,
+              ManaVital: chara.ManaVital_character,
+              Stamina: chara.Stamina_character,
+    });
         } else {
           console.warn("Aucun personnage trouvé, affichage du Visiteur.");
         }
@@ -131,78 +154,67 @@ function ConnectGame() {
   useEffect(() => {
     if (!character || character.ID_character === 0) {
       // Reste sur les valeurs par défaut du Visiteur
-      setCurrentManaAir(character.ManaAir_character);
-      setCurrentManaEau(character.ManaEau_character);
-      setCurrentManaTerre(character.ManaTerre_character);
-      setCurrentManaFeu(character.ManaFeu_character);
-      setCurrentManaVolonte(character.ManaVolonte_character);
-      setCurrentManaVital(character.ManaVital_character);
-      setCurrentStamina(character.Stamina_character);
+       setCurrentGauges({
+          currentManaAir: character.ManaAir_character,
+          currentManaEau: character.ManaEau_character,
+          currentManaTerre: character.ManaTerre_character,
+          currentManaFeu: character.ManaFeu_character,
+          currentManaVolonte: character.ManaVolonte_character,
+          currentManaVital: character.ManaVital_character,
+          currentStamina: character.Stamina_character,
+        });
       return;
     }
 
-    fetch(`/api/gauges/getOneGauges/${character.Name_character}`) // permet d'aller chercher un URL spécifique
-      .then((res) => res.json())
+    const name = encodeURIComponent(character.Name_character);
+
+    fetch(`/api/gauges/getOneGauges/${name}`) // permet d'aller chercher un URL spécifique
+      .then(async (res) => {
+        const body = await res.json().catch(() => null);
+
+        if (!res.ok){
+          console.log("Gauges API error: ", res.status, body);
+          throw new Error(`HTTP ${res.status}`);
+        }
+
+        return body;
+      })
       .then((data) => {
         console.log("data: ", data);
-        const gauges = data.data;
-        setCurrentManaAir(gauges.currentManaAir);
-        console.log(currentManaAir);
-        setCurrentManaEau(gauges.currentManaEau);
-        console.log(currentManaEau);
-        setCurrentManaTerre(gauges.currentManaTerre);
-        console.log(currentManaTerre);
-        setCurrentManaFeu(gauges.currentManaFeu);
-        console.log(currentManaFeu);
-        setCurrentManaVolonte(gauges.currentManaVolonte);
-        console.log(currentManaVolonte);
-        setCurrentManaVital(gauges.currentManaVital);
-        console.log(currentManaVital);
-        setCurrentStamina(gauges.currentStamina);
-        console.log(currentStamina);
+        const gauges = data?.data;
+        if(!gauges) throw new Error("Réponse API invalide: data.data manquant");
+
+        setCurrentGauges({
+        currentManaAir: gauges.currentManaAir,
+        currentManaEau: gauges.currentManaEau,
+        currentManaTerre: gauges.currentManaTerre,
+        currentManaFeu: gauges.currentManaFeu,
+        currentManaVolonte: gauges.currentManaVolonte,
+        currentManaVital: gauges.currentManaVital,
+        currentStamina: gauges.currentStamina,
+      });
       })
       .catch((err) => {
         console.log(
           "Erreur récupération jauges, fallback sur valeurs max :",
           err
         );
-        setCurrentManaAir(character.ManaAir_character);
-        setCurrentManaEau(character.ManaEaucharacter);
-        setCurrentManaTerre(character.ManaTerre_character);
-        setCurrentManaFeu(character.ManaFeu_character);
-        setCurrentManaVolonte(character.ManaVolonte_character);
-        setCurrentManaVital(character.ManaVital_character);
-        setCurrentStamina(character.Stamina_character);
+        setCurrentGauges({
+          currentManaAir: character.ManaAir_character,
+          currentManaEau: character.ManaEau_character,
+          currentManaTerre: character.ManaTerre_character,
+          currentManaFeu: character.ManaFeu_character,
+          currentManaVolonte: character.ManaVolonte_character,
+          currentManaVital: character.ManaVital_character,
+          currentStamina: character.Stamina_character,
+        });
       });
   }, [character]);
 
-  function handleGaugeUpdate(manaName, newValue) {
-    switch (manaName) {
-      case "currentManaAir":
-        setCurrentManaAir(newValue);
-        break;
-      case "currentManaEau":
-        setCurrentManaEau(newValue);
-        break;
-      case "currentManaTerre":
-        setCurrentManaTerre(newValue);
-        break;
-      case "currentManaFeu":
-        setCurrentManaFeu(newValue);
-        break;
-      case "currentManaVolonte":
-        setCurrentManaVolonte(newValue);
-        break;
-      case "currentManaVital":
-        setCurrentManaVital(newValue);
-        break;
-      case "currentStamina":
-        setCurrentStamina(newValue);
-        break;
-      default:
-        console.warn("Mana inconnue : ", manaName);
-    }
-  }
+function handleGaugeUpdate(manaName, newValue) {
+  setCurrentGauges((prev) => ({ ...prev, [manaName]: newValue }));
+}
+
   console.log("character datas : ",character);
 
   return (
@@ -276,13 +288,13 @@ function ConnectGame() {
                   >
                     <AirIcon/>
                     <br/>
-                    {currentManaAir} pts
+                    {currentGauges.currentManaAir} pts
                   </Typography>
                   <LinearProgress
                     color="success"
                     id="manaAir"
                     variant="determinate"
-                    value={(currentManaAir / maxManaAir) * 100}
+                    value={(currentGauges.currentManaAir / maxGauges.maxManaAir) * 100}
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -304,15 +316,17 @@ function ConnectGame() {
                   >
                     <BtnAdd
                       name={"mana d'air"}
-                      mana={currentManaAir}
+                      mana={currentGauges.currentManaAir}
                       manaName={"currentManaAir"}
                       character={character}
+                      onGaugeUpdate={handleGaugeUpdate}
                     />
                     <BtnRm
                       name={"mana d'air"}
-                      mana={currentManaAir}
+                      mana={currentGauges.currentManaAir}
                       manaName={"currentManaAir"}
                       character={character}
+                      onGaugeUpdate={handleGaugeUpdate}
                     />
                   </div>
                 </div>
@@ -350,13 +364,13 @@ function ConnectGame() {
                     sx={{ color: theme.custom.mycustomblur.text }}
                   > <WaterDropIcon/>
                   <br/>
-                    {currentManaEau} pts
+                    {currentGauges.currentManaEau} pts
                   </Typography>
                   <LinearProgress
                     color="info"
                     id="manaEau"
                     variant="determinate"
-                    value={(currentManaEau / maxManaEau) * 100}
+                    value={(currentGauges.currentManaEau / maxGauges.maxManaEau) * 100}
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -378,14 +392,14 @@ function ConnectGame() {
                   >
                     <BtnAdd
                       name={"mana d'eau"}
-                      mana={currentManaEau}
+                      mana={currentGauges.currentManaEau}
                       manaName={"currentManaEau"}
                       character={character}
                       onGaugeUpdate={handleGaugeUpdate}
                     />
                     <BtnRm
                       name={"mana d'eau"}
-                      mana={currentManaEau}
+                      mana={currentGauges.currentManaEau}
                       manaName={"currentManaEau"}
                       character={character}
                       onGaugeUpdate={handleGaugeUpdate}
@@ -427,13 +441,13 @@ function ConnectGame() {
                   >
                     <GrassIcon/>
                     <br/>
-                    {currentManaTerre} pts
+                    {currentGauges.currentManaTerre} pts
                   </Typography>
                   <LinearProgress
                     color="warning"
                     id="manaTerre"
                     variant="determinate"
-                    value={(currentManaTerre / maxManaTerre) * 100}
+                    value={(currentGauges.currentManaTerre / maxGauges.maxManaTerre) * 100}
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -454,14 +468,14 @@ function ConnectGame() {
                   >
                     <BtnAdd
                       name={"mana de terre"}
-                      mana={currentManaTerre}
+                      mana={currentGauges.currentManaTerre}
                       manaName={"currentManaTerre"}
                       character={character}
                       onGaugeUpdate={handleGaugeUpdate}
                     />
                     <BtnRm
                       name={"mana de terre"}
-                      mana={currentManaTerre}
+                      mana={currentGauges.currentManaTerre}
                       manaName={"currentManaTerre"}
                       character={character}
                       onGaugeUpdate={handleGaugeUpdate}
@@ -501,13 +515,13 @@ function ConnectGame() {
                     top={"45vh"}
                     sx={{ color: theme.custom.mycustomblur.text }}
                   >
-                   <LocalFireDepartmentIcon/> <br/> {currentManaFeu} pts
+                   <LocalFireDepartmentIcon/> <br/> {currentGauges.currentManaFeu} pts
                   </Typography>
                   <LinearProgress
                     color="error"
                     id="manaFeu"
                     variant="determinate"
-                    value={(currentManaFeu / maxManaFeu) * 100}
+                    value={(currentGauges.currentManaFeu / maxGauges.maxManaFeu) * 100}
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -528,14 +542,14 @@ function ConnectGame() {
                   >
                     <BtnAdd
                       name={"mana de feu"}
-                      mana={currentManaFeu}
+                      mana={currentGauges.currentManaFeu}
                       manaName={"currentManaFeu"}
                       character={character}
                       onGaugeUpdate={handleGaugeUpdate}
                     />
                     <BtnRm
                       name={"mana de feu"}
-                      mana={currentManaFeu}
+                      mana={currentGauges.currentManaFeu}
                       manaName={"currentManaFeu"}
                       character={character}
                       onGaugeUpdate={handleGaugeUpdate}
@@ -578,12 +592,12 @@ function ConnectGame() {
                   >
                     <SelfImprovementIcon/>
                     <br/>
-                    {currentManaVolonte} pts
+                    {currentGauges.currentManaVolonte} pts
                   </Typography>
                   <LinearProgress
                     id="manaVolonte"
                     variant="determinate"
-                    value={(currentManaVolonte / maxManaVolonte) * 100}
+                    value={(currentGauges.currentManaVolonte / maxGauges.maxManaVolonte) * 100}
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -604,14 +618,14 @@ function ConnectGame() {
                   >
                     <BtnAdd
                       name={"mana de volonté"}
-                      mana={currentManaVolonte}
+                      mana={currentGauges.currentManaVolonte}
                       manaName={"currentManaVolonte"}
                       character={character}
                       onGaugeUpdate={handleGaugeUpdate}
                     />
                     <BtnRm
                       name={"mana de volonté"}
-                      mana={currentManaVolonte}
+                      mana={currentGauges.currentManaVolonte}
                       manaName={"currentManaVolonte"}
                       character={character}
                       onGaugeUpdate={handleGaugeUpdate}
@@ -644,9 +658,9 @@ function ConnectGame() {
                   </Typography>
 
                   <CircularProgressbar
-                    value={(currentManaVital / maxManaVital) * 100}
+                    value={(currentGauges.currentManaVital / maxGauges.ManaVital) * 100}
                     circleRatio={0.5}
-                    text={`${currentManaVital} points`}
+                    text={`${currentGauges.currentManaVital} points`}
                     styles={buildStyles({
                       rotation: 0.75,
                       strokeLinecap: "butt",
@@ -669,14 +683,14 @@ function ConnectGame() {
                   >
                     <BtnAdd
                       name={"mana Vital"}
-                      mana={currentManaVital}
+                      mana={currentGauges.currentManaVital}
                       manaName={"currentManaVital"}
                       character={character}
                       onGaugeUpdate={handleGaugeUpdate}
                     />
                     <BtnRm
                       name={"mana Vital"}
-                      mana={currentManaVital}
+                      mana={currentGauges.currentManaVital}
                       manaName={"currentManaVital"}
                       character={character}
                       onGaugeUpdate={handleGaugeUpdate}
@@ -776,9 +790,9 @@ function ConnectGame() {
                   </Typography>
 
                   <CircularProgressbar
-                    value={(currentStamina / maxStamina) * 100}
+                    value={(currentGauges.currentStamina / maxGauges.Stamina) * 100}
                     circleRatio={0.5}
-                    text={`${currentStamina} points`}
+                    text={`${currentGauges.currentStamina} points`}
                     styles={buildStyles({
                       rotation: 0.75,
                       strokeLinecap: "butt",
@@ -801,14 +815,14 @@ function ConnectGame() {
                   >
                     <BtnAdd
                       name={"Stamina"}
-                      mana={currentStamina}
+                      mana={currentGauges.currentStamina}
                       manaName={"currentStamina"}
                       character={character}
                       onGaugeUpdate={handleGaugeUpdate}
                     />
                     <BtnRm
                       name={"Stamina"}
-                      mana={currentStamina}
+                      mana={currentGauges.currentStamina}
                       manaName={"currentStamina"}
                       character={character}
                       onGaugeUpdate={handleGaugeUpdate}

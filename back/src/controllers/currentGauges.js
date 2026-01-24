@@ -111,7 +111,7 @@ module.exports = {
       .catch((err) => {
        res
          .status(404)
-         .send("Mise à jour de l'inventaire impossible :" + err)
+         .send("Mise à jour d'énergie impossible :" + err)
       });
    }
 };

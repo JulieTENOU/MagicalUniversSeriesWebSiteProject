@@ -1,4 +1,4 @@
-version: '4.0'
+#version: '4.0'
 
 services:
   db:
@@ -12,7 +12,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./data/db:/var/lib/mysql
+      - /data/docker/mus-db:/var/lib/mysql
     restart: always
     networks:
       - mu-network
@@ -29,24 +29,48 @@ services:
     container_name: backMA
     ports:
       - "3333:3333"
-    volumes:
-      - ./back:/app
+    env_file:
+      - ./.env
+      - ./back/.env
+#    volumes:
+#      - ./back:/app
     depends_on:
       - db
     networks:
       - mu-network
 
-  front:
+#   front:
+#     build: ./front
+#     container_name: frontMA
+#     ports:
+#       - "3003:3003"
+# #    volumes:
+# #      - ./front:/app
+#     depends_on:
+#       - back
+#     networks:
+#       - mu-network
+
+  nginx:
     build: ./front
-    container_name: frontMA
-    ports:
-      - "3003:3003"
-    volumes:
-      - ./front:/app
     depends_on:
       - back
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certbot/www:/var/www/certbot:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+    restart: unless-stopped
     networks:
       - mu-network
+      
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
 
 networks:
   mu-network:

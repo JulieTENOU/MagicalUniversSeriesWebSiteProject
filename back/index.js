@@ -42,10 +42,20 @@ app.use(
     secret: authConfig.secret,
     httpOnly: true,
     maxAge: 1000*60*60*24*30,
-    sameSite: 'none',
+    sameSite: 'lax',
     secure: false,
   })
 );
+
+app.use((req, _res, next) => {
+  console.log("SESSION:", {
+    url: req.method + " " + req.originalUrl,
+    hasCookieHeader: !!req.headers.cookie,
+    sessionKeys: req.session ? Object.keys(req.session) : null,
+  });
+  next();
+});
+
 
 sequelize
   .authenticate()
@@ -86,7 +96,7 @@ app.use("/chapters", chapters);
 app.use("/books", books);
 app.use("/series", series);
 app.use("/book_parts", book_parts);
-app.use("/characters", characters);
+app.use("/api/characters", characters);
 app.use("/api/inventories", inventories);
 app.use("/api/ingredients", ingredients);
 app.use("/api/crystals", crystals);

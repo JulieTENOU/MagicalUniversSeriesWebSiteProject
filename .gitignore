@@ -25,3 +25,7 @@ binlog.*
 *.tmp
 
 .env
+
+/nginx/*
+
+/certbot/*

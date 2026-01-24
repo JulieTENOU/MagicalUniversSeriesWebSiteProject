@@ -10,6 +10,7 @@ const AppProvider = ({ children}) => {
 
     const fetchStat = useCallback(() => {
         getStat().then(setStats)
+        console.log(stats);
     },[]);
     // const addPost = (body) => {
     //     insertPost(body).then(setPosts)

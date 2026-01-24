@@ -1111,7 +1111,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Zombique
+                              Zombik
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1120,12 +1120,12 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              {perso.Zombique_character}
+                              {perso.Zombik_character}
                               <ModifierDialogs
                                 character={character}
-                                name={"zombique"}
+                                name={"zombik"}
                                 left={"40%"}
-                                dataToUpdate={"Zombique"}
+                                dataToUpdate={"Zombik"}
                               />
                             </TableCell>
                           </TableRow>
@@ -1231,7 +1231,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Gnomique
+                              Gnomik
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1240,12 +1240,12 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              {perso.Gnomique_character}
+                              {perso.Gnomik_character}
                               <ModifierDialogs
                                 character={character}
-                                name={"gnomique"}
+                                name={"gnomik"}
                                 left={"40%"}
-                                dataToUpdate={"Gnomique"}
+                                dataToUpdate={"Gnomik"}
                               />
                             </TableCell>
                           </TableRow>

@@ -1,7 +1,18 @@
-FROM node:18
+# 1) Build React (CRA)
+FROM node:18-alpine AS build
 WORKDIR /app
+
 COPY package*.json ./
-RUN npm install
+RUN npm ci || npm install
+
 COPY . .
-EXPOSE 3003
-CMD ["npm", "start", "--", "--host", "0.0.0.0"]
+RUN npm run build
+
+# 2) Serve with Nginx
+FROM nginx:alpine
+
+# On enlève la conf par défaut (optionnel mais propre)
+RUN rm -f /etc/nginx/conf.d/default.conf
+
+# Les fichiers statiques compilés
+COPY --from=build /app/build /usr/share/nginx/html

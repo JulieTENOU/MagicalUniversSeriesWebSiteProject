@@ -64,11 +64,11 @@ module.exports = {
          JusticcelArchaique_character,
          JusticcelAntique_character,
          JusticcelDemonique_character,
-         Zombique_character,
+         Zombik_character,
          Faerik_character,
          Elfik_character,
          Nanien_character,
-         Gnomique_character,
+         Gnomik_character,
          Tenebriale_character,
          Noyale_character,
          Elementale_character,
@@ -189,11 +189,11 @@ module.exports = {
           JusticcelArchaique_character,
           JusticcelAntique_character,
           JusticcelDemonique_character,
-          Zombique_character,
+          Zombik_character,
           Faerik_character,
           Elfik_character,
           Nanien_character,
-          Gnomique_character,
+          Gnomik_character,
           Tenebriale_character,
           Noyale_character,
           Elementale_character,
@@ -336,12 +336,12 @@ module.exports = {
 },
 
   updateOneCharacter: async function (req, res){
-    const character = req.params.Name_character;
-    console.log("Name_character:" + character)
+     const id = req.params.ID_character;
+    console.log("Id_character:" + id)
     characters
     .findOne({
      where: {
-       Name_character: character,
+       ID_character: id ,
      },
    })
       .then((response) => {

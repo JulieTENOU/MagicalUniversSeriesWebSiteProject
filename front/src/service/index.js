@@ -3,7 +3,7 @@ import axios from "axios";
 export function getStat() {
     
     return new Promise(resolve => {
-        axios.get(`/characters/getAllCharacters`)
+        axios.get(`api/characters/getAllCharacters`)
         .then(res => res.status === 200 && res.data)
         .then(resolve)
         .catch(console.error)

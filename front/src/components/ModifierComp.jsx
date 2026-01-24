@@ -63,6 +63,7 @@ export default function ModifierDialogs(data) {
   };
 
   console.log("character", character)
+  console.log("character.character", character.character)
 
   const handleSave = () => {
     if(name === 'force'){
@@ -185,9 +186,9 @@ export default function ModifierDialogs(data) {
     newDatas = {
       JusticcelDemonique_character: text,
     };
-  } else if (name ==='zombique'){
+  } else if (name ==='zombik'){
     newDatas = {
-      Zombique_character: text,
+      Zombik_character: text,
     };
   } else if (name ==='faerik'){
     newDatas = {
@@ -201,9 +202,9 @@ export default function ModifierDialogs(data) {
     newDatas = {
       Nanien_character: text,
     };
-  } else if (name ==='gnomique'){
+  } else if (name ==='gnomik'){
     newDatas = {
-      Gnomique_character: text,
+      Gnomik_character: text,
     };
   } else if (name ==='spectrale'){
     newDatas = {
@@ -367,20 +368,31 @@ export default function ModifierDialogs(data) {
     };
   };
     console.log(newDatas);
-    fetch(`/characters/api/updateCharacter/${currentUser.login.users_ID}`,{
-      method: "PUT",
-      headers:{
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(newDatas),
-    })
-      .then((response) => response.json())
-      .then((newDatas) => {
-        console.log("Success:", newDatas);
-      })
-      .catch((error)=>{
-        console.error("Error:", error);
-      });
+
+
+
+const value = Number(text);
+if (!Number.isFinite(value)) {
+  alert("Valeur invalide");
+  return;
+}
+
+fetch(`/api/characters/updateCharacter/${character.character.ID_character}`, {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(newDatas),
+})
+  .then(async (res) => {
+    const body = await res.json().catch(() => null);
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${JSON.stringify(body)}`);
+    return body;
+  })
+  .then((updated) => {
+    console.log("Success:", updated);
+    setOpen(false);
+  })
+  .catch((err) => console.error("Error:", err));
+
   };
 
   return (

@@ -31,8 +31,6 @@ function JDR() {
     );
   };
 
-  console.log("setCurrentCharacter :", setCurrentCharacter);
-
   console.log("characters list : ", stats);
   console.log("isConnected :", isConnected);
   return (

@@ -65,23 +65,24 @@ export default function BtnRm(props) {
       };
     }
     console.log(data);
-    fetch(`/gauges/api/updateGauges/${props.character.ID_character}`, {
-      method: "PUT",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Success:", data);
-        if (props.onGaugeUpdate) {
-          props.onGaugeUpdate(props.manaName, diff);
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+fetch(`/api/gauges/updateGauges/${encodeURIComponent(props.character.Name_character)}`, {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(data),
+})
+  .then(async (res) => {
+    const body = await res.json().catch(() => null);
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${JSON.stringify(body)}`);
+    return body;
+  })
+  .then((data) => {
+    console.log("Success:", data);
+    props.onGaugeUpdate?.(props.manaName, diff);
+  })
+  .catch((error) => {
+    console.error("Error:", error);
+  });
+
 
     setOpen(false);
   };

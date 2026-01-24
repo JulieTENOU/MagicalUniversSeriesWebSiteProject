@@ -50,7 +50,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     {
       sequelize,
-      tableName: "Chapters",
+      tableName: "chapters",
       timestamps: false,
       indexes: [
         {
