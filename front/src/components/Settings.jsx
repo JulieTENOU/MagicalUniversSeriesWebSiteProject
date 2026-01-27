@@ -122,9 +122,10 @@ export default function Settings() {
       old_password: oldPwd,
       new_password: newPwd,
     };
-    fetch(`/api/change-password`, {
-      method: "POST",
+    fetch(`/api/updatePwd/${userId}`, {
+      method: "PUT",
       headers: { "content-type": "application/json" },
+      credentials: "include",
       body: JSON.stringify(data),
     })
       .then((res) => {
@@ -132,6 +133,9 @@ export default function Settings() {
         return res.json();
       })
       .then(() => {
+      setOldPwd("");
+      setNewPwd("");
+      setConfirmPwd("");
         setAlertMessage("Mot de passe mis à jour !");
         setAlertSeverity("success");
         setAlertOpen(true);
