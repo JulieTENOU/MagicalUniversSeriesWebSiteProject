@@ -48,6 +48,11 @@ function ChaptersList() {
     fetchChapters();
   }, [serie, book]);
 
+  if (!loading && !isConnected) {
+    navigate("/", { replace: true });
+    return null;
+  }
+
   return (
     <div className="main">
       <BG />

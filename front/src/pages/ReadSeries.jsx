@@ -11,7 +11,7 @@ import { ConnexionContext } from '../components/provider.jsx';
 function ReadSeries() {
   const navigate = useNavigate();
   const { serie } = useParams(); // ← récupère "xalyt" ou "ma", etc.
-  const { state: isConnected } = useContext(ConnexionContext);
+  const { state: isConnected, loading } = useContext(ConnexionContext);
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
@@ -27,6 +27,11 @@ function ReadSeries() {
 
     fetchBooks();
   }, [serie]);
+
+  if (!loading && !isConnected) {
+    navigate("/", { replace: true });
+    return null;
+  }
 
   return (
     <div className='main'>

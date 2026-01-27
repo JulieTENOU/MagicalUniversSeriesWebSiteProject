@@ -10,7 +10,7 @@ import { ConnexionContext } from '../components/provider.jsx';
 
 function ReadHome() {
   const navigate = useNavigate();
-  const { state: isConnected } = useContext(ConnexionContext);
+  const { state: isConnected, loading } = useContext(ConnexionContext);
 
   const [seriesList, setSeriesList] = useState([]);
 
@@ -27,6 +27,11 @@ function ReadHome() {
 
     fetchSeries();
   }, []);
+
+  if (!loading && !isConnected) {
+    navigate("/", { replace: true });
+    return null;
+  }
 
   return (
     <div className='main'>

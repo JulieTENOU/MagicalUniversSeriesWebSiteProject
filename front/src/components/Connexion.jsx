@@ -181,11 +181,16 @@ export default function Connexion() {
               id="password"
               type="password"
               onChange={(e) => setPwd(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && id && pwd) {
+                  handleConnexion();
+                }
+              }}
             />
             <Btn
               sx={{
                 color: theme.custom.mymodal.text,
-                textDecoration:"underline"
+                textDecoration: "underline"
               }}
               path="/forgotten_password"
               msg={"Mot de passe oublié"}

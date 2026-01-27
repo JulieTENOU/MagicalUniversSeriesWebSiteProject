@@ -2913,7 +2913,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                {perso.Lumière_character}
+                                {perso.Lumiere_character}
                                 <ModifierDialogs
                                   character={character}
                                   name={"lumiere"}

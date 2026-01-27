@@ -18,6 +18,7 @@ import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 
 import Btn from "../components/Btn";
 import DynamicSkillSelector from "../components/DynamicSkillSelector";
+import { useNavigate } from "react-router-dom";
 
 function ConnectGameMJ() {
   const { ids } = useParams();
@@ -28,7 +29,11 @@ function ConnectGameMJ() {
     setState: setCurrentUser,
     loading,
   } = useContext(ConnexionContext);
-  console.log(currentUser.users_ID);
+
+  let navigate = useNavigate();
+
+
+  console.log(currentUser?.users_ID);
   const [characters, setCharacters] = useState([]);
   console.log(characters);
   useEffect(() => {
@@ -75,6 +80,16 @@ function ConnectGameMJ() {
     console.log("Champ utilisé :", fieldName, "| Valeur :", valeur);
 
   };
+
+  const isInvalidUser =
+    !currentUser ||
+    (Array.isArray(currentUser) && currentUser.length === 0) ||
+    (typeof currentUser === "object" && Object.keys(currentUser).length === 0);
+
+  if (!loading && isInvalidUser) {
+    navigate("/", { replace: true });
+    return null;
+  }
 
   return (
     <div className="main">

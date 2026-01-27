@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import "../index.css";
 import "../general.css";
 import Btn from "../components/Btn";
@@ -33,6 +33,12 @@ function JDR() {
 
   console.log("characters list : ", stats);
   console.log("isConnected :", isConnected);
+
+  if (!loading && !isConnected) {
+    navigate("/", { replace: true });
+    return null;
+  }
+
   return (
     <div className="main">
       <BG />
@@ -56,9 +62,9 @@ function JDR() {
             textAlign: "center",
           }}
         >
-          {isConnected.users_status === "a" &&
+          {isConnected?.users_status === "a" &&
             "Choose the characters for this game"}
-          {isConnected.users_status === "p" &&
+          {isConnected?.users_status === "p" &&
             "Choose your character for this game"}
         </Typography>
         <Btn
@@ -74,8 +80,8 @@ function JDR() {
         {stats.map((stat) => {
           const player = `${stat?.Name_character}`;
           if (
-            isConnected.users_status === "p" &&
-            stat.users_ID === isConnected.users_ID
+            isConnected?.users_status === "p" &&
+            stat.users_ID === isConnected?.users_ID
           ) {
             return (
               <Btn
@@ -93,7 +99,7 @@ function JDR() {
                 }}
               />
             );
-          } else if (isConnected.users_status === "a") {
+          } else if (isConnected?.users_status === "a") {
             const isSelected = selectedCharacters.some(
               (c) => c.ID_character === stat.ID_character
             );
@@ -118,7 +124,7 @@ function JDR() {
                     color: theme.custom.mymodal.text,
                     backgroundColor: isSelected
                       ? theme.custom.mymodal.selected ??
-                        theme.custom.mymodal.button
+                      theme.custom.mymodal.button
                       : theme.custom.mymodal.button,
                     marginBottom: 2,
                     fontWeight: "bold",
@@ -128,7 +134,7 @@ function JDR() {
             );
           }
         })}
-        {isConnected.users_status === "a" && selectedCharacters.length > 0 && (
+        {isConnected?.users_status === "a" && selectedCharacters.length > 0 && (
           <Btn
             onClick={() => {
               const ids = selectedCharacters

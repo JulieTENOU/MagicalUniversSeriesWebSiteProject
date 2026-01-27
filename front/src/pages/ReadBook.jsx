@@ -26,7 +26,7 @@ function ReadBook() {
         const res = await axios.get(
           `/chapters/getByPath/${serie}/${book}/${chapter}`
         );
-      console.log("✔️ Chapitre reçu :", res.data);
+        console.log("✔️ Chapitre reçu :", res.data);
         setCurrentChapter(res.data);
       } catch (error) {
         console.error("Erreur chargement chapitre :", error);
@@ -56,81 +56,86 @@ function ReadBook() {
     };
   }, [localReadingMode, defaultMode, changeTheme]);
 
+  if (!loading && !isConnected) {
+    navigate("/", { replace: true });
+    return null;
+  }
+
   const parseChapterContent = (text, mode) => {
-  if (!text) return null;
+    if (!text) return null;
 
-  const lines = text.split("\n");
+    const lines = text.split("\n");
 
-  return lines.map((line, index) => {
-    // Image de séparation
-    if (line.includes("<sep />")) {
-      const imgSrc =
-        mode === "dark"
-          ? "/assets/img/separator-light.png"
-          : "/assets/img/separator-dark.png";
+    return lines.map((line, index) => {
+      // Image de séparation
+      if (line.includes("<sep />")) {
+        const imgSrc =
+          mode === "dark"
+            ? "/assets/img/separator-light.png"
+            : "/assets/img/separator-dark.png";
 
-      return (
-        <div key={index} style={{ textAlign: "center", margin: "1rem 0" }}>
-          <img
-            src={imgSrc}
-            alt="Séparateur"
-            style={{ maxHeight: "40px" }}
-          />
-        </div>
-      );
-    }
+        return (
+          <div key={index} style={{ textAlign: "center", margin: "1rem 0" }}>
+            <img
+              src={imgSrc}
+              alt="Séparateur"
+              style={{ maxHeight: "40px" }}
+            />
+          </div>
+        );
+      }
 
-    // Texte en italique complet
-    const italicMatch = line.match(/^<i>(.*?)<\/i>$/);
-    if (italicMatch) {
-      return (
-        <Typography
-          key={index}
-          sx={{ fontStyle: "italic", whiteSpace: "pre-line", textAlign: "justify" }}
-          color={theme.custom.mycustomblur.text}
-        >
-          {italicMatch[1]}
-        </Typography>
-      );
-    }
+      // Texte en italique complet
+      const italicMatch = line.match(/^<i>(.*?)<\/i>$/);
+      if (italicMatch) {
+        return (
+          <Typography
+            key={index}
+            sx={{ fontStyle: "italic", whiteSpace: "pre-line", textAlign: "justify" }}
+            color={theme.custom.mycustomblur.text}
+          >
+            {italicMatch[1]}
+          </Typography>
+        );
+      }
 
-    // Texte avec balises <i> à l'intérieur
-    if (line.includes("<i>")) {
-      const parts = line.split(/(<i>.*?<\/i>)/g);
+      // Texte avec balises <i> à l'intérieur
+      if (line.includes("<i>")) {
+        const parts = line.split(/(<i>.*?<\/i>)/g);
 
+        return (
+          <Typography
+            key={index}
+            sx={{ whiteSpace: "pre-line", textAlign: "justify" }}
+            color={theme.custom.mycustomblur.text}
+          >
+            {parts.map((part, i) => {
+              if (part.startsWith("<i>") && part.endsWith("</i>")) {
+                return (
+                  <span key={i} style={{ fontStyle: "italic" }}>
+                    {part.slice(3, -4)}
+                  </span>
+                );
+              } else {
+                return part;
+              }
+            })}
+          </Typography>
+        );
+      }
+
+      // Paragraphe normal
       return (
         <Typography
           key={index}
           sx={{ whiteSpace: "pre-line", textAlign: "justify" }}
           color={theme.custom.mycustomblur.text}
         >
-          {parts.map((part, i) => {
-            if (part.startsWith("<i>") && part.endsWith("</i>")) {
-              return (
-                <span key={i} style={{ fontStyle: "italic" }}>
-                  {part.slice(3, -4)}
-                </span>
-              );
-            } else {
-              return part;
-            }
-          })}
+          {line}
         </Typography>
       );
-    }
-
-    // Paragraphe normal
-    return (
-      <Typography
-        key={index}
-        sx={{ whiteSpace: "pre-line", textAlign: "justify" }}
-        color={theme.custom.mycustomblur.text}
-      >
-        {line}
-      </Typography>
-    );
-  });
-};
+    });
+  };
 
 
   return (

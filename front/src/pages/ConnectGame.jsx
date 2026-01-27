@@ -21,6 +21,7 @@ import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import AirIcon from '@mui/icons-material/Air';
 import GrassIcon from '@mui/icons-material/Grass';
 import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
+import { useNavigate } from "react-router-dom";
 
 function ConnectGame() {
   const { characterId } = useParams();
@@ -30,8 +31,13 @@ function ConnectGame() {
     setState: setCurrentUser,
     loading,
   } = useContext(ConnexionContext);
-  console.log(currentUser.users_ID);
-  
+  // console.log(currentUser.users_ID);
+  console.log(`currentUser : ${currentUser}`);
+
+  let navigate = useNavigate();
+
+
+
   const defaultCharacter = {
     ID_character: 0,
     Name_character: "Visiteur",
@@ -60,66 +66,118 @@ function ConnectGame() {
 
   const [character, setCharacter] = useState(defaultCharacter);
 
-  // const [maxManaAir, setMaxManaAir] = useState(character.ManaAir_character);
-  
-  // console.log("maxManaAir: ", maxManaAir);
-  // const [currentManaAir, setCurrentManaAir] = useState(
-  //   character.ManaAir_character
-  // );
-  
-  // console.log("currentManaAir: ", currentManaAir);
-  // const [maxManaEau, setMaxManaEau] = useState(character.ManaEau_character);
-  // console.log("maxManaEau: ", maxManaEau);
-  // const [currentManaEau, setCurrentManaEau] = useState(
-  //   character.ManaEau_character
-  // );
-  // console.log("currentManaEau: ", currentManaEau);
-  // const [maxManaTerre, setMaxManaTerre] = useState(
-  //   character.ManaTerre_character
-  // );
-  // const [currentManaTerre, setCurrentManaTerre] = useState(
-  //   character.ManaTerre_character
-  // );
-  // const [maxManaFeu, setMaxManaFeu] = useState(character.ManaFeu_character);
-  // const [currentManaFeu, setCurrentManaFeu] = useState(
-  //   character.ManaFeu_character
-  // );
-  // const [maxManaVolonte, setMaxManaVolonte] = useState(
-  //   character.ManaVolonte_character
-  // );
-  // const [currentManaVolonte, setCurrentManaVolonte] = useState(
-  //   character.ManaVolonte_character
-  // );
-  // const [maxManaVital, setMaxManaVital] = useState(
-  //   character.ManaVital_character
-  // );
-  // const [currentManaVital, setCurrentManaVital] = useState(
-  //   character.ManaVital_character
-  // );
-  // const [maxStamina, setMaxStamina] = useState(character.Stamina_character);
-  // const [currentStamina, setCurrentStamina] = useState(
-  //   character.Stamina_character
-  // );
 
   const [maxGauges, setMaxGauges] = useState({
-  ManaAir: defaultCharacter.ManaAir_character,
-  ManaEau: defaultCharacter.ManaEau_character,
-  ManaTerre: defaultCharacter.ManaTerre_character,
-  ManaFeu: defaultCharacter.ManaFeu_character,
-  ManaVolonte: defaultCharacter.ManaVolonte_character,
-  ManaVital: defaultCharacter.ManaVital_character,
-  Stamina: defaultCharacter.Stamina_character,
-});
+    ManaAir: defaultCharacter.ManaAir_character,
+    ManaEau: defaultCharacter.ManaEau_character,
+    ManaTerre: defaultCharacter.ManaTerre_character,
+    ManaFeu: defaultCharacter.ManaFeu_character,
+    ManaVolonte: defaultCharacter.ManaVolonte_character,
+    ManaVital: defaultCharacter.ManaVital_character,
+    Stamina: defaultCharacter.Stamina_character,
+  });
 
-const [currentGauges, setCurrentGauges] = useState({
-  currentManaAir: defaultCharacter.ManaAir_character,     // fallback temporaire
-  currentManaEau: defaultCharacter.ManaEau_character,
-  currentManaTerre: defaultCharacter.ManaTerre_character,
-  currentManaFeu: defaultCharacter.ManaFeu_character,
-  currentManaVolonte: defaultCharacter.ManaVolonte_character,
-  currentManaVital: defaultCharacter.ManaVital_character,
-  currentStamina: defaultCharacter.Stamina_character,
-});
+  const [currentGauges, setCurrentGauges] = useState({
+    currentManaAir: defaultCharacter.ManaAir_character,     // fallback temporaire
+    currentManaEau: defaultCharacter.ManaEau_character,
+    currentManaTerre: defaultCharacter.ManaTerre_character,
+    currentManaFeu: defaultCharacter.ManaFeu_character,
+    currentManaVolonte: defaultCharacter.ManaVolonte_character,
+    currentManaVital: defaultCharacter.ManaVital_character,
+    currentStamina: defaultCharacter.Stamina_character,
+  });
+
+  const compFieldByName = {
+    force: "Force_character",
+    dexte: "Dexte_character",
+    resistance: "Resistance_character",
+    resilience: "Resilience_character",
+    intell: "Intell_character",
+    charsime: "Charisme_character",
+    bien: "Bien_character",
+    mal: "Mal_character",
+    instinct: "Instinct_character",
+    survie: "Survie_character",
+
+    "démonique": "Demonique_character",
+    draconique: "Draconique_character",
+    xalytien: "Xalytien_character",
+    xento: "Xento_character",
+    zenolm: "Zenolm_character",
+    justiccel: "Justiccel_character",
+    cerebrov: "Cerebrov_character",
+
+    xaArch: "XalytienArchaique_character",
+    xenArch: "XentoArchaique_character",
+    zenArch: "ZenolmArchaique_character",
+    justiArch: "JusticcelArchaique_character",
+
+    xaAnt: "XalytienAntique_character",
+    d4q: "XentoAntique_character",
+    xenAnt: "XentoAntique_character",
+    zenAnt: "ZenolmAntique_character",
+    justiAnt: "JusticcelAntique_character",
+
+    xaDem: "XalytienDemonique_character",
+    xenDem: "XentoDemonique_character",
+    ZenDem: "ZenolmDemonique_character",
+    JustiDem: "JusticcelDemonique_character",
+
+    zombik: "Zombik_character",
+    faerik: "Faerik_character",
+    elfik: "Elfik_character",
+    nanien: "Nanien_character",
+    gnomik: "Gnomik_character",
+
+    spectrale: "Spectrale_character",
+    astrale: "Astrale_character",
+    tenebriale: "Tenebriale_character",
+    noyale: "Noyale_character",
+    elementale: "Elementale_character",
+    celeste: "Celeste_character",
+
+    arcs: "Arcs_character",
+    tir: "Tir_character",
+    mainsNues: "MainsNues_character",
+    jets: "Jets_character",
+    hast: "ArmesHast_character",
+    tranchantes: "Tranchantes_character",
+    contondantes: "Contondantes_character",
+    esquive: "Esquive_character",
+    parade: "Parade_character",
+
+    magicotech: "MagicoTech_character",
+    carto: "Cartographie_character",
+    herbo: "Herboristerie_character",
+    medecine: "Medecine_character",
+    popo: "Potions_character",
+    theoMag: "TheorieMagique_character",
+    histoMag: "HistoireMagique_character",
+
+    air: "MagieAir_character",
+    eau: "MagieEau_character",
+    feu: "MagieFeu_character",
+    terre: "MagieTerre_character",
+    elec: "MagieElec_character",
+
+    crea: "Crea_character",
+    animaturgie: "Animaturgie_character",
+
+    vie: "MagieVie_character",
+    mort: "Mort_character",
+    temps: "Temps_character",
+    lumiere: "Lumiere_character",
+    tenebre: "Tenebres_character",
+    cosmos: "Cosmos_character",
+
+    invoc: "Invoc_character",
+    aura: "Aura_character",
+    magieAstrale: "MagieAstrale_character",
+    magieSpectrale: "MagieSpectrale_character",
+    magieDraconique: "MagieDraconique_character",
+  };
+
+  const [comps, setComps] = useState({});
 
 
   useEffect(() => {
@@ -129,16 +187,16 @@ const [currentGauges, setCurrentGauges] = useState({
         const chara = data.data;
         if (chara && chara.ID_character) {
           console.log("Personnage trouvé :", chara);
-            setCharacter(chara);
-            setMaxGauges({
-              ManaAir: chara.ManaAir_character,
-              ManaEau: chara.ManaEau_character,
-              ManaTerre: chara.ManaTerre_character,
-              ManaFeu: chara.ManaFeu_character,
-              ManaVolonte: chara.ManaVolonte_character,
-              ManaVital: chara.ManaVital_character,
-              Stamina: chara.Stamina_character,
-    });
+          setCharacter(chara);
+          setMaxGauges({
+            ManaAir: chara.ManaAir_character,
+            ManaEau: chara.ManaEau_character,
+            ManaTerre: chara.ManaTerre_character,
+            ManaFeu: chara.ManaFeu_character,
+            ManaVolonte: chara.ManaVolonte_character,
+            ManaVital: chara.ManaVital_character,
+            Stamina: chara.Stamina_character,
+          });
         } else {
           console.warn("Aucun personnage trouvé, affichage du Visiteur.");
         }
@@ -149,20 +207,20 @@ const [currentGauges, setCurrentGauges] = useState({
           err
         );
       });
-  }, [currentUser.users_ID]);
+  }, [currentUser?.users_ID]);
 
   useEffect(() => {
     if (!character || character.ID_character === 0) {
       // Reste sur les valeurs par défaut du Visiteur
-       setCurrentGauges({
-          currentManaAir: character.ManaAir_character,
-          currentManaEau: character.ManaEau_character,
-          currentManaTerre: character.ManaTerre_character,
-          currentManaFeu: character.ManaFeu_character,
-          currentManaVolonte: character.ManaVolonte_character,
-          currentManaVital: character.ManaVital_character,
-          currentStamina: character.Stamina_character,
-        });
+      setCurrentGauges({
+        currentManaAir: character.ManaAir_character,
+        currentManaEau: character.ManaEau_character,
+        currentManaTerre: character.ManaTerre_character,
+        currentManaFeu: character.ManaFeu_character,
+        currentManaVolonte: character.ManaVolonte_character,
+        currentManaVital: character.ManaVital_character,
+        currentStamina: character.Stamina_character,
+      });
       return;
     }
 
@@ -172,7 +230,7 @@ const [currentGauges, setCurrentGauges] = useState({
       .then(async (res) => {
         const body = await res.json().catch(() => null);
 
-        if (!res.ok){
+        if (!res.ok) {
           console.log("Gauges API error: ", res.status, body);
           throw new Error(`HTTP ${res.status}`);
         }
@@ -182,17 +240,17 @@ const [currentGauges, setCurrentGauges] = useState({
       .then((data) => {
         console.log("data: ", data);
         const gauges = data?.data;
-        if(!gauges) throw new Error("Réponse API invalide: data.data manquant");
+        if (!gauges) throw new Error("Réponse API invalide: data.data manquant");
 
         setCurrentGauges({
-        currentManaAir: gauges.currentManaAir,
-        currentManaEau: gauges.currentManaEau,
-        currentManaTerre: gauges.currentManaTerre,
-        currentManaFeu: gauges.currentManaFeu,
-        currentManaVolonte: gauges.currentManaVolonte,
-        currentManaVital: gauges.currentManaVital,
-        currentStamina: gauges.currentStamina,
-      });
+          currentManaAir: gauges.currentManaAir,
+          currentManaEau: gauges.currentManaEau,
+          currentManaTerre: gauges.currentManaTerre,
+          currentManaFeu: gauges.currentManaFeu,
+          currentManaVolonte: gauges.currentManaVolonte,
+          currentManaVital: gauges.currentManaVital,
+          currentStamina: gauges.currentStamina,
+        });
       })
       .catch((err) => {
         console.log(
@@ -211,11 +269,30 @@ const [currentGauges, setCurrentGauges] = useState({
       });
   }, [character]);
 
-function handleGaugeUpdate(manaName, newValue) {
-  setCurrentGauges((prev) => ({ ...prev, [manaName]: newValue }));
-}
+  function handleGaugeUpdate(manaName, newValue) {
+    setCurrentGauges((prev) => ({ ...prev, [manaName]: newValue }));
+  }
 
-  console.log("character datas : ",character);
+  function handleCompUpdate(name, newValue) {
+    const field = compFieldByName[name];
+    if (!field) {
+      console.warn("Comp inconnue :", name);
+      return;
+    }
+    setComps((prev) => ({ ...prev, [field]: newValue }));
+  }
+
+  console.log("character datas : ", character);
+
+  const isInvalidUser =
+    !currentUser ||
+    (Array.isArray(currentUser) && currentUser.length === 0) ||
+    (typeof currentUser === "object" && Object.keys(currentUser).length === 0);
+
+  if (!loading && isInvalidUser) {
+    navigate("/", { replace: true });
+    return null;
+  }
 
   return (
     <div className="main">
@@ -286,8 +363,8 @@ function handleGaugeUpdate(manaName, newValue) {
                     left={"35vw"}
                     sx={{ color: theme.custom.mycustomblur.text }}
                   >
-                    <AirIcon/>
-                    <br/>
+                    <AirIcon />
+                    <br />
                     {currentGauges.currentManaAir} pts
                   </Typography>
                   <LinearProgress
@@ -362,8 +439,8 @@ function handleGaugeUpdate(manaName, newValue) {
                     top={"45vh"}
                     left={"40vw"}
                     sx={{ color: theme.custom.mycustomblur.text }}
-                  > <WaterDropIcon/>
-                  <br/>
+                  > <WaterDropIcon />
+                    <br />
                     {currentGauges.currentManaEau} pts
                   </Typography>
                   <LinearProgress
@@ -439,8 +516,8 @@ function handleGaugeUpdate(manaName, newValue) {
                     top={"45vh"}
                     sx={{ color: theme.custom.mycustomblur.text }}
                   >
-                    <GrassIcon/>
-                    <br/>
+                    <GrassIcon />
+                    <br />
                     {currentGauges.currentManaTerre} pts
                   </Typography>
                   <LinearProgress
@@ -515,7 +592,7 @@ function handleGaugeUpdate(manaName, newValue) {
                     top={"45vh"}
                     sx={{ color: theme.custom.mycustomblur.text }}
                   >
-                   <LocalFireDepartmentIcon/> <br/> {currentGauges.currentManaFeu} pts
+                    <LocalFireDepartmentIcon /> <br /> {currentGauges.currentManaFeu} pts
                   </Typography>
                   <LinearProgress
                     color="error"
@@ -590,8 +667,8 @@ function handleGaugeUpdate(manaName, newValue) {
                     top={"45vh"}
                     sx={{ color: theme.custom.mycustomblur.text }}
                   >
-                    <SelfImprovementIcon/>
-                    <br/>
+                    <SelfImprovementIcon />
+                    <br />
                     {currentGauges.currentManaVolonte} pts
                   </Typography>
                   <LinearProgress
@@ -650,8 +727,8 @@ function handleGaugeUpdate(manaName, newValue) {
                     position={"fixed"}
                     left={"4vw"}
                     top={"42vh"}
-                    
-                    sx={{color:theme.custom.mycustomblur.text}}
+
+                    sx={{ color: theme.custom.mycustomblur.text }}
                     textAlign={"center"}
                   >
                     Mana Vital
@@ -759,8 +836,8 @@ function handleGaugeUpdate(manaName, newValue) {
                   </div>
                   <Typography
                     className="label"
-                    
-                    sx={{color:theme.custom.mycustomblur.text}}
+
+                    sx={{ color: theme.custom.mycustomblur.text }}
                     id="manaVolonte"
                   >
                     Etat transitionnel
@@ -782,8 +859,8 @@ function handleGaugeUpdate(manaName, newValue) {
                     position={"fixed"}
                     left={" 18vw"}
                     top={"42vh"}
-                    
-                    sx={{color:theme.custom.mycustomblur.text}}
+
+                    sx={{ color: theme.custom.mycustomblur.text }}
                     textAlign={"center"}
                   >
                     Stamina
@@ -833,7 +910,7 @@ function handleGaugeUpdate(manaName, newValue) {
                   <p
                     contentEditable="true"
                     style={{
-                      color:theme.custom.mycustomblur.text,
+                      color: theme.custom.mycustomblur.text,
                       fontSize: "1.3em",
                       border: "solid whitesmoke 1px",
                       borderRadius: "5px",
@@ -846,14 +923,14 @@ function handleGaugeUpdate(manaName, newValue) {
                     ...................
                     <br />
                   </p>
-                  <Typography 
-                    sx={{color:theme.custom.mycustomblur.text}} id="chance">
+                  <Typography
+                    sx={{ color: theme.custom.mycustomblur.text }} id="chance">
                     Chance
                   </Typography>
                 </div>
               </div>
             </div>
-            <div style={{ height: "3em", position:"fixed", left:"2vw", top:"12vh" }}>
+            <div style={{ height: "3em", position: "fixed", left: "2vw", top: "12vh" }}>
               <h2 style={{ color: theme.custom.mycustomblur.text }}>
                 Welcome back {character.Name_character}
               </h2>
