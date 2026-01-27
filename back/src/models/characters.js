@@ -16,7 +16,7 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false,
         references: {
           model: "users",
-          key:"users_ID",
+          key: "users_ID",
         },
       },
       Name_character: {
@@ -109,11 +109,11 @@ module.exports = function (sequelize, DataTypes) {
       },
       HasDraconiqueHeart: {
         type: DataTypes.BOOLEAN,
-        allowNull: true
+        allowNull: true,
       },
       HasCeleste: {
         type: DataTypes.BOOLEAN,
-        allowNull: true
+        allowNull: true,
       },
       Force_character: {
         type: DataTypes.INTEGER,
@@ -196,8 +196,8 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: true,
       },
       XalytienDemonique_character: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
+        type: DataTypes.INTEGER,
+        allowNull: true,
       },
       XentoAntique_character: {
         type: DataTypes.INTEGER,
@@ -215,7 +215,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-        ZenolmAntique_character: {
+      ZenolmAntique_character: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
@@ -293,11 +293,11 @@ module.exports = function (sequelize, DataTypes) {
       },
       Tranchantes_character: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       Contondantes_character: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       Esquive_character: {
         type: DataTypes.INTEGER,
@@ -323,7 +323,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-       Discretion_character: {
+      Discretion_character: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
@@ -463,7 +463,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      Lumière_character: {
+      Lumiere_character: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
@@ -505,6 +505,6 @@ module.exports = function (sequelize, DataTypes) {
           fields: [{ name: "users_ID" }],
         },
       ],
-    }
+    },
   );
 };

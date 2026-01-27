@@ -2,9 +2,20 @@ import { Box, Typography, Button, MenuItem, TextField } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 import Btn from "./Btn";
 import Dice3D from "./Dice3D";
+import { useContext } from "react";
+import { ConnexionContext } from "./provider"; // adapte le chemin exact
+import { Dialog, DialogTitle, DialogContent, DialogActions, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox,} from "@mui/material";
 
 export default function CreationPersonnage({ theme }) {
   const [activeTab, setActiveTab] = useState("identite");
+  const [openEquipDialog, setOpenEquipDialog] = useState(false);
+
+  const [initialChoices, setInitialChoices] = useState({
+    virtual_game: false,
+    weapon_choice: "", // "arc" | "arbalète"
+  });
+
+  const { state: currentUser } = useContext(ConnexionContext);
 
   // -- States des valeurs du personnage --
   const [name, setName] = useState("");
@@ -167,6 +178,9 @@ export default function CreationPersonnage({ theme }) {
   const isAllValid =
     isIdentiteValid() && isAttributsValid() && isRessourcesValid();
 
+  const needsWeaponChoice = metier === "Palladin";
+
+
   // --- Onglets avec navigation bloquée ---
   const tabs = [
     { key: "identite", label: "Identité", disabled: false },
@@ -178,41 +192,153 @@ export default function CreationPersonnage({ theme }) {
     },
   ];
 
-  // --- SUBMIT ---
-  const handleSubmit = () => {
-    if (!isAllValid) return; // Sécurité
-    const data = {
-      Name_character: name,
-      Age_character: age,
-      Sexe_character: sexe,
-      Race_character: race,
-      Metier_character: metier,
-      OeilD_character: oeilD,
-      OeilG_character: oeilG,
-      Cheveux_character: cheveux,
-      Taille_character: taille,
-      Poids_character: poids,
-      Signes_character: signes,
-      Traits_character: traits,
-      Agence_character: agence,
-      Planete_character: planete,
-      Force_character: force,
-      Dexte_character: dexte,
-      Resistance_character: resistance,
-      Resilience_character: resilience,
-      Intell_character: intell,
-      Charisme_character: charisme,
-      Chance_character: chance,
-      Stamina_character: stamina,
-      ManaVital_character: manaVital,
-      ManaEau_character: manaEau,
-      ManaTerre_character: manaTerre,
-      ManaFeu_character: manaFeu,
-      ManaAir_character: manaAir,
-      ManaVolonte_character: manaVolonte,
-    };
-    alert("Données du perso :\n" + JSON.stringify(data, null, 2));
+// const handleSubmit = async () => {
+//   if (!isAllValid) return;
+
+//   const data = {
+//     Name_character: name,
+//     Age_character: Number(age),
+//     Sexe_character: sexe,
+//     Race_character: race,
+//     Metier_character: metier,
+//     OeilD_character: oeilD,
+//     OeilG_character: oeilG,
+//     Cheveux_character: cheveux,
+//     Taille_character: Number(taille),
+//     Poids_character: Number(poids),
+//     Signes_character: signes,
+//     Traits_character: traits,
+//     Agence_character: agence,
+//     Planete_character: planete,
+//     Force_character: Number(force),
+//     Dexte_character: Number(dexte),
+//     Resistance_character: Number(resistance),
+//     Resilience_character: Number(resilience),
+//     Intell_character: Number(intell),
+//     Charisme_character: Number(charisme),
+//     Chance_character: Number(chance),
+//     Stamina_character: Number(stamina),
+//     ManaVital_character: Number(manaVital),
+//     ManaEau_character: Number(manaEau),
+//     ManaTerre_character: Number(manaTerre),
+//     ManaFeu_character: Number(manaFeu),
+//     ManaAir_character: Number(manaAir),
+//     ManaVolonte_character: Number(manaVolonte),
+//     users_ID: currentUser?.users_ID,
+//   };
+
+//   try {
+//     const res = await fetch("/api/characters/createCharacter", { 
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       credentials: "include",
+//       body: JSON.stringify(data),
+//     });
+
+//     const payload = await res.json().catch(() => ({}));
+
+//     if (!res.ok) {
+//       console.error("CREATE FAILED", res.status, payload);
+//       return;
+//     }
+
+//     console.log("CREATED", payload);
+//     // ici tu peux redirect ou afficher un snackbar
+//   } catch (e) {
+//     console.error("NETWORK ERROR", e);
+//   }
+// };
+
+const buildDataPayload = () => ({
+  Name_character: name,
+  Age_character: Number(age),
+  Sexe_character: sexe,
+  Race_character: race,
+  Metier_character: metier,
+  OeilD_character: oeilD,
+  OeilG_character: oeilG,
+  Cheveux_character: cheveux,
+  Taille_character: Number(taille),
+  Poids_character: Number(poids),
+  Signes_character: signes,
+  Traits_character: traits,
+  Agence_character: agence,
+  Planete_character: planete,
+  Force_character: Number(force),
+  Dexte_character: Number(dexte),
+  Resistance_character: Number(resistance),
+  Resilience_character: Number(resilience),
+  Intell_character: Number(intell),
+  Charisme_character: Number(charisme),
+  Chance_character: Number(chance),
+  Stamina_character: Number(stamina),
+  ManaVital_character: Number(manaVital),
+  ManaEau_character: Number(manaEau),
+  ManaTerre_character: Number(manaTerre),
+  ManaFeu_character: Number(manaFeu),
+  ManaAir_character: Number(manaAir),
+  ManaVolonte_character: Number(manaVolonte),
+  // users_ID inutile si back utilise req.userId via verifyToken
+});
+
+const sendCreate = async () => {
+  const data = {
+    ...buildDataPayload(),
+    initialChoices, // ✅ envoyé au back
   };
+
+  try {
+    const res = await fetch("/api/characters/createCharacter", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(data),
+    });
+
+    const payload = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      console.error("CREATE FAILED", res.status, payload);
+      return;
+    }
+
+    console.log("CREATED", payload);
+    // TODO: redirect/snackbar
+  } catch (e) {
+    console.error("NETWORK ERROR", e);
+  }
+};
+
+const handleSubmit = () => {
+  if (!isAllValid) return;
+
+  // si palladin, on force le choix arc/arbalète via popup
+  if (needsWeaponChoice) {
+    setOpenEquipDialog(true);
+    return;
+  }
+
+  // sinon popup quand même (virtual game) ? au choix :
+  // ici je la montre aussi, car virtual game est proposé à tous
+  setOpenEquipDialog(true);
+};
+
+const handleCloseEquipDialog = () => {
+  setOpenEquipDialog(false);
+};
+
+const handleConfirmEquipDialog = async () => {
+  // validation : si palladin -> arme obligatoire
+  if (needsWeaponChoice && (initialChoices.weapon_choice !== "arc" && initialChoices.weapon_choice !== "arbalète")) {
+    // tu peux afficher un message MUI si tu veux, là c'est le plus simple :
+    alert("Choisis une arme (arc ou arbalète).");
+    return;
+  }
+
+  setOpenEquipDialog(false);
+  await sendCreate();
+};
+
 
   const dieRef = useRef(null);
   // --- RENDER ---
@@ -611,6 +737,49 @@ export default function CreationPersonnage({ theme }) {
             onRollEnd={(v)=>console.log(v)}/>
         </Box>
       </Box>
+
+      <Dialog open={openEquipDialog} onClose={handleCloseEquipDialog} maxWidth="sm" fullWidth>
+  <DialogTitle>Équipement de départ</DialogTitle>
+
+  <DialogContent dividers>
+    {/* Virtual game (optionnel pour tous) */}
+    <FormControlLabel
+      control={
+        <Checkbox
+          checked={initialChoices.virtual_game}
+          onChange={(e) =>
+            setInitialChoices((prev) => ({ ...prev, virtual_game: e.target.checked }))
+          }
+        />
+      }
+      label="Prendre un Virtual Game dès le départ (optionnel)"
+    />
+
+    {/* Choix arc/arbalète uniquement pour Palladin */}
+    {needsWeaponChoice && (
+      <FormControl sx={{ mt: 2 }}>
+        <FormLabel>Choix d'arme (obligatoire)</FormLabel>
+        <RadioGroup
+          value={initialChoices.weapon_choice}
+          onChange={(e) =>
+            setInitialChoices((prev) => ({ ...prev, weapon_choice: e.target.value }))
+          }
+        >
+          <FormControlLabel value="arc" control={<Radio />} label="Arc" />
+          <FormControlLabel value="arbalète" control={<Radio />} label="Arbalète" />
+        </RadioGroup>
+      </FormControl>
+    )}
+  </DialogContent>
+
+  <DialogActions>
+    <Button onClick={handleCloseEquipDialog}>Annuler</Button>
+    <Button variant="contained" onClick={handleConfirmEquipDialog}>
+      Confirmer
+    </Button>
+  </DialogActions>
+</Dialog>
+
     </Box>
   );
 }

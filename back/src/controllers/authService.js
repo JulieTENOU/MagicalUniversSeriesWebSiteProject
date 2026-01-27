@@ -129,33 +129,58 @@ module.exports = {
 
   // Update password
   updatePassword: async function (req, res) {
-    console.log(req.body);
-    if (req.body) {
-      users
-        .findOne({
-          where: {
-            users_email: req.body.users_email,
-          },
-        })
-        .then((response) => {
-          if (!response) {
-            return res.status(404).send({ message: "Invalid Email Address" });
-          } else {
-            req.body.users_password = bcrypt.hashSync(
-              req.body.users_password,
-              8
-            );
-            response.update(req.body);
-            res.send(true);
-          }
-        })
-        .catch((err) => {
-          return res.status(400).send({ err: err.message });
-        });
-    } else {
-      res.status(400).json({ message: "No data was provided." });
+    try{
+      console.log(req.body);
+      const { users_ID } = req.params;
+      const { old_password, new_password  } = req.body;
+      if(!users_ID || !old_password || !new_password){
+        return res.status(400).send({message: "Données manquantes."});
+      }
+
+      const user = await users.findOne({where: {users_ID}});  
+      if(!user){
+        return res.status(404).send({ message: "Utilisateur inconnu."});
+      }
+
+      const ok = await bcrypt.compare(old_password, user.users_password);
+      if(!ok){
+        return res.status(401).send({ message: "Mot de passe actuel incorrect."});
+      }
+
+      const hashed = bcrypt.hashSync(new_password, 8);
+      await user.update({users_password: hashed});
+
+      return res.status(200).send({message: "Mot de passe mis à jour."});
+    } catch (err){
+      return res.status(400).send({err: err.message});
     }
   },
+  //   if (req.body) {
+  //     users
+  //       .findOne({
+  //         where: {
+  //           users_email: req.body.users_email,
+  //         },
+  //       })
+  //       .then((response) => {
+  //         if (!response) {
+  //           return res.status(404).send({ message: "Invalid Email Address" });
+  //         } else {
+  //           req.body.users_password = bcrypt.hashSync(
+  //             req.body.users_password,
+  //             8
+  //           );
+  //           response.update(req.body);
+  //           res.send(true);
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         return res.status(400).send({ err: err.message });
+  //       });
+  //   } else {
+  //     res.status(400).json({ message: "No data was provided." });
+  //   }
+  // },
 
 
 
@@ -168,7 +193,7 @@ module.exports = {
 
         if (!user) {
         return res.status(200).send({
-          message: "Si cet email existe, un lien de réinitialisation a été envoyé.",
+          message: "Si cet email existe dans notre base, un lien de réinitialisation a été envoyé.",
         });
           // return res.status(404).send({ message: "Aucun utilisateur trouvé." });
         }
@@ -183,12 +208,12 @@ module.exports = {
           users_reset_expires: resetExpires,
         });
 
-        const resetLink = `http://192.168.1.16:3003/reset-password/${resetToken}`;
+        const resetLink = `https://melaniedc-magical-universe.duckdns.org/reset-password/${resetToken}`;
         await sendResetEmail(user.users_email, resetLink);
 
         return res.status(200).send({
           message:
-            "Si cet email existe, un lien de réinitialisation a été envoyé.",
+            "Si cet email existe dans notre base, un lien de réinitialisation a été envoyé.",
         });
       } catch (err) {
         return res.status(500).send({ err: err.message });

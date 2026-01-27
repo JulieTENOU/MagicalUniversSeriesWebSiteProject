@@ -15,6 +15,10 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.STRING(30),
         allowNull: false,
       },
+      code: {
+        type: DataTypes.STRING(50),
+        allowNull: true,
+      },
     },
     {
       sequelize,
@@ -28,6 +32,6 @@ module.exports = function (sequelize, DataTypes) {
           fields: [{ name: "id" }],
         },
       ],
-    }
+    },
   );
 };
