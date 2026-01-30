@@ -88,6 +88,26 @@ function ConnectGame() {
     currentStamina: defaultCharacter.Stamina_character,
   });
 
+  const percentManaAir =
+    (currentGauges.currentManaAir / maxGauges.ManaAir) * 100;
+  const clampedManaAir = Math.min(100, Math.max(0, percentManaAir));
+
+  const percentManaEau =
+    (currentGauges.currentManaEau / maxGauges.ManaEau) * 100;
+  const clampedManaEau = Math.min(100, Math.max(0, percentManaEau));
+
+  const percentManaTerre =
+    (currentGauges.currentManaTerre / maxGauges.ManaTerre) * 100;
+  const clampedManaTerre = Math.min(100, Math.max(0, percentManaTerre));
+
+  const percentManaFeu =
+    (currentGauges.currentManaFeu / maxGauges.ManaFeu) * 100;
+  const clampedManaFeu = Math.min(100, Math.max(0, percentManaFeu));
+
+  const percentManaVolonte =
+    (currentGauges.currentVolonte / maxGauges.ManaVolonte) * 100;
+  const clampedManaVolonte = Math.min(100, Math.max(0, percentManaVolonte));
+
   const compFieldByName = {
     force: "Force_character",
     dexte: "Dexte_character",
@@ -376,10 +396,7 @@ function ConnectGame() {
                     color="success"
                     id="manaAir"
                     variant="determinate"
-                    value={
-                      (currentGauges.currentManaAir / maxGauges.maxManaAir) *
-                      100
-                    }
+                    value={clampedManaAir}
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -457,10 +474,7 @@ function ConnectGame() {
                     color="info"
                     id="manaEau"
                     variant="determinate"
-                    value={
-                      (currentGauges.currentManaEau / maxGauges.maxManaEau) *
-                      100
-                    }
+                    value={clampedManaEau}
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -537,11 +551,7 @@ function ConnectGame() {
                     color="warning"
                     id="manaTerre"
                     variant="determinate"
-                    value={
-                      (currentGauges.currentManaTerre /
-                        maxGauges.maxManaTerre) *
-                      100
-                    }
+                    value={clampedManaTerre}
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -616,10 +626,7 @@ function ConnectGame() {
                     color="error"
                     id="manaFeu"
                     variant="determinate"
-                    value={
-                      (currentGauges.currentManaFeu / maxGauges.maxManaFeu) *
-                      100
-                    }
+                    value={clampedManaFeu}
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -695,11 +702,7 @@ function ConnectGame() {
                   <LinearProgress
                     id="manaVolonte"
                     variant="determinate"
-                    value={
-                      (currentGauges.currentManaVolonte /
-                        maxGauges.maxManaVolonte) *
-                      100
-                    }
+                    value={clampedManaVolonte}
                     sx={{
                       position: "fixed",
                       top: "25vh",
