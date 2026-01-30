@@ -15,6 +15,7 @@ import { ConnexionContext } from "./provider";
 import HomeCompo from "./Home";
 import Btn from "./Btn";
 import { useTheme } from "@mui/material/styles";
+import { useTranslation } from "react-i18next";
 
 export default function Connexion() {
   const theme = useTheme();
@@ -27,6 +28,7 @@ export default function Connexion() {
   const [id, setId] = useState(null);
   const [pwd, setPwd] = useState(null);
   console.log(ConnexionContext);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (currentUser) {
@@ -118,7 +120,7 @@ export default function Connexion() {
                     fontWeight: "bold",
                   }}
                 >
-                  Connexion
+                  {t("buttons.login")}
                 </Typography>
               }
             />
@@ -142,7 +144,7 @@ export default function Connexion() {
                     fontWeight: "bold",
                   }}
                 >
-                  Inscritpion
+                  {t("buttons.signup")}
                 </Typography>
               }
             />
@@ -171,7 +173,7 @@ export default function Connexion() {
                 color: theme.custom.mymodal.text,
               }}
             >
-              Mot de passe
+              {t("signup.pwd")}
             </DialogContentText>
             <TextField
               sx={{
@@ -190,10 +192,10 @@ export default function Connexion() {
             <Btn
               sx={{
                 color: theme.custom.mymodal.text,
-                textDecoration: "underline"
+                textDecoration: "underline",
               }}
               path="/forgotten_password"
-              msg={"Mot de passe oublié"}
+              msg={t("signup.frgt")}
             />
           </DialogContent>
           <DialogActions sx={{ textAlign: "center", justifyContent: "center" }}>
@@ -204,7 +206,7 @@ export default function Connexion() {
                 backgroundColor: theme.custom.mymodal.button,
               }}
             >
-              Se connecter
+              {t("signup.cta")}
             </Button>
           </DialogActions>
         </Box>

@@ -18,7 +18,10 @@ import { useState } from "react";
 import ModifierDialogs from "./ModifierComp";
 import { useTheme } from "@mui/material/styles";
 
+import { useTranslation } from "react-i18next";
+
 export default function SideMenu(character) {
+  const { t } = useTranslation();
   const theme = useTheme();
   console.log(character);
   console.log(character.character);
@@ -92,7 +95,7 @@ export default function SideMenu(character) {
                   color: theme.custom.mycustomblur.text,
                 }}
               >
-                Caractéristiques
+                {t("side.carac")}
               </Button>
               {isCarac && (
                 <div
@@ -114,7 +117,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Force
+                          {t("side.strength")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -142,7 +145,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Dextérité
+                          {t("side.dexte")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -170,7 +173,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Résistance
+                          {t("side.resis")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -198,7 +201,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Résilience
+                          {t("side.resil")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -226,7 +229,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Intelligence
+                          {t("side.intell")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -254,7 +257,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Charisme
+                          {t("side.charisma")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -287,7 +290,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Bien
+                          {t("side.good")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -315,7 +318,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Mal
+                          {t("side.evil")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -343,7 +346,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Instinct
+                          {t("side.instinct")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -371,7 +374,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Survie
+                          {t("side.survival")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -403,7 +406,7 @@ export default function SideMenu(character) {
                   color: theme.custom.mycustomblur.text,
                 }}
               >
-                Langues
+                {t("side.languages")}
               </Button>
               {isLang && (
                 <div
@@ -420,7 +423,7 @@ export default function SideMenu(character) {
                       color: theme.custom.mycustomblur.text,
                     }}
                   >
-                    Classiques
+                    {t("side.classic")}
                   </Button>
                   {classique && (
                     <div
@@ -444,7 +447,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Démonique
+                              {t("side.demonic")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -474,7 +477,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Draconique
+                              {t("side.draconic")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -504,7 +507,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Xalytien
+                              {t("side.xalytian")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -534,7 +537,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Xentokolien
+                              {t("side.xento")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -564,7 +567,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Zenolm
+                              {t("side.zenolm")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -594,7 +597,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Justiccel
+                              {t("side.justiccel")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -624,7 +627,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Cerebrov
+                              {t("side.cerebrov")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -654,7 +657,7 @@ export default function SideMenu(character) {
                       color: theme.custom.mycustomblur.text,
                     }}
                   >
-                    Langues Arachaïques
+                    {t("side.archaic")}
                   </Button>
                   {xalytien && (
                     <div
@@ -678,7 +681,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Xalytien Archaïque
+                              {t("side.arcaXaly")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -708,7 +711,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Xentokolien Archaïque
+                              {t("side.arcaXen")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -738,7 +741,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Zenolm Archaïque
+                              {t("side.arcaZen")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -768,7 +771,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Justiccel Arachaïque
+                              {t("side.arcaJus")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -798,7 +801,7 @@ export default function SideMenu(character) {
                       color: theme.custom.mycustomblur.text,
                     }}
                   >
-                    Langues Antiques
+                    {t("side.antique")}
                   </Button>
                   {xentokolien && (
                     <div
@@ -853,7 +856,7 @@ export default function SideMenu(character) {
                               className="comp"
                             >
                               {" "}
-                              Xentokolien Antique
+                              {t("side.antXen")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -883,7 +886,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Zenolm Antique
+                              {t("side.antZen")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -913,7 +916,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Justiccel Antique
+                              {t("side.antJus")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -943,7 +946,7 @@ export default function SideMenu(character) {
                       color: theme.custom.mycustomblur.text,
                     }}
                   >
-                    Langues Démoniques
+                    {t("side.demlang")}
                   </Button>
                   {zenolm && (
                     <div
@@ -967,7 +970,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Xalytien Démonique
+                              {t("side.demXaly")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -997,7 +1000,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Xentokolien Démonique
+                              {t("side.demXento")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1027,7 +1030,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Zenolm Démonique
+                              {t("side.demZen")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1057,7 +1060,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Justiccel Démonique
+                              {t("side.demJus")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1087,7 +1090,7 @@ export default function SideMenu(character) {
                       color: theme.custom.mycustomblur.text,
                     }}
                   >
-                    Raciales
+                    {t("side.racial")}
                   </Button>
                   {raciale && (
                     <div
@@ -1111,7 +1114,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Zombik
+                              {t("side.zombik")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1141,7 +1144,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Faerik
+                              {t("side.faerik")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1171,7 +1174,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Elfik
+                              {t("side.elfik")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1201,7 +1204,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Nanien
+                              {t("side.nanian")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1231,7 +1234,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Gnomik
+                              {t("side.gnomik")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1261,7 +1264,7 @@ export default function SideMenu(character) {
                       color: theme.custom.mycustomblur.text,
                     }}
                   >
-                    Planaires
+                    {t("side.planar")}
                   </Button>
                   {planaire && (
                     <div
@@ -1285,7 +1288,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Spectrale
+                              {t("side.spectral")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1315,7 +1318,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Astrale
+                              {t("side.astral")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1350,7 +1353,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Ténébriale
+                              {t("side.tenebrial")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1380,7 +1383,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Noyale
+                              {t("side.nucleal")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1410,7 +1413,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Elémentale
+                              {t("side.elemental")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1440,7 +1443,7 @@ export default function SideMenu(character) {
                               }}
                               className="comp"
                             >
-                              Céleste
+                              {t("side.celestial")}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -1474,7 +1477,7 @@ export default function SideMenu(character) {
                   color: theme.custom.mycustomblur.text,
                 }}
               >
-                Combat
+                {t("side.fight")}
               </Button>
               {isWeapons && (
                 <div
@@ -1496,7 +1499,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Arcs
+                          {t("side.bows")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1524,7 +1527,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Tir
+                          {t("side.shot")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1552,7 +1555,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Mains nues
+                          {t("side.bare")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1580,7 +1583,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Jet
+                          {t("side.throw")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1608,7 +1611,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Armes d'hast
+                          {t("side.polearm")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1636,7 +1639,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Tranchantes
+                          {t("side.sharp")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1664,7 +1667,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Contondantes
+                          {t("side.blunt")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1692,7 +1695,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Esquive
+                          {t("side.dodge")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1720,7 +1723,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Parade
+                          {t("side.parade")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1752,7 +1755,7 @@ export default function SideMenu(character) {
                   color: theme.custom.mycustomblur.text,
                 }}
               >
-                Diverses
+                {t("side.misc")}
               </Button>
               {isDivers && (
                 <div
@@ -1774,7 +1777,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Chant
+                          {t("side.sing")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1802,7 +1805,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Chasse
+                          {t("side.hunt")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1830,7 +1833,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Course
+                          {t("side.run")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1858,7 +1861,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Crochetage
+                          {t("side.lockpicking")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1886,7 +1889,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Déquisement
+                          {t("side.disguise")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1914,7 +1917,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Discrétion
+                          {t("side.discretion")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1942,7 +1945,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Eloquence
+                          {t("side.eloquance")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1970,7 +1973,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Equitation
+                          {t("side.riding")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -1998,7 +2001,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Escalade
+                          {t("side.climbing")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2026,7 +2029,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Hypnose
+                          {t("side.hypnosis")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2054,7 +2057,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Nage
+                          {t("side.swim")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2082,7 +2085,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Observation
+                          {t("side.perception")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2110,7 +2113,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Pièges
+                          {t("side.traps")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2138,7 +2141,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Professorat
+                          {t("side.teach")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2166,7 +2169,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Saut
+                          {t("side.jump")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2194,7 +2197,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Soin
+                          {t("side.care")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2222,7 +2225,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Télékinésie
+                          {t("side.telekin")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2250,7 +2253,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Vigilence
+                          {t("side.awarness")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2283,7 +2286,7 @@ export default function SideMenu(character) {
                   color: theme.custom.mycustomblur.text,
                 }}
               >
-                Sciences
+                {t("side.sciences")}
               </Button>
               {isScience && (
                 <div
@@ -2333,7 +2336,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Cartographie
+                          {t("side.carto")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2361,7 +2364,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Herboristerie
+                          {t("side.herbalism")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2389,7 +2392,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Médecine
+                          {t("side.medicine")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2417,7 +2420,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Potions
+                          {t("side.potion")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2445,7 +2448,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Théorie des magies
+                          {t("side.magicTheory")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2473,7 +2476,7 @@ export default function SideMenu(character) {
                           }}
                           className="comp"
                         >
-                          Histoire Magique
+                          {t("side.histoMage")}
                         </TableCell>
                         <TableCell
                           sx={{
@@ -2505,7 +2508,7 @@ export default function SideMenu(character) {
                   color: theme.custom.mycustomblur.text,
                 }}
               >
-                Magies
+                {t("side.magies")}
               </Button>
               {isMagic && (
                 <Grid
@@ -2526,7 +2529,7 @@ export default function SideMenu(character) {
                       }}
                     >
                       {" "}
-                      Elementaire{" "}
+                      {t("side.elementair")}{" "}
                     </Button>
                     {isRang1 && (
                       <div
@@ -2550,7 +2553,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Air
+                                {t("side.air")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2580,7 +2583,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Eau
+                                {t("side.water")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2610,7 +2613,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Feu
+                                {t("side.fire")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2640,7 +2643,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Terre
+                                {t("side.earth")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2670,7 +2673,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Electricité
+                                {t("side.elec")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2703,7 +2706,7 @@ export default function SideMenu(character) {
                       }}
                     >
                       {" "}
-                      Psychique{" "}
+                      {t("side.psy")}{" "}
                     </Button>
                     {isRang2 && (
                       <div
@@ -2727,7 +2730,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Création
+                                {t("side.crea")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2757,7 +2760,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Animaturgie
+                                {t("side.anima")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2790,7 +2793,7 @@ export default function SideMenu(character) {
                       }}
                     >
                       {" "}
-                      Energétique{" "}
+                      {t("side.energy")}{" "}
                     </Button>
                     {isRang3 && (
                       <div
@@ -2814,7 +2817,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Vie
+                                {t("side.life")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2844,7 +2847,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Mort
+                                {t("side.death")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2874,7 +2877,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Temps
+                                {t("side.time")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2904,7 +2907,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Lumière
+                                {t("side.light")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2934,7 +2937,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Ténèbres
+                                {t("side.dark")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2964,7 +2967,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Cosmos
+                                {t("side.cosmos")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -2997,7 +3000,7 @@ export default function SideMenu(character) {
                       }}
                     >
                       {" "}
-                      Planaire{" "}
+                      {t("side.plan")}{" "}
                     </Button>
                     {isRangA && (
                       <div
@@ -3021,7 +3024,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Invocation
+                                {t("side.invoc")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -3051,7 +3054,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Aura
+                                {t("side.aura")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -3081,7 +3084,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Magie Astrale
+                                {t("side.astr")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -3111,7 +3114,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Magie Spectrale
+                                {t("side.spectr")}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -3141,7 +3144,7 @@ export default function SideMenu(character) {
                                 }}
                                 className="comp"
                               >
-                                Magie Draconique
+                                {t("side.drac")}
                               </TableCell>
                               <TableCell
                                 sx={{

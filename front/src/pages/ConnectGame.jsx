@@ -3,6 +3,7 @@ import BG from "../components/Background";
 import Top from "../components/Header";
 import { ConnexionContext } from "../components/provider";
 import SideMenu from "../components/SideMenu";
+import Loader from "../components/Loader";
 import { LinearProgress, Typography } from "@mui/material";
 import BtnAdd from "../components/BtnAdd";
 import BtnRm from "../components/BtnRm";
@@ -16,14 +17,17 @@ import Crystals from "../components/Crystals";
 import Creatures from "../components/Creatures";
 import { useTheme } from "@mui/material/styles";
 import { useParams } from "react-router-dom";
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
-import WaterDropIcon from '@mui/icons-material/WaterDrop';
-import AirIcon from '@mui/icons-material/Air';
-import GrassIcon from '@mui/icons-material/Grass';
-import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
+import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
+import WaterDropIcon from "@mui/icons-material/WaterDrop";
+import AirIcon from "@mui/icons-material/Air";
+import GrassIcon from "@mui/icons-material/Grass";
+import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import { useNavigate } from "react-router-dom";
 
+import { useTranslation } from "react-i18next";
+
 function ConnectGame() {
+  const { t } = useTranslation();
   const { characterId } = useParams();
   const theme = useTheme();
   const {
@@ -35,8 +39,6 @@ function ConnectGame() {
   console.log(`currentUser : ${currentUser}`);
 
   let navigate = useNavigate();
-
-
 
   const defaultCharacter = {
     ID_character: 0,
@@ -66,7 +68,6 @@ function ConnectGame() {
 
   const [character, setCharacter] = useState(defaultCharacter);
 
-
   const [maxGauges, setMaxGauges] = useState({
     ManaAir: defaultCharacter.ManaAir_character,
     ManaEau: defaultCharacter.ManaEau_character,
@@ -78,7 +79,7 @@ function ConnectGame() {
   });
 
   const [currentGauges, setCurrentGauges] = useState({
-    currentManaAir: defaultCharacter.ManaAir_character,     // fallback temporaire
+    currentManaAir: defaultCharacter.ManaAir_character, // fallback temporaire
     currentManaEau: defaultCharacter.ManaEau_character,
     currentManaTerre: defaultCharacter.ManaTerre_character,
     currentManaFeu: defaultCharacter.ManaFeu_character,
@@ -99,7 +100,7 @@ function ConnectGame() {
     instinct: "Instinct_character",
     survie: "Survie_character",
 
-    "démonique": "Demonique_character",
+    démonique: "Demonique_character",
     draconique: "Draconique_character",
     xalytien: "Xalytien_character",
     xento: "Xento_character",
@@ -179,7 +180,6 @@ function ConnectGame() {
 
   const [comps, setComps] = useState({});
 
-
   useEffect(() => {
     fetch(`/api/characters/getOneCharacterById/${characterId}`)
       .then((res) => res.json())
@@ -204,7 +204,7 @@ function ConnectGame() {
       .catch((err) => {
         console.error(
           "Erreur récupération personnage, fallback Visiteur :",
-          err
+          err,
         );
       });
   }, [currentUser?.users_ID]);
@@ -240,7 +240,8 @@ function ConnectGame() {
       .then((data) => {
         console.log("data: ", data);
         const gauges = data?.data;
-        if (!gauges) throw new Error("Réponse API invalide: data.data manquant");
+        if (!gauges)
+          throw new Error("Réponse API invalide: data.data manquant");
 
         setCurrentGauges({
           currentManaAir: gauges.currentManaAir,
@@ -255,7 +256,7 @@ function ConnectGame() {
       .catch((err) => {
         console.log(
           "Erreur récupération jauges, fallback sur valeurs max :",
-          err
+          err,
         );
         setCurrentGauges({
           currentManaAir: character.ManaAir_character,
@@ -292,6 +293,10 @@ function ConnectGame() {
   if (!loading && isInvalidUser) {
     navigate("/", { replace: true });
     return null;
+  }
+
+  if (loading) {
+    return <Loader />;
   }
 
   return (
@@ -371,7 +376,10 @@ function ConnectGame() {
                     color="success"
                     id="manaAir"
                     variant="determinate"
-                    value={(currentGauges.currentManaAir / maxGauges.maxManaAir) * 100}
+                    value={
+                      (currentGauges.currentManaAir / maxGauges.maxManaAir) *
+                      100
+                    }
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -439,7 +447,9 @@ function ConnectGame() {
                     top={"45vh"}
                     left={"40vw"}
                     sx={{ color: theme.custom.mycustomblur.text }}
-                  > <WaterDropIcon />
+                  >
+                    {" "}
+                    <WaterDropIcon />
                     <br />
                     {currentGauges.currentManaEau} pts
                   </Typography>
@@ -447,7 +457,10 @@ function ConnectGame() {
                     color="info"
                     id="manaEau"
                     variant="determinate"
-                    value={(currentGauges.currentManaEau / maxGauges.maxManaEau) * 100}
+                    value={
+                      (currentGauges.currentManaEau / maxGauges.maxManaEau) *
+                      100
+                    }
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -524,7 +537,11 @@ function ConnectGame() {
                     color="warning"
                     id="manaTerre"
                     variant="determinate"
-                    value={(currentGauges.currentManaTerre / maxGauges.maxManaTerre) * 100}
+                    value={
+                      (currentGauges.currentManaTerre /
+                        maxGauges.maxManaTerre) *
+                      100
+                    }
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -592,13 +609,17 @@ function ConnectGame() {
                     top={"45vh"}
                     sx={{ color: theme.custom.mycustomblur.text }}
                   >
-                    <LocalFireDepartmentIcon /> <br /> {currentGauges.currentManaFeu} pts
+                    <LocalFireDepartmentIcon /> <br />{" "}
+                    {currentGauges.currentManaFeu} pts
                   </Typography>
                   <LinearProgress
                     color="error"
                     id="manaFeu"
                     variant="determinate"
-                    value={(currentGauges.currentManaFeu / maxGauges.maxManaFeu) * 100}
+                    value={
+                      (currentGauges.currentManaFeu / maxGauges.maxManaFeu) *
+                      100
+                    }
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -674,7 +695,11 @@ function ConnectGame() {
                   <LinearProgress
                     id="manaVolonte"
                     variant="determinate"
-                    value={(currentGauges.currentManaVolonte / maxGauges.maxManaVolonte) * 100}
+                    value={
+                      (currentGauges.currentManaVolonte /
+                        maxGauges.maxManaVolonte) *
+                      100
+                    }
                     sx={{
                       position: "fixed",
                       top: "25vh",
@@ -726,8 +751,7 @@ function ConnectGame() {
                     variant="h5"
                     position={"fixed"}
                     left={"4vw"}
-                    top={"42vh"}
-
+                    top={"58vh"}
                     sx={{ color: theme.custom.mycustomblur.text }}
                     textAlign={"center"}
                   >
@@ -735,7 +759,10 @@ function ConnectGame() {
                   </Typography>
 
                   <CircularProgressbar
-                    value={(currentGauges.currentManaVital / maxGauges.ManaVital) * 100}
+                    value={
+                      (currentGauges.currentManaVital / maxGauges.ManaVital) *
+                      100
+                    }
                     circleRatio={0.5}
                     text={`${currentGauges.currentManaVital} points`}
                     styles={buildStyles({
@@ -836,11 +863,10 @@ function ConnectGame() {
                   </div>
                   <Typography
                     className="label"
-
                     sx={{ color: theme.custom.mycustomblur.text }}
                     id="manaVolonte"
                   >
-                    Etat transitionnel
+                    {t("jdr.transition")}
                   </Typography>
                 </div>
                 <div
@@ -859,15 +885,16 @@ function ConnectGame() {
                     position={"fixed"}
                     left={" 18vw"}
                     top={"42vh"}
-
                     sx={{ color: theme.custom.mycustomblur.text }}
                     textAlign={"center"}
                   >
-                    Stamina
+                    {t("jdr.stamina")}
                   </Typography>
 
                   <CircularProgressbar
-                    value={(currentGauges.currentStamina / maxGauges.Stamina) * 100}
+                    value={
+                      (currentGauges.currentStamina / maxGauges.Stamina) * 100
+                    }
                     circleRatio={0.5}
                     text={`${currentGauges.currentStamina} points`}
                     styles={buildStyles({
@@ -918,21 +945,30 @@ function ConnectGame() {
                       paddingRight: "1vw",
                     }}
                   >
-                    Bonus/Malus
+                    {t("jdr.bm")}
                     <br />
                     ...................
                     <br />
                   </p>
                   <Typography
-                    sx={{ color: theme.custom.mycustomblur.text }} id="chance">
-                    Chance
+                    sx={{ color: theme.custom.mycustomblur.text }}
+                    id="chance"
+                  >
+                    {t("jdr.luck")}
                   </Typography>
                 </div>
               </div>
             </div>
-            <div style={{ height: "3em", position: "fixed", left: "2vw", top: "12vh" }}>
+            <div
+              style={{
+                height: "3em",
+                position: "fixed",
+                left: "2vw",
+                top: "12vh",
+              }}
+            >
               <h2 style={{ color: theme.custom.mycustomblur.text }}>
-                Welcome back {character.Name_character}
+                {t("login.title")} {character.Name_character}
               </h2>
               <br />
             </div>
@@ -966,61 +1002,69 @@ function ConnectGame() {
             >
               <div id="idLeft" style={{ padding: "10px" }}>
                 <p style={{ color: theme.custom.mycustomblur.text }}>
-                  Nom : <span id="name">{character.Name_character}</span>
+                  {t("jdr.name")}{" "}
+                  <span id="name">{character.Name_character}</span>
                 </p>
                 <p style={{ color: theme.custom.mycustomblur.text }}>
-                  Métier : <span id="job">{character.Metier_character}</span>{" "}
+                  {t("jdr.job")}{" "}
+                  <span id="job">{character.Metier_character}</span>{" "}
                 </p>
                 <p style={{ color: theme.custom.mycustomblur.text }}>
-                  Race : <span id="race">{character.Race_character}</span>{" "}
+                  {t("jdr.race")}{" "}
+                  <span id="race">{character.Race_character}</span>{" "}
                 </p>
                 <p style={{ color: theme.custom.mycustomblur.text }}>
-                  Planète :{" "}
+                  {t("jdr.planet")}{" "}
                   <span id="planet">{character.Planete_character}</span>{" "}
                 </p>
                 <p style={{ color: theme.custom.mycustomblur.text }}>
-                  Niveau : <span id="lvl">{character.Niveau_character}</span>{" "}
+                  {t("jdr.lvl")}{" "}
+                  <span id="lvl">{character.Niveau_character}</span>{" "}
                 </p>
                 <p style={{ color: theme.custom.mycustomblur.text }}>
-                  Agence : <span id="agence">{character.Agence_character}</span>{" "}
+                  {t("jdr.agency")}{" "}
+                  <span id="agence">{character.Agence_character}</span>{" "}
                 </p>
               </div>
               <div id="idRight" style={{ paddingRight: "10px" }}>
                 <p style={{ color: theme.custom.mycustomblur.text }}>
-                  Age : <span id="age">{character.Age_character}</span> ans
+                  {t("jdr.age")} <span id="age">{character.Age_character}</span>{" "}
+                  ans
                 </p>
                 <p style={{ color: theme.custom.mycustomblur.text }}>
-                  Taille : <span id="height">{character.Taille_character}</span>{" "}
-                  cm
+                  {t("jdr.height")}{" "}
+                  <span id="height">{character.Taille_character}</span> cm
                 </p>
                 <p style={{ color: theme.custom.mycustomblur.text }}>
-                  Poids : <span id="pounds">{character.Poids_character}</span>{" "}
-                  kg
+                  {t("jdr.weight")}{" "}
+                  <span id="pounds">{character.Poids_character}</span> kg
                 </p>
                 <p style={{ color: theme.custom.mycustomblur.text }}>
-                  Sexe : <span id="sex">{character.Sexe_character}</span>{" "}
+                  {t("jdr.gender")}{" "}
+                  <span id="sex">{character.Sexe_character}</span>{" "}
                 </p>
                 <p style={{ color: theme.custom.mycustomblur.text }}>
-                  Oeil droit :{" "}
+                  {t("jdr.rEye")}{" "}
                   <span id="rightEye">{character.OeilD_character}</span>
                 </p>
                 <p style={{ color: theme.custom.mycustomblur.text }}>
-                  Oeil gauche :{" "}
+                  {t("jdr.lEye")}{" "}
                   <span id="leftEye">{character.OeilG_character}</span>
                 </p>
                 <p style={{ color: theme.custom.mycustomblur.text }}>
-                  Cheveux : <span id="hair">{character.Cheveux_character}</span>
+                  {t("jdr.hair")}
+                  <span id="hair">{character.Cheveux_character}</span>
                 </p>
               </div>
             </div>
             <div id="idBottom" style={{ padding: "10px" }}>
               <p style={{ color: theme.custom.mycustomblur.text }}>
-                Signes distinctif :{" "}
+                {t("jdr.trait")}{" "}
                 <span id="particularity">{character.Signes_character}</span>
               </p>
               <br />
               <p style={{ color: theme.custom.mycustomblur.text }}>
-                Traits de caractère :{" "}
+                {t("jdr.background")}{" "}
                 <span id="caracter">{character.Traits_character}</span>
               </p>
             </div>

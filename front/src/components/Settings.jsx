@@ -16,12 +16,16 @@ import { useThemeMode } from "../context/ThemeContext";
 import { useTheme } from "@mui/material/styles";
 import { ConnexionContext } from "./provider";
 
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
+import i18n from "i18next";
+import { useTranslation } from "react-i18next";
+import { useSnack } from "../hooks/useSnack";
 
 export default function Settings() {
   const { state: currentUser, refreshUser } = useContext(ConnexionContext);
   console.log("refreshUser: ", refreshUser);
+  const { t } = useTranslation();
+
+  const { showSnack, Snack } = useSnack();
 
   const currentTheme = useTheme();
   const { changeTheme } = useThemeMode();
@@ -47,15 +51,14 @@ export default function Settings() {
   const [theme, setTheme] = useState("dark");
   const [language, setLanguage] = useState("fr");
 
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertSeverity, setAlertSeverity] = useState("success"); // "success" | "error"
+  // const [alertOpen, setAlertOpen] = useState(false);
+  // const [alertMessage, setAlertMessage] = useState("");
+  // const [alertSeverity, setAlertSeverity] = useState("success"); // "success" | "error"
 
-  const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-  });
+  // const Alert = React.forwardRef(function Alert(props, ref) {
+  //   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  // });
 
-  // ✅ NOUVEAU: Synchronise les champs dès que le currentUser change
   useEffect(() => {
     if (currentUser) {
       setUserId(currentUser.users_ID);
@@ -69,9 +72,7 @@ export default function Settings() {
     e.preventDefault();
     e.stopPropagation();
     if (!userId) {
-      setAlertMessage("Utilisateur non identifié !");
-      setAlertSeverity("error");
-      setAlertOpen(true);
+      showSnack("Utilisateur non identifié !", "error");
       return;
     }
 
@@ -87,35 +88,32 @@ export default function Settings() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     })
-      .then((res) => {
+      .then(async (res) => {
+        const payload = await res.json().catch(() => null);
+
         if (!res.ok) {
-          throw new Error("Erreur serveur");
+          showSnack(payload?.message || "Erreur serveur", "error");
+          throw new Error("Update user failed");
         }
-        return res.json();
+
+        return payload;
       })
-      .then((updatedUser) => {
-        // Ajoute une petite pause pour être certain que le backend ait bien commit la modif
+      .then(() => {
         setTimeout(() => {
           refreshUser();
-        }, 250); // parfois 100ms suffisent, 250ms c'est solide
+        }, 250);
 
-        setAlertMessage("Identité mise à jour !");
-        setAlertSeverity("success");
-        setAlertOpen(true);
+        showSnack("Identité mise à jour !", "success");
       })
       .catch((error) => {
         console.error("Erreur lors de la mise à jour : ", error);
-        setAlertMessage("Erreur lors de la mise à jour de l'identité.");
-        setAlertSeverity("error");
-        setAlertOpen(true);
+        showSnack("Erreur lors de la mise à jour de l'identité.", "error");
       });
   };
 
   const handleChangePassword = () => {
     if (newPwd !== confirmPwd) {
-      setAlertMessage("Les mots de passe ne correspondent pas.");
-      setAlertSeverity("error");
-      setAlertOpen(true);
+      showSnack("Les mots de passe ne correspondent pas.", "warning");
       return;
     }
     const data = {
@@ -128,49 +126,58 @@ export default function Settings() {
       credentials: "include",
       body: JSON.stringify(data),
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Échec du changement de mot de passe");
-        return res.json();
+      .then(async (res) => {
+        const payload = await res.json().catch(() => null);
+
+        if (!res.ok) {
+          showSnack(
+            payload?.message || "Échec du changement de mot de passe",
+            "error",
+          );
+          throw new Error("Update pwd failed");
+        }
+
+        return payload;
       })
       .then(() => {
-      setOldPwd("");
-      setNewPwd("");
-      setConfirmPwd("");
-        setAlertMessage("Mot de passe mis à jour !");
-        setAlertSeverity("success");
-        setAlertOpen(true);
+        setOldPwd("");
+        setNewPwd("");
+        setConfirmPwd("");
+        showSnack("Mot de passe mis à jour !", "success");
       })
       .catch((error) => {
         console.error("Erreur changement mot de passe:", error);
-        setAlertMessage("Impossible de changer le mot de passe.");
-        setAlertSeverity("error");
-        setAlertOpen(true);
+        showSnack("Impossible de changer le mot de passe.", "error");
       });
   };
 
-  const handleSavePreferences = () => {
-    const data = { user_theme: theme, user_language: language };
-    fetch(`/api/preferences`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(data),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Erreur de sauvegarde");
-        return res.json(); // ou `return;` si pas de JSON renvoyé
-      })
-      .then(() => {
-        changeTheme(theme);
-        setAlertMessage("Préférences enregistrées !");
-        setAlertSeverity("success");
-        setAlertOpen(true);
-      })
-      .catch((error) => {
-        console.error("Erreur préférences:", error);
-        setAlertMessage("Erreur lors de la sauvegarde des préférences.");
-        setAlertSeverity("error");
-        setAlertOpen(true);
+  const handleSavePreferences = async () => {
+    try {
+      const data = { user_theme: theme, user_language: language };
+
+      const res = await fetch("/api/preferences", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(data),
       });
+
+      const payload = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        showSnack(payload?.message || "Erreur de sauvegarde", "error");
+        return;
+      }
+
+      changeTheme(theme);
+      await i18n.changeLanguage(language);
+      refreshUser?.();
+
+      showSnack("Préférences enregistrées !", "success");
+    } catch (error) {
+      console.error("Erreur préférences:", error);
+      showSnack("Erreur lors de la sauvegarde des préférences.", "error");
+    }
   };
 
   return (
@@ -187,9 +194,9 @@ export default function Settings() {
       {/* Onglets */}
       <Box sx={{ display: "flex", flexDirection: "row" }}>
         {[
-          { key: "identity", label: "Identité" },
-          { key: "security", label: "Sécurité" },
-          { key: "preferences", label: "Préférences" },
+          { key: "identity", label: t("settings.identity") },
+          { key: "security", label: t("settings.security") },
+          { key: "preferences", label: t("settings.preferences") },
         ].map(({ key, label }) => (
           <Btn
             key={key}
@@ -219,8 +226,8 @@ export default function Settings() {
                 key === "identity"
                   ? "5px 0 0 0"
                   : key === "preferences"
-                  ? "0 5px 0 0"
-                  : "0",
+                    ? "0 5px 0 0"
+                    : "0",
             }}
           />
         ))}
@@ -231,7 +238,7 @@ export default function Settings() {
         {activeTab === "identity" && (
           <>
             <Typography variant="h6" color={currentTheme.custom.mymodal.text}>
-              Informations personnelles
+              {t("settings.infos")}
             </Typography>
             <TextField
               label="Pseudo"
@@ -263,13 +270,13 @@ export default function Settings() {
                 value="r"
                 sx={{ color: currentTheme.custom.mymodal.text }}
               >
-                Lecteur
+                {t("signup.statusR")}
               </MenuItem>
               <MenuItem
                 value="p"
                 sx={{ color: currentTheme.custom.mymodal.text }}
               >
-                Joueur
+                {t("signup.statusP")}
               </MenuItem>
             </TextField>
             <Button
@@ -282,7 +289,7 @@ export default function Settings() {
                 backgroundColor: currentTheme.custom.mymodal.button,
               }}
             >
-              Mettre à jour
+              {t("settings.update")}
             </Button>
           </>
         )}
@@ -293,10 +300,10 @@ export default function Settings() {
               variant="h6"
               sx={{ color: currentTheme.custom.mymodal.text }}
             >
-              Sécurité du compte
+              {t("settings.account")}
             </Typography>
             <TextField
-              label="Mot de passe actuel"
+              label={t("settings.currentPwd")}
               type={showPwd.old ? "text" : "password"}
               value={oldPwd}
               onChange={(e) => setOldPwd(e.target.value)}
@@ -323,7 +330,7 @@ export default function Settings() {
               }}
             />
             <TextField
-              label="Nouveau mot de passe"
+              label={t("settings.newPwd")}
               type={showPwd.new ? "text" : "password"}
               value={newPwd}
               onChange={(e) => setNewPwd(e.target.value)}
@@ -350,7 +357,7 @@ export default function Settings() {
               }}
             />
             <TextField
-              label="Confirmer le mot de passe"
+              label={t("settings.confirmPwd")}
               type={showPwd.confirm ? "text" : "password"}
               value={confirmPwd}
               onChange={(e) => setConfirmPwd(e.target.value)}
@@ -390,14 +397,14 @@ export default function Settings() {
                 backgroundColor: currentTheme.custom.mymodal.button,
               }}
             >
-              Changer le mot de passe
+              {t("settings.updatePwd")}
             </Button>
           </>
         )}
 
         {activeTab === "preferences" && (
           <>
-            <Typography variant="h6">Préférences</Typography>
+            <Typography variant="h6">{t("settings.preferences")}</Typography>
             <TextField
               label="Thème"
               select
@@ -411,13 +418,13 @@ export default function Settings() {
                 value="light"
                 sx={{ color: currentTheme.custom.mymodal.text }}
               >
-                Clair
+                {t("settings.lightMode")}
               </MenuItem>
               <MenuItem
                 value="dark"
                 sx={{ color: currentTheme.custom.mymodal.text }}
               >
-                Sombre
+                {t("settings.darkMode")}
               </MenuItem>
             </TextField>
             <TextField
@@ -433,13 +440,13 @@ export default function Settings() {
                 value="fr"
                 sx={{ color: currentTheme.custom.mymodal.text }}
               >
-                Français
+                {t("settings.fr")}
               </MenuItem>
               <MenuItem
                 value="en"
                 sx={{ color: currentTheme.custom.mymodal.text }}
               >
-                Anglais
+                {t("settings.en")}
               </MenuItem>
             </TextField>
             <Button
@@ -451,25 +458,12 @@ export default function Settings() {
                 backgroundColor: currentTheme.custom.mymodal.button,
               }}
             >
-              Enregistrer les préférences
+              {t("settings.savePref")}
             </Button>
           </>
         )}
       </Box>
-      <Snackbar
-        open={alertOpen}
-        autoHideDuration={3000}
-        onClose={() => setAlertOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
-          onClose={() => setAlertOpen(false)}
-          severity={alertSeverity}
-          sx={{ width: "100%" }}
-        >
-          {alertMessage}
-        </Alert>
-      </Snackbar>
+      {Snack}
     </Box>
   );
 }

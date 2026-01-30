@@ -65,7 +65,7 @@ module.exports = function (sequelize, DataTypes) {
           fields: [{ name: "ID_book" }],
         },
       ],
-    }
+    },
   );
 
   Chapter.associate = function (models) {
@@ -75,7 +75,11 @@ module.exports = function (sequelize, DataTypes) {
 
     Chapter.belongsTo(models.book_parts, {
       foreignKey: "ID_part",
-      as: "part", 
+      as: "part",
+    });
+    Chapter.hasMany(models.chapter_translations, {
+      foreignKey: "ID_chapter",
+      as: "translations",
     });
   };
 

@@ -5,13 +5,15 @@ import ModifierDialogs from "./ModifierIngredients";
 import Ingredient from "../assets/img/icons8-potion.svg";
 import { useTheme } from "@mui/material/styles";
 
+import { useTranslation } from "react-i18next";
+
 function IngredientRow({ label, nameKey, quantityKey, ingredients, theme }) {
   const name = ingredients?.[nameKey] ?? "—";
   const quantity = ingredients?.[quantityKey] ?? "—";
 
   return (
     <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
-      <TableCell  sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder,  }}  className="diversName">
+      <TableCell sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }} className="diversName">
         {name}
         <ModifierDialogs
           inventaire={ingredients}
@@ -20,7 +22,7 @@ function IngredientRow({ label, nameKey, quantityKey, ingredients, theme }) {
           dataToUpdate={label}
         />
       </TableCell>
-      <TableCell  sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder,  }}  className="diversQ">
+      <TableCell sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
         {quantity}
         <ModifierDialogs
           inventaire={ingredients}
@@ -34,7 +36,8 @@ function IngredientRow({ label, nameKey, quantityKey, ingredients, theme }) {
 }
 
 export default function Ingredients(data) {
-      const theme = useTheme();
+  const { t } = useTranslation();
+  const theme = useTheme();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const character = data.data;
   console.log(character);
@@ -80,8 +83,8 @@ export default function Ingredients(data) {
         BackdropProps={{ style: { backdropFilter: "none", opacity: 0 } }}
         PaperProps={{
           sx: {
-           backgroundColor:theme.custom.mycustomblur.main, 
-           backdropFilter: theme.custom.mycustomblur.blur,
+            backgroundColor: theme.custom.mycustomblur.main,
+            backdropFilter: theme.custom.mycustomblur.blur,
             top: "5vh",
             textAlign: "center",
             width: "40%",
@@ -110,9 +113,9 @@ export default function Ingredients(data) {
             >
               <Typography
                 variant="h6"
-                sx={{ color: theme.custom.mycustomblur.text , textAlign: "center" }}
+                sx={{ color: theme.custom.mycustomblur.text, textAlign: "center" }}
               >
-                Ingrédients
+                {t("inventory.ingredients")}
               </Typography>
               <Table>
                 <TableBody>
@@ -138,7 +141,7 @@ export default function Ingredients(data) {
           onClick={handleDrawerClose}
           sx={{ position: "fixed", right: "0vw", top: "45vh" }}
         >
-           <CloseIcon sx={{color:theme.custom.mycustomblur.text }}/>
+          <CloseIcon sx={{ color: theme.custom.mycustomblur.text }} />
         </IconButton>
       </Drawer>
     </div>

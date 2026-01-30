@@ -5,7 +5,7 @@ import {
   Divider,
   Button,
   Grid,
-  List, Table, TableBody, TableCell, TableHead, TableRow  
+  List, Table, TableBody, TableCell, TableHead, TableRow
 } from "@mui/material";
 import CardTravelIcon from "@mui/icons-material/CardTravel";
 import CloseIcon from "@mui/icons-material/Close";
@@ -13,11 +13,13 @@ import { useState, useEffect } from "react";
 import ModifierDialogs from "./ModifierInventory";
 import { useTheme } from "@mui/material/styles";
 
+import { useTranslation } from "react-i18next";
+
 function InventoryRow({ label, nameKey, quantityKey, data, theme }) {
   const name = data?.[nameKey] ?? "—";
   const quantity = quantityKey ? (data?.[quantityKey] ?? "—") : null;
   return (
-    <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+    <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
       <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
         {name}
         <ModifierDialogs
@@ -28,23 +30,25 @@ function InventoryRow({ label, nameKey, quantityKey, data, theme }) {
         />
       </TableCell>
       {quantity != null &&
-      <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
-        {quantity}
-        <ModifierDialogs
-          inventaire={data}
-          name={quantityKey}
-          left="40%"
-          dataToUpdate={`quantité de ${label}`}
-        />
-      </TableCell>
+        <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
+          {quantity}
+          <ModifierDialogs
+            inventaire={data}
+            name={quantityKey}
+            left="40%"
+            dataToUpdate={`quantité de ${label}`}
+          />
+        </TableCell>
       }
     </TableRow>
-    
+
   );
 }
 
 export default function Inventory(data) {
-      const theme = useTheme();
+
+  const { t } = useTranslation();
+  const theme = useTheme();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const character = data.data;
   console.log(character);
@@ -82,8 +86,8 @@ export default function Inventory(data) {
         BackdropProps={{ style: { backdropFilter: "none", opacity: 0 } }}
         PaperProps={{
           sx: {
-           backgroundColor:theme.custom.mycustomblur.main, 
-           backdropFilter: theme.custom.mycustomblur.blur,
+            backgroundColor: theme.custom.mycustomblur.main,
+            backdropFilter: theme.custom.mycustomblur.blur,
             top: "5vh",
             textAlign: "center",
             width: "40%",
@@ -106,15 +110,15 @@ export default function Inventory(data) {
               <Button
                 variant="h6"
                 onClick={() => setIsImportant(!isImportant)}
-                sx={{color: theme.custom.mycustomblur.text , }}
+                sx={{ color: theme.custom.mycustomblur.text, }}
               >
-                Importants
+                {t("inventory.important")}
               </Button>
               {isImportant && (
                 <div
                   style={{
                     textAlign: "left",
-                   color: theme.custom.mycustomblur.text ,
+                    color: theme.custom.mycustomblur.text,
                     marginInline: "5px",
                   }}
                 >
@@ -140,15 +144,15 @@ export default function Inventory(data) {
               <Button
                 variant="h6"
                 onClick={() => setRepas(!repas)}
-                sx={{ color: theme.custom.mycustomblur.text ,}}
+                sx={{ color: theme.custom.mycustomblur.text, }}
               >
-                Repas
+                {t("inventory.meal")}
               </Button>
               {repas && (
                 <div
                   style={{
                     textAlign: "left",
-                    color: theme.custom.mycustomblur.text ,
+                    color: theme.custom.mycustomblur.text,
                     marginInline: "5px",
                   }}
                 >
@@ -174,9 +178,9 @@ export default function Inventory(data) {
               <Button
                 variant="h6"
                 onClick={() => setArgent(!argent)}
-                sx={{ color: theme.custom.mycustomblur.text , }}
+                sx={{ color: theme.custom.mycustomblur.text, }}
               >
-                Monnaie
+                {t("inventory.currency")}
               </Button>
               {argent && (
                 <Grid
@@ -184,15 +188,15 @@ export default function Inventory(data) {
                   spacing={2}
                   style={{
                     textAlign: "left",
-                    color: theme.custom.mycustomblur.text ,
+                    color: theme.custom.mycustomblur.text,
                     marginLeft: "5px",
                   }}
                 >
                   <Table>
                     <TableBody>
-                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                      <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="important comp">
-                          Pièces de Platine Universelles :{" "}
+                          {t("inventory.ppu")}{" "}
                           <span>{inventaires?.PPU ?? 0}</span>
                           <ModifierDialogs
                             inventaire={inventaires}
@@ -202,10 +206,10 @@ export default function Inventory(data) {
                           />
                         </TableCell>
                       </TableRow>
-                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                      <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="important comp" >
                           {" "}
-                          Pièces d'Or Universelles :{" "}
+                          {t("inventory.pou")}{" "}
                           <span>{inventaires?.POU ?? 0}</span>
                           <ModifierDialogs
                             inventaire={inventaires}
@@ -215,9 +219,9 @@ export default function Inventory(data) {
                           />
                         </TableCell>
                       </TableRow>
-                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                      <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="important comp">
-                          Pièces d'Argent Universelles :{" "}
+                          {t("inventory.pau")}{" "}
                           <span>{inventaires?.PAU ?? 0}</span>
                           <ModifierDialogs
                             inventaire={inventaires}
@@ -237,27 +241,27 @@ export default function Inventory(data) {
               <Button
                 variant="h6"
                 onClick={() => setDivers(!divers)}
-                sx={{ color: theme.custom.mycustomblur.text , }}
+                sx={{ color: theme.custom.mycustomblur.text, }}
               >
-                Divers
+                {t("inventory.misc")}
               </Button>
               {divers && (
                 <div
                   style={{
                     textAlign: "left",
-                    color: theme.custom.mycustomblur.text ,
+                    color: theme.custom.mycustomblur.text,
                     marginInline: "5px",
                   }}
                 >
                   <Table>
                     <TableHead>
-                      <TableCell  sx={{ border: theme.custom.mycustomblur.tableborder, }} variant="head">Nom/Appelation</TableCell>
-                      <TableCell  sx={{ border: theme.custom.mycustomblur.tableborder, }} variant="head">Quantité</TableCell>
+                      <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} variant="head">{t("inventory.name")}</TableCell>
+                      <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} variant="head">{t("inventory.qty")}</TableCell>
                     </TableHead>
                     <TableBody>
-                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                      <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
-                          {inventaires?.divers1_inventory ?? "Auncun objet"}
+                          {inventaires?.divers1_inventory ?? t("inventory.nothing")}
                           <ModifierDialogs
                             inventaire={inventaires}
                             name={"d1"}
@@ -266,7 +270,7 @@ export default function Inventory(data) {
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
-                          {inventaires?.divers1Quantite ?? "Aucun objet"}
+                          {inventaires?.divers1Quantite ?? t("inventory.nothing")}
                           <span>
                             <ModifierDialogs
                               inventaire={inventaires}
@@ -277,9 +281,9 @@ export default function Inventory(data) {
                           </span>
                         </TableCell>
                       </TableRow>
-                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                      <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
-                          {inventaires?.divers2_inventory ?? "Aucun objet"}
+                          {inventaires?.divers2_inventory ?? t("inventory.nothing")}
                           <ModifierDialogs
                             inventaire={inventaires}
                             name={"d2"}
@@ -288,7 +292,7 @@ export default function Inventory(data) {
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
-                          {inventaires?.divers2Quantite ?? "Aucun objet"}
+                          {inventaires?.divers2Quantite ?? t("inventory.nothing")}
                           <span>
                             <ModifierDialogs
                               inventaire={inventaires}
@@ -299,9 +303,9 @@ export default function Inventory(data) {
                           </span>
                         </TableCell>
                       </TableRow>
-                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                      <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
-                          {inventaires?.divers3_inventory ?? "Aucun objet"}
+                          {inventaires?.divers3_inventory ?? t("inventory.nothing")}
                           <ModifierDialogs
                             inventaire={inventaires}
                             name={"d3"}
@@ -310,7 +314,7 @@ export default function Inventory(data) {
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
-                          {inventaires?.divers3Quantite ?? "Aucun objet"}
+                          {inventaires?.divers3Quantite ?? t("inventory.nothing")}
                           <span>
                             <ModifierDialogs
                               inventaire={inventaires}
@@ -321,9 +325,9 @@ export default function Inventory(data) {
                           </span>
                         </TableCell>
                       </TableRow>
-                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                      <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
-                          {inventaires?.divers4_inventory ?? "Aucun objet"}
+                          {inventaires?.divers4_inventory ?? t("inventory.nothing")}
                           <ModifierDialogs
                             inventaire={inventaires}
                             name={"d4"}
@@ -332,7 +336,7 @@ export default function Inventory(data) {
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
-                          {inventaires?.divers4Quantite ?? "Aucun objet"}
+                          {inventaires?.divers4Quantite ?? t("inventory.nothing")}
                           <span>
                             <ModifierDialogs
                               inventaire={inventaires}
@@ -343,9 +347,9 @@ export default function Inventory(data) {
                           </span>
                         </TableCell>
                       </TableRow>
-                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                      <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
-                          {inventaires?.divers5_inventory ?? "Aucun objet"}
+                          {inventaires?.divers5_inventory ?? t("inventory.nothing")}
                           <ModifierDialogs
                             inventaire={inventaires}
                             name={"d5"}
@@ -354,7 +358,7 @@ export default function Inventory(data) {
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
-                          {inventaires?.divers5Quantite ?? "Aucun objet"}
+                          {inventaires?.divers5Quantite ?? t("inventory.nothing")}
                           <span>
                             <ModifierDialogs
                               inventaire={inventaires}
@@ -365,9 +369,9 @@ export default function Inventory(data) {
                           </span>
                         </TableCell>
                       </TableRow>
-                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                      <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
-                          {inventaires?.divers6_inventory ?? "Aucun objet"}
+                          {inventaires?.divers6_inventory ?? t("inventory.nothing")}
                           <ModifierDialogs
                             inventaire={inventaires}
                             name={"d6"}
@@ -376,7 +380,7 @@ export default function Inventory(data) {
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
-                          {inventaires?.divers6Quantite ?? "Aucun objet"}
+                          {inventaires?.divers6Quantite ?? t("inventory.nothing")}
                           <span>
                             <ModifierDialogs
                               inventaire={inventaires}
@@ -387,9 +391,9 @@ export default function Inventory(data) {
                           </span>
                         </TableCell>
                       </TableRow>
-                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                      <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
-                          {inventaires?.divers7_inventory ?? "Aucun objet"}
+                          {inventaires?.divers7_inventory ?? t("inventory.nothing")}
                           <ModifierDialogs
                             inventaire={inventaires}
                             name={"d7"}
@@ -398,7 +402,7 @@ export default function Inventory(data) {
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
-                          {inventaires?.divers7Quantite ?? "Aucun objet"}
+                          {inventaires?.divers7Quantite ?? t("inventory.nothing")}
                           <span>
                             <ModifierDialogs
                               inventaire={inventaires}
@@ -409,9 +413,9 @@ export default function Inventory(data) {
                           </span>
                         </TableCell>
                       </TableRow>
-                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                      <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
-                          {inventaires?.divers8_inventory ?? "Aucun objet"}
+                          {inventaires?.divers8_inventory ?? t("inventory.nothing")}
                           <ModifierDialogs
                             inventaire={inventaires}
                             name={"d8"}
@@ -420,7 +424,7 @@ export default function Inventory(data) {
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
-                          {inventaires?.divers8Quantite ?? "Aucun objet"}
+                          {inventaires?.divers8Quantite ?? t("inventory.nothing")}
                           <span>
                             <ModifierDialogs
                               inventaire={inventaires}
@@ -431,9 +435,9 @@ export default function Inventory(data) {
                           </span>
                         </TableCell>
                       </TableRow>
-                      <TableRow  sx={{ border: theme.custom.mycustomblur.tableborder, }}>
+                      <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
-                          {inventaires?.divers9_inventory ?? "Aucun objet"}
+                          {inventaires?.divers9_inventory ?? t("inventory.nothing")}
                           <ModifierDialogs
                             inventaire={inventaires}
                             name={"d9"}
@@ -442,7 +446,7 @@ export default function Inventory(data) {
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
-                          {inventaires?.divers9Quantite ?? "Aucun objet"}
+                          {inventaires?.divers9Quantite ?? t("inventory.nothing")}
                           <span>
                             <ModifierDialogs
                               inventaire={inventaires}
@@ -455,7 +459,7 @@ export default function Inventory(data) {
                       </TableRow>
                       <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversName">
-                          {inventaires?.divers10_inventory ?? "Aucun objet"}
+                          {inventaires?.divers10_inventory ?? t("inventory.nothing")}
                           <ModifierDialogs
                             inventaire={inventaires}
                             name={"d10"}
@@ -464,7 +468,7 @@ export default function Inventory(data) {
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
-                          {inventaires?.divers10Quantite ?? "Aucun objet"}
+                          {inventaires?.divers10Quantite ?? t("inventory.nothing")}
                           <span>
                             <ModifierDialogs
                               inventaire={inventaires}
@@ -487,7 +491,7 @@ export default function Inventory(data) {
           onClick={handleDrawerClose}
           sx={{ position: "fixed", right: "0vw", top: "18vh" }}
         >
-          <CloseIcon sx={{ color: theme.custom.mycustomblur.text , }} />
+          <CloseIcon sx={{ color: theme.custom.mycustomblur.text, }} />
         </IconButton>
       </Drawer>
     </div>
