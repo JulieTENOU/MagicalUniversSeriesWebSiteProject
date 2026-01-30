@@ -4,11 +4,24 @@ import Btn from "./Btn";
 import Dice3D from "./Dice3D";
 import { useContext } from "react";
 import { ConnexionContext } from "./provider"; // adapte le chemin exact
-import { Dialog, DialogTitle, DialogContent, DialogActions, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox,} from "@mui/material";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Checkbox,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
-export default function CreationPersonnage({ theme }) {
+export default function CreationPersonnage() {
   const [activeTab, setActiveTab] = useState("identite");
   const [openEquipDialog, setOpenEquipDialog] = useState(false);
+  const theme = useTheme();
 
   const [initialChoices, setInitialChoices] = useState({
     virtual_game: false,
@@ -98,16 +111,16 @@ export default function CreationPersonnage({ theme }) {
       .then((res) => res.json())
       .then((data) =>
         setRaceOptions(
-          data.map((r) => ({ label: r.race_name, value: r.race_name }))
-        )
+          data.map((r) => ({ label: r.race_name, value: r.race_name })),
+        ),
       )
       .catch(() => setRaceOptions([]));
     fetch("/api/metiers/findAllJobs")
       .then((res) => res.json())
       .then((data) =>
         setMetierOptions(
-          data.map((m) => ({ label: m.metier_name, value: m.metier_name }))
-        )
+          data.map((m) => ({ label: m.metier_name, value: m.metier_name })),
+        ),
       )
       .catch(() => setMetierOptions([]));
     fetch("/api/agences/findAllAgences")
@@ -119,16 +132,16 @@ export default function CreationPersonnage({ theme }) {
             value: a.agence_name,
             classement: a.agence_classement,
             specialite: a.agence_specialite,
-          }))
-        )
+          })),
+        ),
       )
       .catch(() => setAgenceOptions([]));
     fetch("/api/planete/findAllPlanete")
       .then((res) => res.json())
       .then((data) =>
         setPlaneteOptions(
-          data.map((p) => ({ label: p.planete_name, value: p.planete_name }))
-        )
+          data.map((p) => ({ label: p.planete_name, value: p.planete_name })),
+        ),
       )
       .catch(() => setPlaneteOptions([]));
   }, []);
@@ -180,7 +193,6 @@ export default function CreationPersonnage({ theme }) {
 
   const needsWeaponChoice = metier === "Palladin";
 
-
   // --- Onglets avec navigation bloquée ---
   const tabs = [
     { key: "identite", label: "Identité", disabled: false },
@@ -192,153 +204,97 @@ export default function CreationPersonnage({ theme }) {
     },
   ];
 
-// const handleSubmit = async () => {
-//   if (!isAllValid) return;
+  const buildDataPayload = () => ({
+    Name_character: name,
+    Age_character: Number(age),
+    Sexe_character: sexe,
+    Race_character: race,
+    Metier_character: metier,
+    OeilD_character: oeilD,
+    OeilG_character: oeilG,
+    Cheveux_character: cheveux,
+    Taille_character: Number(taille),
+    Poids_character: Number(poids),
+    Signes_character: signes,
+    Traits_character: traits,
+    Agence_character: agence,
+    Planete_character: planete,
+    Force_character: Number(force),
+    Dexte_character: Number(dexte),
+    Resistance_character: Number(resistance),
+    Resilience_character: Number(resilience),
+    Intell_character: Number(intell),
+    Charisme_character: Number(charisme),
+    Chance_character: Number(chance),
+    Stamina_character: Number(stamina),
+    ManaVital_character: Number(manaVital),
+    ManaEau_character: Number(manaEau),
+    ManaTerre_character: Number(manaTerre),
+    ManaFeu_character: Number(manaFeu),
+    ManaAir_character: Number(manaAir),
+    ManaVolonte_character: Number(manaVolonte),
+    // users_ID inutile si back utilise req.userId via verifyToken
+  });
 
-//   const data = {
-//     Name_character: name,
-//     Age_character: Number(age),
-//     Sexe_character: sexe,
-//     Race_character: race,
-//     Metier_character: metier,
-//     OeilD_character: oeilD,
-//     OeilG_character: oeilG,
-//     Cheveux_character: cheveux,
-//     Taille_character: Number(taille),
-//     Poids_character: Number(poids),
-//     Signes_character: signes,
-//     Traits_character: traits,
-//     Agence_character: agence,
-//     Planete_character: planete,
-//     Force_character: Number(force),
-//     Dexte_character: Number(dexte),
-//     Resistance_character: Number(resistance),
-//     Resilience_character: Number(resilience),
-//     Intell_character: Number(intell),
-//     Charisme_character: Number(charisme),
-//     Chance_character: Number(chance),
-//     Stamina_character: Number(stamina),
-//     ManaVital_character: Number(manaVital),
-//     ManaEau_character: Number(manaEau),
-//     ManaTerre_character: Number(manaTerre),
-//     ManaFeu_character: Number(manaFeu),
-//     ManaAir_character: Number(manaAir),
-//     ManaVolonte_character: Number(manaVolonte),
-//     users_ID: currentUser?.users_ID,
-//   };
+  const sendCreate = async () => {
+    const data = {
+      ...buildDataPayload(),
+      initialChoices, // ✅ envoyé au back
+    };
 
-//   try {
-//     const res = await fetch("/api/characters/createCharacter", { 
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       credentials: "include",
-//       body: JSON.stringify(data),
-//     });
+    try {
+      const res = await fetch("/api/characters/createCharacter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
 
-//     const payload = await res.json().catch(() => ({}));
+      const payload = await res.json().catch(() => ({}));
 
-//     if (!res.ok) {
-//       console.error("CREATE FAILED", res.status, payload);
-//       return;
-//     }
+      if (!res.ok) {
+        console.error("CREATE FAILED", res.status, payload);
+        return;
+      }
 
-//     console.log("CREATED", payload);
-//     // ici tu peux redirect ou afficher un snackbar
-//   } catch (e) {
-//     console.error("NETWORK ERROR", e);
-//   }
-// };
-
-const buildDataPayload = () => ({
-  Name_character: name,
-  Age_character: Number(age),
-  Sexe_character: sexe,
-  Race_character: race,
-  Metier_character: metier,
-  OeilD_character: oeilD,
-  OeilG_character: oeilG,
-  Cheveux_character: cheveux,
-  Taille_character: Number(taille),
-  Poids_character: Number(poids),
-  Signes_character: signes,
-  Traits_character: traits,
-  Agence_character: agence,
-  Planete_character: planete,
-  Force_character: Number(force),
-  Dexte_character: Number(dexte),
-  Resistance_character: Number(resistance),
-  Resilience_character: Number(resilience),
-  Intell_character: Number(intell),
-  Charisme_character: Number(charisme),
-  Chance_character: Number(chance),
-  Stamina_character: Number(stamina),
-  ManaVital_character: Number(manaVital),
-  ManaEau_character: Number(manaEau),
-  ManaTerre_character: Number(manaTerre),
-  ManaFeu_character: Number(manaFeu),
-  ManaAir_character: Number(manaAir),
-  ManaVolonte_character: Number(manaVolonte),
-  // users_ID inutile si back utilise req.userId via verifyToken
-});
-
-const sendCreate = async () => {
-  const data = {
-    ...buildDataPayload(),
-    initialChoices, // ✅ envoyé au back
+      console.log("CREATED", payload);
+      // TODO: redirect/snackbar
+    } catch (e) {
+      console.error("NETWORK ERROR", e);
+    }
   };
 
-  try {
-    const res = await fetch("/api/characters/createCharacter", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(data),
-    });
+  const handleSubmit = () => {
+    if (!isAllValid) return;
 
-    const payload = await res.json().catch(() => ({}));
-
-    if (!res.ok) {
-      console.error("CREATE FAILED", res.status, payload);
+    // si palladin, on force le choix arc/arbalète via popup
+    if (needsWeaponChoice) {
+      setOpenEquipDialog(true);
       return;
     }
 
-    console.log("CREATED", payload);
-    // TODO: redirect/snackbar
-  } catch (e) {
-    console.error("NETWORK ERROR", e);
-  }
-};
-
-const handleSubmit = () => {
-  if (!isAllValid) return;
-
-  // si palladin, on force le choix arc/arbalète via popup
-  if (needsWeaponChoice) {
+    // sinon popup quand même (virtual game) ? au choix :
     setOpenEquipDialog(true);
-    return;
-  }
+  };
 
-  // sinon popup quand même (virtual game) ? au choix :
-  // ici je la montre aussi, car virtual game est proposé à tous
-  setOpenEquipDialog(true);
-};
+  const handleCloseEquipDialog = () => {
+    setOpenEquipDialog(false);
+  };
 
-const handleCloseEquipDialog = () => {
-  setOpenEquipDialog(false);
-};
+  const handleConfirmEquipDialog = async () => {
+    // validation : si palladin -> arme obligatoire
+    if (
+      needsWeaponChoice &&
+      initialChoices.weapon_choice !== "arc" &&
+      initialChoices.weapon_choice !== "arbalète"
+    ) {
+      alert("Choisis une arme (arc ou arbalète).");
+      return;
+    }
 
-const handleConfirmEquipDialog = async () => {
-  // validation : si palladin -> arme obligatoire
-  if (needsWeaponChoice && (initialChoices.weapon_choice !== "arc" && initialChoices.weapon_choice !== "arbalète")) {
-    // tu peux afficher un message MUI si tu veux, là c'est le plus simple :
-    alert("Choisis une arme (arc ou arbalète).");
-    return;
-  }
-
-  setOpenEquipDialog(false);
-  await sendCreate();
-};
-
+    setOpenEquipDialog(false);
+    await sendCreate();
+  };
 
   const dieRef = useRef(null);
   // --- RENDER ---
@@ -373,8 +329,8 @@ const handleConfirmEquipDialog = async () => {
                   color: disabled
                     ? "#777"
                     : activeTab === key
-                    ? "#fff"
-                    : "#99aacc",
+                      ? "#fff"
+                      : "#99aacc",
                   fontSize: "1.05rem",
                   cursor: disabled ? "not-allowed" : "pointer",
                   opacity: disabled ? 0.6 : 1,
@@ -394,8 +350,8 @@ const handleConfirmEquipDialog = async () => {
                 key === "identite"
                   ? "5px 0 0 0"
                   : key === "ressources"
-                  ? "0 5px 0 0"
-                  : "0",
+                    ? "0 5px 0 0"
+                    : "0",
             }}
             disabled={disabled}
           />
@@ -599,7 +555,7 @@ const handleConfirmEquipDialog = async () => {
                   required
                 />
                 <TextField
-                  label="Traits"
+                  label="Background"
                   value={traits}
                   onChange={(e) => setTraits(e.target.value)}
                   fullWidth
@@ -716,9 +672,7 @@ const handleConfirmEquipDialog = async () => {
                 ? "visible"
                 : "hidden",
             height:
-              activeTab === "attributs" || activeTab === "ressources"
-                ? 280
-                : 0,
+              activeTab === "attributs" || activeTab === "ressources" ? 280 : 0,
             border: "2px dashed #3a3a4a",
             borderRadius: 2,
             position: "relative",
@@ -727,59 +681,74 @@ const handleConfirmEquipDialog = async () => {
           <Typography variant="subtitle1" sx={{ mb: 1 }}>
             Dé en cours de test
           </Typography>
-          <Dice3D 
+          <Dice3D
             key={activeTab}
-            ref={dieRef} 
-            sides={activeTab === "ressources" ? 100 : 20} 
-            size={200} 
+            ref={dieRef}
+            sides={activeTab === "ressources" ? 100 : 20}
+            size={200}
             color="#eeeeee"
             background="#0b102a"
-            onRollEnd={(v)=>console.log(v)}/>
+            onRollEnd={(v) => console.log(v)}
+          />
         </Box>
       </Box>
 
-      <Dialog open={openEquipDialog} onClose={handleCloseEquipDialog} maxWidth="sm" fullWidth>
-  <DialogTitle>Équipement de départ</DialogTitle>
+      <Dialog
+        open={openEquipDialog}
+        onClose={handleCloseEquipDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Équipement de départ</DialogTitle>
 
-  <DialogContent dividers>
-    {/* Virtual game (optionnel pour tous) */}
-    <FormControlLabel
-      control={
-        <Checkbox
-          checked={initialChoices.virtual_game}
-          onChange={(e) =>
-            setInitialChoices((prev) => ({ ...prev, virtual_game: e.target.checked }))
-          }
-        />
-      }
-      label="Prendre un Virtual Game dès le départ (optionnel)"
-    />
+        <DialogContent dividers>
+          {/* Virtual game (optionnel pour tous) */}
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={initialChoices.virtual_game}
+                onChange={(e) =>
+                  setInitialChoices((prev) => ({
+                    ...prev,
+                    virtual_game: e.target.checked,
+                  }))
+                }
+              />
+            }
+            label="Prendre un Virtual Game dès le départ (optionnel)"
+          />
 
-    {/* Choix arc/arbalète uniquement pour Palladin */}
-    {needsWeaponChoice && (
-      <FormControl sx={{ mt: 2 }}>
-        <FormLabel>Choix d'arme (obligatoire)</FormLabel>
-        <RadioGroup
-          value={initialChoices.weapon_choice}
-          onChange={(e) =>
-            setInitialChoices((prev) => ({ ...prev, weapon_choice: e.target.value }))
-          }
-        >
-          <FormControlLabel value="arc" control={<Radio />} label="Arc" />
-          <FormControlLabel value="arbalète" control={<Radio />} label="Arbalète" />
-        </RadioGroup>
-      </FormControl>
-    )}
-  </DialogContent>
+          {/* Choix arc/arbalète uniquement pour Palladin */}
+          {needsWeaponChoice && (
+            <FormControl sx={{ mt: 2 }}>
+              <FormLabel>Choix d'arme (obligatoire)</FormLabel>
+              <RadioGroup
+                value={initialChoices.weapon_choice}
+                onChange={(e) =>
+                  setInitialChoices((prev) => ({
+                    ...prev,
+                    weapon_choice: e.target.value,
+                  }))
+                }
+              >
+                <FormControlLabel value="arc" control={<Radio />} label="Arc" />
+                <FormControlLabel
+                  value="arbalète"
+                  control={<Radio />}
+                  label="Arbalète"
+                />
+              </RadioGroup>
+            </FormControl>
+          )}
+        </DialogContent>
 
-  <DialogActions>
-    <Button onClick={handleCloseEquipDialog}>Annuler</Button>
-    <Button variant="contained" onClick={handleConfirmEquipDialog}>
-      Confirmer
-    </Button>
-  </DialogActions>
-</Dialog>
-
+        <DialogActions>
+          <Button onClick={handleCloseEquipDialog}>Annuler</Button>
+          <Button variant="contained" onClick={handleConfirmEquipDialog}>
+            Confirmer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

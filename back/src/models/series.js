@@ -36,6 +36,12 @@ module.exports = function (sequelize, DataTypes) {
           fields: [{ name: "ID_series" }],
         },
       ],
-    }
+    },
   );
+
+  series.associate = function (models) {
+    series.hasMany(models.books, {
+      foreignKey: "ID_series",
+    });
+  };
 };

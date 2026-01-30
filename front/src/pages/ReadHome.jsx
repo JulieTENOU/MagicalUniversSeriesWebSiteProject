@@ -54,6 +54,13 @@ function ReadHome() {
           height={'100px'}
           sx={{ color: 'whitesmoke' }}
         />
+        {seriesList.forEach((serie, i) => {
+          console.log("serie", i, serie);
+        })}
+
+        {seriesList.forEach((serie, i) => {
+          console.log("keys", i, Object.keys(serie));
+        })}
 
         {seriesList.map(serie => (
           <Btn

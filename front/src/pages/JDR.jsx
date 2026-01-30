@@ -10,8 +10,12 @@ import { Typography } from "@mui/material";
 import { ConnexionContext } from "../components/provider.jsx";
 import { useTheme } from "@mui/material/styles";
 import BtnRtn from "../components/BtnRtn.jsx";
+import i18n from "i18next";
+import { useTranslation } from "react-i18next";
+import Loader from "../components/Loader.jsx";
 
 function JDR() {
+  const { t } = useTranslation();
   let navigate = useNavigate();
   const {
     state: isConnected,
@@ -27,16 +31,17 @@ function JDR() {
     setSelectedCharacters((prev) =>
       prev.some((c) => c.ID_character === character.ID_character)
         ? prev.filter((c) => c.ID_character !== character.ID_character)
-        : [...prev, character]
+        : [...prev, character],
     );
   };
-
-  console.log("characters list : ", stats);
-  console.log("isConnected :", isConnected);
 
   if (!loading && !isConnected) {
     navigate("/", { replace: true });
     return null;
+  }
+
+  if (loading) {
+    return <Loader />;
   }
 
   return (
@@ -62,21 +67,34 @@ function JDR() {
             textAlign: "center",
           }}
         >
-          {isConnected?.users_status === "a" &&
-            "Choose the characters for this game"}
-          {isConnected?.users_status === "p" &&
-            "Choose your character for this game"}
+          {isConnected?.users_status === "a" && t("jdr.selectCharas")}
+          {isConnected?.users_status === "p" && t("jdr.selectChara")}
         </Typography>
-        <Btn
-          onClick={() => navigate("/jdr/create_character")}
-          msg="Créer un personnage"
-          sx={{
-            color: theme.custom.mymodal.text,
-            backgroundColor: theme.custom.mymodal.button,
-            marginBottom: 4,
-            fontWeight: "bold",
-          }}
-        />
+        {isConnected?.users_status === "p" && (
+          <Btn
+            onClick={() => navigate("/jdr/create_character")}
+            msg={t("jdr.newChara")}
+            sx={{
+              color: theme.custom.mymodal.text,
+              backgroundColor: theme.custom.mymodal.button,
+              marginBottom: 4,
+              fontWeight: "bold",
+            }}
+          />
+        )}
+
+        {isConnected?.users_status === "a" && (
+          <Btn
+            onClick={() => navigate("/jdr/admin/create_character")}
+            msg={"Créer / importer un personnage (Admin)"}
+            sx={{
+              color: theme.custom.mymodal.text,
+              backgroundColor: theme.custom.mymodal.button,
+              marginBottom: 4,
+              fontWeight: "bold",
+            }}
+          />
+        )}
         {stats.map((stat) => {
           const player = `${stat?.Name_character}`;
           if (
@@ -101,7 +119,7 @@ function JDR() {
             );
           } else if (isConnected?.users_status === "a") {
             const isSelected = selectedCharacters.some(
-              (c) => c.ID_character === stat.ID_character
+              (c) => c.ID_character === stat.ID_character,
             );
             return (
               <div
@@ -123,8 +141,8 @@ function JDR() {
                   sx={{
                     color: theme.custom.mymodal.text,
                     backgroundColor: isSelected
-                      ? theme.custom.mymodal.selected ??
-                      theme.custom.mymodal.button
+                      ? (theme.custom.mymodal.selected ??
+                        theme.custom.mymodal.button)
                       : theme.custom.mymodal.button,
                     marginBottom: 2,
                     fontWeight: "bold",
@@ -167,7 +185,7 @@ function JDR() {
         }}
       >
         <BtnRtn
-          msg={"Go back"}
+          msg={t("jdr.return")}
           sx={{
             color: theme.custom.mymodal.text,
             backgroundColor: theme.custom.mymodal.button,

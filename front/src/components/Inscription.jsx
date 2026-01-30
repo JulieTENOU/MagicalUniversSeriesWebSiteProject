@@ -11,6 +11,8 @@ import {
 import Btn from "./Btn";
 import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
+import { useTranslation } from "react-i18next";
+import { useSnack } from "../hooks/useSnack";
 
 export default function Inscription() {
   const theme = useTheme();
@@ -18,6 +20,8 @@ export default function Inscription() {
   const [pwd, setPwd] = useState(null);
   const [status, setStatus] = useState(null);
   const [name, setName] = useState(null);
+  const { t } = useTranslation();
+  const { showSnack, Snack } = useSnack();
 
   const handleInscription = () => {
     const data = {
@@ -26,16 +30,16 @@ export default function Inscription() {
       users_pseudo: name,
       users_status: status,
     };
-    console.log(data);
-    alert(
-      "Data fournies : \n mail: " +
-        data.users_email +
-        "\n password: " +
-        data.users_password +
-        "\n pseudo: " +
-        data.users_pseudo +
-        "\n status: " +
-        data.users_status
+    // console.log(data);
+
+    if (!data.users_email || !data.users_password || !data.users_pseudo) {
+      showSnack("Merci de remplir pseudo, email et mot de passe.", "warning");
+      return;
+    }
+
+    showSnack(
+      `Données fournies : mail=${data.users_email}, pseudo=${data.users_pseudo}, status=${data.users_status || "r"}`,
+      "info",
     );
 
     fetch(`api/register`, {
@@ -45,15 +49,31 @@ export default function Inscription() {
       },
       body: JSON.stringify(data),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Success:", data);
-        //    window.location.href = "http://localhost:3000/connexion";
+      .then(async (response) => {
+        // si le backend renvoie parfois autre chose que du json, on protège
+        const payload = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          showSnack(
+            payload?.message ||
+              payload?.error ||
+              "Erreur lors de l'inscription.",
+            "error",
+          );
+          throw new Error("Register failed");
+        }
+
+        return payload;
+      })
+      .then((payload) => {
+        console.log("Success:", payload);
+        showSnack("Inscription réussie ! 🎉", "success");
+        // window.location.href = "http://localhost:3000/connexion";
       })
       .catch((error) => {
         console.error("Error:", error);
+        showSnack("Impossible de contacter le serveur.", "error");
       });
-    // }
   };
 
   return (
@@ -97,7 +117,7 @@ export default function Inscription() {
                   fontWeight: "bold",
                 }}
               >
-                Connexion
+                {t("buttons.login")}
               </Typography>
             }
           />
@@ -123,7 +143,7 @@ export default function Inscription() {
                   fontWeight: "bold",
                 }}
               >
-                Inscritpion
+                {t("buttons.signup")}
               </Typography>
             }
           />
@@ -175,7 +195,7 @@ export default function Inscription() {
               color: theme.custom.mymodal.text,
             }}
           >
-            Mot de passe
+            {t("signup.pwd")}
           </DialogContentText>
           <TextField
             sx={{
@@ -215,7 +235,7 @@ export default function Inscription() {
               }}
               value="r"
             >
-              Lecteur
+              {t("signup.statusR")}
             </MenuItem>
             <MenuItem
               sx={{
@@ -224,7 +244,7 @@ export default function Inscription() {
               }}
               value="p"
             >
-              Joueur
+              {t("signup.statusP")}
             </MenuItem>
           </TextField>
         </DialogContent>
@@ -237,10 +257,11 @@ export default function Inscription() {
               backgroundColor: theme.custom.mymodal.button,
             }}
           >
-            S'inscrire
+            {t("signup.cta")}
           </Button>
         </DialogActions>
       </Box>
+      {Snack}
     </div>
   );
 }

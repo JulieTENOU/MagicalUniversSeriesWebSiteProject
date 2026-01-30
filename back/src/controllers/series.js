@@ -3,29 +3,24 @@ const sequelize = require("../models").sequelize;
 const bcrypt = require("bcrypt");
 const series = require("../models/series")(sequelize, DataTypes);
 
-module.exports = {  
-  create: async function (req, res){
+module.exports = {
+  create: async function (req, res) {
     console.log(req.body);
-    if(req.body){
-      try{
-        let{
-          ID_series,
-          series_title,
-          image,
-          path
-        } = req.body;
-        
+    if (req.body) {
+      try {
+        let { ID_series, series_title, image, path } = req.body;
+
         const newSerie = await series.create({
           ID_series,
           series_title,
           image,
-          path
+          path,
         });
-        return res.status(201).send({newSerie});
-      } catch (error){
-        return res.status(400).send({error: error.message});
+        return res.status(201).send({ newSerie });
+      } catch (error) {
+        return res.status(400).send({ error: error.message });
       }
-    }else{
+    } else {
       res.status(500).json(response);
     }
   },
@@ -81,40 +76,34 @@ module.exports = {
 
   // This function updates a user's information.
 
-   update: async function (req, res) {
-   // console.log(req)
+  update: async function (req, res) {
+    // console.log(req)
     const id = req.params.ID_series;
     console.log(id);
-     series
-       .findOne({
+    series
+      .findOne({
         where: {
           ID_series: id,
-         },
-       })
-       .then(async (response) => {
+        },
+      })
+      .then(async (response) => {
         // We update the book
-             const {
-              ID_series,
-              series_title,
-              image,
-              path
-             } = req.body;
-             const bookUpdate = {
-              ID_series,
-              series_title,
-              image,
-              path
-             };
-             response.update(bookUpdate);
-             res.send(response);
-         }
-       )
-       .catch((err) => {
-         res
-           .status(404)
-           .send("We were unable to update your book because " + err);
-       });
-   },
+        const { ID_series, series_title, image, path } = req.body;
+        const bookUpdate = {
+          ID_series,
+          series_title,
+          image,
+          path,
+        };
+        response.update(bookUpdate);
+        res.send(response);
+      })
+      .catch((err) => {
+        res
+          .status(404)
+          .send("We were unable to update your book because " + err);
+      });
+  },
 
   // This function deletes a user.
 

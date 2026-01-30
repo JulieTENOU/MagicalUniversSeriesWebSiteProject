@@ -495,6 +495,152 @@ module.exports = {
   },
   // This function find and returns all the users registered.
 
+  adminCreateCharacter_TEMP: async function (req, res) {
+    const t = await sequelize.transaction();
+    try {
+      // on réutilise ta liste, mais on accepte aussi users_ID
+      const client = pick(req.body || {}, [...ALLOWED_FROM_CLIENT, "users_ID"]);
+
+      const usersId = Number(req.body?.users_ID);
+      if (!usersId) {
+        await t.rollback();
+        return res.status(400).send({ error: "users_ID manquant." });
+      }
+
+      const payload = {
+        ...CHARACTER_DEFAULTS,
+        ...client,
+        users_ID: usersId,
+      };
+
+      if (!payload.Name_character?.trim()) {
+        await t.rollback();
+        return res.status(400).send({ message: "Nom manquant." });
+      }
+
+      // ✅ IMPORTANT : pas de applyAllBonuses ici
+      const newCharacter = await characters.create(payload, { transaction: t });
+
+      await currentGauges.create(
+        {
+          Name_character: newCharacter.Name_character,
+          currentStamina: newCharacter.Stamina_character,
+          currentManaVital: newCharacter.ManaVital_character,
+          currentManaEau: newCharacter.ManaEau_character,
+          currentManaTerre: newCharacter.ManaTerre_character,
+          currentManaFeu: newCharacter.ManaFeu_character,
+          currentManaAir: newCharacter.ManaAir_character,
+          currentManaVolonte: newCharacter.ManaVolonte_character,
+        },
+        { transaction: t },
+      );
+
+      await creatures.create(
+        { Name_character: newCharacter.Name_character },
+        { transaction: t },
+      );
+      await crystals.create(
+        { Name_character: newCharacter.Name_character },
+        { transaction: t },
+      );
+      await ingredients.create(
+        { Name_character: newCharacter.Name_character },
+        { transaction: t },
+      );
+
+      // --- INVENTORY init : on garde ton bloc identique ---
+      const metierName = payload.Metier_character;
+
+      const foundMetier = await metiers.findOne({
+        where: { metier_name: metierName },
+        transaction: t,
+      });
+
+      if (!foundMetier) {
+        throw new Error(`Métier introuvable en base: ${metierName}`);
+      }
+
+      const metierId = Number(foundMetier.metier_id);
+
+      const choices = req.body.initialChoices || {};
+      const wantVirtualGame = choices.virtual_game === true;
+      const weaponChoice = choices.weapon_choice;
+
+      const rows = await equipInit.findAll({
+        where: {
+          [Op.or]: [
+            { type_cible: "all" },
+            { type_cible: "metiers", cible_id: metierId },
+          ],
+        },
+        transaction: t,
+      });
+
+      const invPayload = {
+        Name_character: newCharacter.Name_character,
+        PPU: 0,
+        POU: 0,
+        PAU: 0,
+      };
+
+      if (
+        rows.some(
+          (r) =>
+            r.type_cible === "all" &&
+            r.nom_objet === "holocom" &&
+            r.obligatoire === 1,
+        )
+      ) {
+        invPayload.important1 = "holocom";
+      }
+
+      if (
+        wantVirtualGame &&
+        rows.some(
+          (r) =>
+            r.type_cible === "all" &&
+            r.nom_objet === "virtual game" &&
+            r.obligatoire === 0,
+        )
+      ) {
+        invPayload.important2 = "virtual game";
+      }
+
+      if (metierId === 5) {
+        if (rows.some((r) => r.nom_objet === "épée standard")) {
+          invPayload.arme1Name = "épée standard";
+        }
+      }
+
+      if (metierId === 6) {
+        // choix obligatoire arc/arbalète (si tu veux vraiment imposer)
+        // sinon enlève ce check
+        if (weaponChoice !== "arc" && weaponChoice !== "arbalète") {
+          throw new Error("Choix d'arme requis : arc ou arbalète.");
+        } else {
+          const ok = rows.some(
+            (r) =>
+              r.groupe_choix === "groupe_choix_arcs" &&
+              r.nom_objet === weaponChoice,
+          );
+          if (ok) invPayload.arme1Name = weaponChoice;
+        }
+
+        if (rows.some((r) => r.nom_objet === "armure basique")) {
+          invPayload.armure1Name = "armure basique";
+        }
+      }
+
+      await inventory.create(invPayload, { transaction: t });
+
+      await t.commit();
+      return res.status(201).send({ newCharacter });
+    } catch (error) {
+      await t.rollback();
+      return res.status(400).send({ error: error.message });
+    }
+  },
+
   findAll: async function (req, res) {
     characters
       .findAll(req.params)

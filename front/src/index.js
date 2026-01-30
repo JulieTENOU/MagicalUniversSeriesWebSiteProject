@@ -1,17 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React from "react";
+import ReactDOM from "react-dom/client";
 // import AppProvider from './context';
-import App from './App';
-import MyProvider from './components/provider';
-import { ThemeProvider } from './context/ThemeContext';
+import App from "./App";
+import MyProvider from "./components/provider";
+import { ThemeProvider } from "./context/ThemeContext";
+import "./i18n";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
-    <ThemeProvider>
-     <MyProvider>
-        <App />
-      </MyProvider>
-      </ThemeProvider>
+  <ThemeProvider>
+    <MyProvider>
+      <App />
+    </MyProvider>
+  </ThemeProvider>,
   // </React.StrictMode>
 );
