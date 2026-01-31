@@ -14,7 +14,7 @@ import { useTheme } from "@mui/material/styles";
 
 function ModifierTitle(props) {
   const { children, onClose, ...other } = props;
-  
+
   return (
     <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
       {children}
@@ -42,12 +42,12 @@ ModifierTitle.propTypes = {
 };
 
 export default function ModifierDialogs(data) {
-      const theme = useTheme();
-    console.log(data);
-    const ingredients = data.inventaire;
-    const left = data.left;
-    const name = data.name;
-    const dataToUpdate = data.dataToUpdate;
+  const theme = useTheme();
+  console.log(data);
+  const ingredients = data.inventaire;
+  const left = data.left;
+  const name = data.name;
+  const dataToUpdate = data.dataToUpdate;
   const [open, setOpen] = React.useState(false);
   const [text, setText] = useState("");
   let newDatas = {};
@@ -59,168 +59,173 @@ export default function ModifierDialogs(data) {
   };
 
   console.log("ingredients", ingredients)
-
+  console.log("Name_character", ingredients.Name_character);
   const handleSave = () => {
-    if(name === 'ingredient1'){
+    console.log("text à insérer:", text)
+    if (name === 'ingredient1') {
       newDatas = {
         ingredient1: text,
-    };
-  } else if (name === 'ingredient1Q'){
-    newDatas = {
-      ingredient1Quantite: text,
-    };
-  } else if (name === 'ingredient2'){
-    newDatas = {
-      ingredient2: text,
-    };
-  } else if (name === 'ingredient2Q'){
-    newDatas = {
-      ingredient2Quantite: text,
-    };
-  } else if (name ==='ingredient3'){
-    newDatas = {
-      ingredient3: text,
-    };
-  } else if (name ==='ingredient3Q'){
-    newDatas = {
-      ingredient3Quantite: text,
-    };
-  } else if (name ==='ingredient4'){
-    newDatas = {
-      ingredient4: text,
-    };
-  } else if (name ==='ingredient4Q'){
-    newDatas = {
-      ingredient4Quantite: text,
-    };
-  } else if (name ==='ingredient5'){
-    newDatas = {
-      ingredient5: text,
-    };
-  } else if (name ==='ingredient5Q'){
-    newDatas = {
-      ingredient5Quantite: text,
-    };
-  } else if (name ==='ingredient6'){
-    newDatas = {
-      ingredient6: text,
-    };
-  } else if (name ==='ingredient6Q'){
-    newDatas = {
-      ingredient6Quantite: text,
-    };
-  } else if (name ==='ingredient7'){
-    newDatas = {
-      ingredient7: text,
-    };
-  } else if (name ==='ingredient7Q'){
-    newDatas = {
-      ingredient7Quantite: text,
-    };
-  }else if (name ==='ingredient8'){
-    newDatas = {
-      ingredient8: text,
-    };
-  } else if (name ==='ingredient8Q'){
-    newDatas = {
-      ingredient8Quantite: text,
-    };
-  } else if (name ==='ingredient9'){
-    newDatas = {
-      ingredient9: text,
-    };
-  } else if (name ==='ingredient9Q'){
-    newDatas = {
-      ingredient9Quantite: text,
-    };
-  } else if (name ==='ingredient10'){
-    newDatas = {
-      ingredient10: text,
-    };
-  } else if (name ==='ingredient10Q'){
-    newDatas = {
-      ingredient10Quantite: text,
-    };
-  } else if (name ==='ingredient11'){
-    newDatas = {
-      ingredient11: text,
-    };
-  } else if (name ==='ingredient11Q'){
-    newDatas = {
-      ingredient11Quantite: text,
-    };
-  } else if (name ==='ingredient12'){
-    newDatas = {
-      ingredient12: text,
-    };
-  } else if (name ==='ingredient12Q'){
-    newDatas = {
-      ingredient12Quantite: text,
-    };
-  }else if (name ==='ingredient13'){
-    newDatas = {
-      ingredient13: text,
-    };
-  } else if (name ==='ingredient13Q'){
-    newDatas = {
-      ingredient13Quantite: text,
-    };
-  } else if (name ==='ingredient14'){
-    newDatas = {
-      ingredient14: text,
-    };
-  } else if (name ==='ingredient14Q'){
-    newDatas = {
-      ingredient14Quantite: text,
-    };
-  } else if (name ==='ingredient15'){
-    newDatas = {
-      ingredient15: text,
-    };
-  } else if (name ==='ingredient15Q'){
-    newDatas = {
-      ingredient15Quantite: text,
-    };
-  } 
-    console.log(newDatas);
-    fetch(`/ingredients/api/updateIngredients/${ingredients.ID_character}`,{
+      };
+    } else if (name === 'ingredient1Quantite') {
+      newDatas = {
+        ingredient1Quantite: text,
+      };
+    } else if (name === 'ingredient2') {
+      newDatas = {
+        ingredient2: text,
+      };
+    } else if (name === 'ingredient2Quantite') {
+      newDatas = {
+        ingredient2Quantite: text,
+      };
+    } else if (name === 'ingredient3') {
+      newDatas = {
+        ingredient3: text,
+      };
+    } else if (name === 'ingredient3Quantite') {
+      newDatas = {
+        ingredient3Quantite: text,
+      };
+    } else if (name === 'ingredient4') {
+      newDatas = {
+        ingredient4: text,
+      };
+    } else if (name === 'ingredient4Quantite') {
+      newDatas = {
+        ingredient4Quantite: text,
+      };
+    } else if (name === 'ingredient5') {
+      newDatas = {
+        ingredient5: text,
+      };
+    } else if (name === 'ingredient5Quantite') {
+      newDatas = {
+        ingredient5Quantite: text,
+      };
+    } else if (name === 'ingredient6') {
+      newDatas = {
+        ingredient6: text,
+      };
+    } else if (name === 'ingredient6Quantite') {
+      newDatas = {
+        ingredient6Quantite: text,
+      };
+    } else if (name === 'ingredient7') {
+      newDatas = {
+        ingredient7: text,
+      };
+    } else if (name === 'ingredient7Quantite') {
+      newDatas = {
+        ingredient7Quantite: text,
+      };
+    } else if (name === 'ingredient8') {
+      newDatas = {
+        ingredient8: text,
+      };
+    } else if (name === 'ingredient8Quantite') {
+      newDatas = {
+        ingredient8Quantite: text,
+      };
+    } else if (name === 'ingredient9') {
+      newDatas = {
+        ingredient9: text,
+      };
+    } else if (name === 'ingredient9Quantite') {
+      newDatas = {
+        ingredient9Quantite: text,
+      };
+    } else if (name === 'ingredient10') {
+      newDatas = {
+        ingredient10: text,
+      };
+    } else if (name === 'ingredient10Quantite') {
+      newDatas = {
+        ingredient10Quantite: text,
+      };
+    } else if (name === 'ingredient11') {
+      newDatas = {
+        ingredient11: text,
+      };
+    } else if (name === 'ingredient11Quantite') {
+      newDatas = {
+        ingredient11Quantite: text,
+      };
+    } else if (name === 'ingredient12') {
+      newDatas = {
+        ingredient12: text,
+      };
+    } else if (name === 'ingredient12Quantite') {
+      newDatas = {
+        ingredient12Quantite: text,
+      };
+    } else if (name === 'ingredient13') {
+      newDatas = {
+        ingredient13: text,
+      };
+    } else if (name === 'ingredient13Quantite') {
+      newDatas = {
+        ingredient13Quantite: text,
+      };
+    } else if (name === 'ingredient14') {
+      newDatas = {
+        ingredient14: text,
+      };
+    } else if (name === 'ingredient14Quantite') {
+      newDatas = {
+        ingredient14Quantite: text,
+      };
+    } else if (name === 'ingredient15') {
+      newDatas = {
+        ingredient15: text,
+      };
+    } else if (name === 'ingredient15Quantite') {
+      newDatas = {
+        ingredient15Quantite: text,
+      };
+    }
+
+
+    fetch(`/api/ingredients/updateIngredients/${ingredients.Name_character}`, {
       method: "PUT",
-      headers:{
+      headers: {
         "content-type": "application/json",
       },
       body: JSON.stringify(newDatas),
     })
-      .then((response) => response.json())
-      .then((newDatas) => {
-        console.log("Success:", newDatas);
+      .then(async (res) => {
+        const body = await res.json().catch(() => null);
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${JSON.stringify(body)}`);
+        return body;
       })
-      .catch((error)=>{
-        console.error("Error:", error);
-      });
+      .then(() => {
+        data.onIngredientUpdate?.(newDatas);
+        setOpen(false);
+      })
+      .catch(console.error);
   }
 
   return (
-    <div style={{position: 'relative', height:'0px'}}>
-      <Button sx={{ position:'relative', display: 'flex', left:{left}, top:'-2.3vh' , border:'none'}} variant="outlined" onClick={handleClickOpen}>
-        <img src={Pencil} height={'15px'} color={theme.custom.mycustomblur.text} alt="Modifier" id='modifier'/>
+    <div style={{ position: 'relative', height: '0px' }}>
+      <Button sx={{ position: 'relative', display: 'flex', left: { left }, top: '-2.3vh', border: 'none' }} variant="outlined" onClick={handleClickOpen}>
+        <img src={Pencil} height={'15px'} color={theme.custom.mycustomblur.text} alt="Modifier" id='modifier' />
       </Button>
       <Dialog
         onClose={handleClose}
         open={open}
-        PaperProps={{style:{minWidth:'30vw', minHeight:'30vh', backgroundColor:'beige'},}}
+        PaperProps={{ style: { minWidth: '30vw', minHeight: '30vh', backgroundColor: 'beige' }, }}
       >
-        <DialogTitle onClose={handleClose} sx={{outerWidth:'50vw'}}>
+        <DialogTitle onClose={handleClose} sx={{ outerWidth: '50vw' }}>
           Entrez la nouvelle valeur de {dataToUpdate}
         </DialogTitle>
         <DialogContent>
 
-            <div>
-              <TextField id="newNotes" multiline sx={{minHeight:'30px', minWidth:'30px'}} onChange={(e) => setText(e.target.value)} inputProps={{style:{ height:"150px"}}}/>
-              <Button onClick={() => {
-                handleSave();
-              }
-              }> Save new value</Button>
-            </div> 
+          <div>
+            <TextField id="newNotes" multiline sx={{ minHeight: '30px', minWidth: '30px' }} onChange={(e) => setText(e.target.value)} inputProps={{ style: { height: "150px" } }} />
+            <Button onClick={() => {
+              handleSave();
+            }
+            }> Save new value</Button>
+          </div>
         </DialogContent>
         <DialogActions>
         </DialogActions>

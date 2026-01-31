@@ -32,6 +32,12 @@ export default function Combat(data) {
                 console.error("Error:", error);
             });
     }, [character.Name_character]);
+
+
+    function handleInventoryUpdate(patch) {
+        setInventaires((prev) => ({ ...prev, ...patch }));
+    }
+
     return (
         <div>
             <IconButton size='large' edge='start' color='inherit' aria-label='logo' onClick={() => setIsDrawerOpen(true)} sx={{ width: '50px', position: 'fixed', right: "0vw", top: '27vh' }} >
@@ -56,22 +62,82 @@ export default function Combat(data) {
                                         </TableHead>
                                         <TableBody>
                                             <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
-                                                <TableCell className="armesName" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.arme1Name ?? t("inventory?nothing")}<span><ModifierDialogs inventaire={inventaires} name={"arme1Name"} left={'75%'} dataToUpdate={'nom de la 1e arme'} /></span></TableCell>
-                                                <TableCell className="armeD" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.arme1Damage ?? 0}<span><ModifierDialogs inventaire={inventaires} name={"arme1Damage"} left={'40%'} dataToUpdate={'dégâts de la 1e arme'} /></span></TableCell>
-                                                <TableCell className="armeP" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.arme1Scope ?? 0}<span><ModifierDialogs inventaire={inventaires} name={"arme1Scope"} left={'60%'} dataToUpdate={'portée de la 1e arme'} /></span></TableCell>
-                                                <TableCell className="armeM" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.arme1Ammunition ?? 0}<span><ModifierDialogs inventaire={inventaires} name={"arme1Ammunition"} left={'40%'} dataToUpdate={'munitions de la 1e arme'} /></span></TableCell>
+                                                <TableCell className="armesName" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.arme1Name ?? t("inventory.nothing")}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"arme1Name"} left={'75%'} dataToUpdate={'nom de la 1e arme'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armeD" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.arme1Damage ?? 0}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"arme1Damage"} left={'40%'} dataToUpdate={'dégâts de la 1e arme'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armeP" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.arme1Scope ?? 0}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"arme1Scope"} left={'60%'} dataToUpdate={'portée de la 1e arme'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armeM" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.arme1Ammunition ?? 0}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"arme1Ammunition"} left={'40%'} dataToUpdate={'munitions de la 1e arme'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
                                             </TableRow>
                                             <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
-                                                <TableCell className="armesName" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.arme2Name ?? t("inventory?nothing")}<span><ModifierDialogs inventaire={inventaires} name={"arme2Name"} left={'75%'} dataToUpdate={'nom de la 2e arme'} /></span></TableCell>
-                                                <TableCell className="armeD" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.arme2Damage ?? 0}<span><ModifierDialogs inventaire={inventaires} name={"arme2Damage"} left={'40%'} dataToUpdate={'dégâts de la 2e arme'} /></span></TableCell>
-                                                <TableCell className="armeP" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.arme2Scope ?? 0}<span><ModifierDialogs inventaire={inventaires} name={"arme1Scope"} left={'60%'} dataToUpdate={'portée de la 2e arme'} /></span></TableCell>
-                                                <TableCell className="armeM" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.arme2Ammunition ?? 0}<span><ModifierDialogs inventaire={inventaires} name={"arme2Ammunition"} left={'40%'} dataToUpdate={'munitions de la 2e arme'} /></span></TableCell>
+                                                <TableCell className="armesName" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.arme2Name ?? t("inventory.nothing")}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"arme2Name"} left={'75%'} dataToUpdate={'nom de la 2e arme'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armeD" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.arme2Damage ?? 0}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"arme2Damage"} left={'40%'} dataToUpdate={'dégâts de la 2e arme'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armeP" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.arme2Scope ?? 0}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"arme2Scope"} left={'60%'} dataToUpdate={'portée de la 2e arme'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armeM" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.arme2Ammunition ?? 0}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"arme2Ammunition"} left={'40%'} dataToUpdate={'munitions de la 2e arme'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
                                             </TableRow>
                                             <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
-                                                <TableCell className="armesName" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.arme3Name ?? t("inventory?nothing")}<span><ModifierDialogs inventaire={inventaires} name={"arme3Name"} left={'75%'} dataToUpdate={'nom de la 3e arme'} /></span></TableCell>
-                                                <TableCell className="armeD" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.arme3Damage ?? 0}<span><ModifierDialogs inventaire={inventaires} name={"arme3Damage"} left={'40%'} dataToUpdate={'dégâts de la 3e arme'} /></span></TableCell>
-                                                <TableCell className="armeP" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.arme3Scope ?? 0}<span><ModifierDialogs inventaire={inventaires} name={"arme3Scope"} left={'60%'} dataToUpdate={'portée de la 3e arme'} /></span></TableCell>
-                                                <TableCell className="armeM" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.arme3Ammunition ?? 0}<span><ModifierDialogs inventaire={inventaires} name={"arme3Ammunition"} left={'40%'} dataToUpdate={'munitions de la 3e arme'} /></span></TableCell>
+                                                <TableCell className="armesName" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.arme3Name ?? t("inventory.nothing")}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"arme3Name"} left={'75%'} dataToUpdate={'nom de la 3e arme'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armeD" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.arme3Damage ?? 0}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"arme3Damage"} left={'40%'} dataToUpdate={'dégâts de la 3e arme'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armeP" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.arme3Scope ?? 0}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"arme3Scope"} left={'60%'} dataToUpdate={'portée de la 3e arme'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armeM" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.arme3Ammunition ?? 0}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"arme3Ammunition"} left={'40%'} dataToUpdate={'munitions de la 3e arme'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>
@@ -93,22 +159,79 @@ export default function Combat(data) {
                                         </TableHead>
                                         <TableBody>
                                             <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
-                                                <TableCell className="armureName" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.armure1Name ?? t("inventory?nothing")}<span><ModifierDialogs inventaire={inventaires} name={"armure1Name"} left={'70%'} dataToUpdate={'nom de la 1e armure'} /></span></TableCell>
-                                                <TableCell className="armureCac" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.armure1Cac ?? ""}<span><ModifierDialogs inventaire={inventaires} name={"armure1Damage"} left={'50%'} dataToUpdate={'dégâts de la 1e armure'} /></span></TableCell>
-                                                <TableCell className="armureD" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.armure1Dist ?? ""}<span><ModifierDialogs inventaire={inventaires} name={"arme1Scope"} left={'50%'} dataToUpdate={'portée de la 1e armure'} /></span></TableCell>
-                                                <TableCell className="armureE" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.armure1Effect ?? ""}<span><ModifierDialogs inventaire={inventaires} name={"arme1Ammunition"} left={'70%'} dataToUpdate={'munitions de la 1e armure'} /></span></TableCell>
+                                                <TableCell className="armureName" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.armure1Name ?? t("inventory.nothing")}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"armure1Name"} left={'70%'} dataToUpdate={'nom de la 1e armure'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armureCac" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.armure1Cac ?? ""}
+                                                    <span><ModifierDialogs inventaire={inventaires} name={"armure1Cac"} left={'50%'} dataToUpdate={'Cac de la 1e armure'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armureD" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.armure1Dist ?? ""}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"armure1Dist"} left={'50%'} dataToUpdate={'distance de la 1e armure'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armureE" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.armure1Effect ?? ""}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"armure1Effect"} left={'70%'} dataToUpdate={'effets de la 1e armure'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
                                             </TableRow>
                                             <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
-                                                <TableCell className="armureName" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.armure2Name ?? t("inventory?nothing")}<span><ModifierDialogs inventaire={inventaires} name={"armure2Name"} left={'70%'} dataToUpdate={'nom de la 2e armure'} /></span></TableCell>
-                                                <TableCell className="armureCac" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.armure2Cac ?? ""}<span><ModifierDialogs inventaire={inventaires} name={"armure2Damage"} left={'50%'} dataToUpdate={'dégâts de la 2e armure'} /></span></TableCell>
-                                                <TableCell className="armureD" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.armure2Dist ?? ""}<span><ModifierDialogs inventaire={inventaires} name={"armure2Scope"} left={'50%'} dataToUpdate={'portée de la 2e armure'} /></span></TableCell>
-                                                <TableCell className="armureE" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.armure2Effect ?? ""}<span><ModifierDialogs inventaire={inventaires} name={"armure2Ammunition"} left={'70%'} dataToUpdate={'munitions de la 2e armure'} /></span></TableCell>
+                                                <TableCell className="armureName" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.armure2Name ?? t("inventory.nothing")}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"armure2Name"} left={'70%'} dataToUpdate={'nom de la 2e armure'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armureCac" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.armure2Cac ?? ""}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"armure2Cac"} left={'50%'} dataToUpdate={'Cac de la 2e armure'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span></TableCell>
+                                                <TableCell className="armureD" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.armure2Dist ?? ""}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"armure2Dist"} left={'50%'} dataToUpdate={'distance de la 2e armure'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armureE" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.armure2Effect ?? ""}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"armure2Effect"} left={'70%'} dataToUpdate={'effet de la 2e armure'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
                                             </TableRow>
                                             <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
-                                                <TableCell className="armureName" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.armure3Name ?? t("inventory?nothing")}<span><ModifierDialogs inventaire={inventaires} name={"armure3Name"} left={'70%'} dataToUpdate={'nom de la 3e armure'} /></span></TableCell>
-                                                <TableCell className="armureCac" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.armure3Cac ?? ""}<span><ModifierDialogs inventaire={inventaires} name={"armure3Damage"} left={'50%'} dataToUpdate={'dégâts de la 3e armure'} /></span></TableCell>
-                                                <TableCell className="armureD" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.armure3Dist ?? ""}<span><ModifierDialogs inventaire={inventaires} name={"armure3Scope"} left={'50%'} dataToUpdate={'portée de la 3e armure'} /></span></TableCell>
-                                                <TableCell className="armureE" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>{inventaires?.armure3Effect ?? ""}<span><ModifierDialogs inventaire={inventaires} name={"armure3Ammunition"} left={'70%'} dataToUpdate={'munitions de la 3e armure'} /></span></TableCell>
+                                                <TableCell className="armureName" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.armure3Name ?? t("inventory.nothing")}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"armure3Name"} left={'70%'} dataToUpdate={'nom de la 3e armure'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armureCac" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.armure3Cac ?? ""}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"armure3Cac"} left={'50%'} dataToUpdate={'Cac de la 3e armure'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span></TableCell>
+                                                <TableCell className="armureD" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.armure3Dist ?? ""}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"armure3Dist"} left={'50%'} dataToUpdate={'dist de la 3e armure'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="armureE" sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }}>
+                                                    {inventaires?.armure3Effect ?? ""}
+                                                    <span>
+                                                        <ModifierDialogs inventaire={inventaires} name={"armure3Effect"} left={'70%'} dataToUpdate={'effet de la 3e armure'} onInventoryUpdate={handleInventoryUpdate} />
+                                                    </span>
+                                                </TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>

@@ -25,6 +25,8 @@ import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import { useNavigate } from "react-router-dom";
 
 import { useTranslation } from "react-i18next";
+import { CharacterProvider } from "../context/CharacterContext";
+
 
 function ConnectGame() {
   const { t } = useTranslation();
@@ -198,7 +200,7 @@ function ConnectGame() {
     magieDraconique: "MagieDraconique_character",
   };
 
-  const [comps, setComps] = useState({});
+  // const [comps, setComps] = useState({});
 
   useEffect(() => {
     fetch(`/api/characters/getOneCharacterById/${characterId}`)
@@ -294,14 +296,29 @@ function ConnectGame() {
     setCurrentGauges((prev) => ({ ...prev, [manaName]: newValue }));
   }
 
+  // function handleCompUpdate(name, newValue) {
+  //   const field = compFieldByName[name];
+  //   if (!field) {
+  //     console.warn("Comp inconnue :", name);
+  //     return;
+  //   }
+  //   setComps((prev) => ({ ...prev, [field]: newValue }));
+  // }
+
+  function handleCharacterFieldUpdate(field, newValue) {
+    setCharacter((prev) => ({ ...prev, [field]: newValue }));
+  }
+
+  // Variante pratique (si tu veux continuer à passer `name` = "force")
   function handleCompUpdate(name, newValue) {
     const field = compFieldByName[name];
     if (!field) {
       console.warn("Comp inconnue :", name);
       return;
     }
-    setComps((prev) => ({ ...prev, [field]: newValue }));
+    setCharacter((prev) => ({ ...prev, [field]: newValue }));
   }
+
 
   console.log("character datas : ", character);
 
@@ -1073,13 +1090,16 @@ function ConnectGame() {
             </div>
           </div>
         </div>
-        <SideMenu character={character} />
-        <Inventory data={character} />
-        <Combat data={character} />
-        <Crystals data={character} />
-        <Ingredients data={character} />
-        <Creatures data={character} />
-        <CustomizedDialogs data={character} />
+        <CharacterProvider character={character} setCharacter={setCharacter}>
+          <SideMenu character={character} />
+
+          <Inventory data={character} />
+          <Combat data={character} />
+          <Crystals data={character} />
+          <Ingredients data={character} />
+          <Creatures data={character} />
+          <CustomizedDialogs data={character} />
+        </CharacterProvider>
       </div>
       {/* <Btn style={{ position: "fixed", bottom: "-5vh", left: "50vw", display: "flex", flexDirection: "row", textAlign: "center", justifyContent: "center" }} onClick={navigate(-1)} msg="Close Holocom" sx={{ color: 'white', position: "absolute", fontSize: '20px', bottom: "5vh" }} /> */}
     </div>

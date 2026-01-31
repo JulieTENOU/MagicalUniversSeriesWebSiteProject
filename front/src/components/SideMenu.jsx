@@ -2772,7 +2772,7 @@ export default function SideMenu(character) {
                                 {perso.Animaturgie_character}
                                 <ModifierDialogs
                                   character={character}
-                                  name={"Animaturgie"}
+                                  name={"animaturgie"}
                                   left={"40%"}
                                   dataToUpdate={"Animaturgie"}
                                 />

@@ -15,7 +15,7 @@ import { useTheme } from "@mui/material/styles";
 
 import { useTranslation } from "react-i18next";
 
-function InventoryRow({ label, nameKey, quantityKey, data, theme }) {
+function InventoryRow({ label, nameKey, quantityKey, data, theme, onInventoryUpdate }) {
   const name = data?.[nameKey] ?? "—";
   const quantity = quantityKey ? (data?.[quantityKey] ?? "—") : null;
   return (
@@ -27,6 +27,7 @@ function InventoryRow({ label, nameKey, quantityKey, data, theme }) {
           name={nameKey}
           left="80%"
           dataToUpdate={label}
+          onInventoryUpdate={onInventoryUpdate}
         />
       </TableCell>
       {quantity != null &&
@@ -37,6 +38,7 @@ function InventoryRow({ label, nameKey, quantityKey, data, theme }) {
             name={quantityKey}
             left="40%"
             dataToUpdate={`quantité de ${label}`}
+            onInventoryUpdate={onInventoryUpdate}
           />
         </TableCell>
       }
@@ -68,6 +70,10 @@ export default function Inventory(data) {
         setInventaires(data.data);
       });
   }, [character.Name_character]);
+
+  function handleInventoryUpdate(patch) {
+    setInventaires((prev) => ({ ...prev, ...patch }));
+  }
 
   return (
     <div>
@@ -132,6 +138,7 @@ export default function Inventory(data) {
                           quantityKey={null}
                           data={inventaires}
                           theme={theme}
+                          onInventoryUpdate={handleInventoryUpdate}
                         />
                       ))}
                     </TableBody>
@@ -165,6 +172,7 @@ export default function Inventory(data) {
                           name={"repas"}
                           left={"40%"}
                           dataToUpdate={"quantité de repas"}
+                          onInventoryUpdate={handleInventoryUpdate}
                         />
                       </span>
                     </p>
@@ -203,6 +211,7 @@ export default function Inventory(data) {
                             name={"PPU"}
                             left={"80%"}
                             dataToUpdate={"PPU"}
+                            onInventoryUpdate={handleInventoryUpdate}
                           />
                         </TableCell>
                       </TableRow>
@@ -216,6 +225,7 @@ export default function Inventory(data) {
                             name={"POU"}
                             left={"80%"}
                             dataToUpdate={"POU"}
+                            onInventoryUpdate={handleInventoryUpdate}
                           />
                         </TableCell>
                       </TableRow>
@@ -228,6 +238,7 @@ export default function Inventory(data) {
                             name={"PAU"}
                             left={"80%"}
                             dataToUpdate={"PAU"}
+                            onInventoryUpdate={handleInventoryUpdate}
                           />
                         </TableCell>
                       </TableRow>
@@ -267,6 +278,7 @@ export default function Inventory(data) {
                             name={"d1"}
                             left={"80%"}
                             dataToUpdate={"divers ligne 1"}
+                            onInventoryUpdate={handleInventoryUpdate}
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
@@ -277,6 +289,7 @@ export default function Inventory(data) {
                               name={"d1q"}
                               left={"40%"}
                               dataToUpdate={"quantité de divers ligne 1"}
+                              onInventoryUpdate={handleInventoryUpdate}
                             />
                           </span>
                         </TableCell>
@@ -289,6 +302,7 @@ export default function Inventory(data) {
                             name={"d2"}
                             left={"80%"}
                             dataToUpdate={"divers ligne 2"}
+                            onInventoryUpdate={handleInventoryUpdate}
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
@@ -299,6 +313,7 @@ export default function Inventory(data) {
                               name={"d2q"}
                               left={"40%"}
                               dataToUpdate={"quantité de divers ligne 2"}
+                              onInventoryUpdate={handleInventoryUpdate}
                             />
                           </span>
                         </TableCell>
@@ -311,6 +326,7 @@ export default function Inventory(data) {
                             name={"d3"}
                             left={"80%"}
                             dataToUpdate={"divers ligne 3"}
+                            onInventoryUpdate={handleInventoryUpdate}
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
@@ -321,6 +337,7 @@ export default function Inventory(data) {
                               name={"d3q"}
                               left={"40%"}
                               dataToUpdate={"quantité de divers ligne 3"}
+                              onInventoryUpdate={handleInventoryUpdate}
                             />
                           </span>
                         </TableCell>
@@ -333,6 +350,7 @@ export default function Inventory(data) {
                             name={"d4"}
                             left={"80%"}
                             dataToUpdate={"divers ligne 4"}
+                            onInventoryUpdate={handleInventoryUpdate}
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
@@ -343,6 +361,7 @@ export default function Inventory(data) {
                               name={"d4q"}
                               left={"40%"}
                               dataToUpdate={"quantité de divers ligne 4"}
+                              onInventoryUpdate={handleInventoryUpdate}
                             />
                           </span>
                         </TableCell>
@@ -355,6 +374,7 @@ export default function Inventory(data) {
                             name={"d5"}
                             left={"80%"}
                             dataToUpdate={"divers ligne 5"}
+                            onInventoryUpdate={handleInventoryUpdate}
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
@@ -365,6 +385,7 @@ export default function Inventory(data) {
                               name={"d5q"}
                               left={"40%"}
                               dataToUpdate={"quantité de divers ligne 5"}
+                              onInventoryUpdate={handleInventoryUpdate}
                             />
                           </span>
                         </TableCell>
@@ -377,6 +398,7 @@ export default function Inventory(data) {
                             name={"d6"}
                             left={"80%"}
                             dataToUpdate={"divers ligne 6"}
+                            onInventoryUpdate={handleInventoryUpdate}
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
@@ -387,6 +409,7 @@ export default function Inventory(data) {
                               name={"d6q"}
                               left={"40%"}
                               dataToUpdate={"quantité de divers ligne 6"}
+                              onInventoryUpdate={handleInventoryUpdate}
                             />
                           </span>
                         </TableCell>
@@ -399,6 +422,7 @@ export default function Inventory(data) {
                             name={"d7"}
                             left={"80%"}
                             dataToUpdate={"divers ligne 7"}
+                            onInventoryUpdate={handleInventoryUpdate}
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
@@ -409,6 +433,7 @@ export default function Inventory(data) {
                               name={"d7q"}
                               left={"40%"}
                               dataToUpdate={"quantité de divers ligne 7"}
+                              onInventoryUpdate={handleInventoryUpdate}
                             />
                           </span>
                         </TableCell>
@@ -421,6 +446,7 @@ export default function Inventory(data) {
                             name={"d8"}
                             left={"80%"}
                             dataToUpdate={"divers ligne 8"}
+                            onInventoryUpdate={handleInventoryUpdate}
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
@@ -431,6 +457,7 @@ export default function Inventory(data) {
                               name={"d8q"}
                               left={"40%"}
                               dataToUpdate={"quantité de divers ligne 8"}
+                              onInventoryUpdate={handleInventoryUpdate}
                             />
                           </span>
                         </TableCell>
@@ -443,6 +470,7 @@ export default function Inventory(data) {
                             name={"d9"}
                             left={"80%"}
                             dataToUpdate={"divers ligne 9"}
+                            onInventoryUpdate={handleInventoryUpdate}
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
@@ -453,6 +481,7 @@ export default function Inventory(data) {
                               name={"d9q"}
                               left={"40%"}
                               dataToUpdate={"quantité de divers ligne 9"}
+                              onInventoryUpdate={handleInventoryUpdate}
                             />
                           </span>
                         </TableCell>
@@ -465,6 +494,7 @@ export default function Inventory(data) {
                             name={"d10"}
                             left={"80%"}
                             dataToUpdate={"divers ligne 10"}
+                            onInventoryUpdate={handleInventoryUpdate}
                           />
                         </TableCell>
                         <TableCell sx={{ border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
@@ -475,6 +505,7 @@ export default function Inventory(data) {
                               name={"d10q"}
                               left={"40%"}
                               dataToUpdate={"quantité de divers ligne 10"}
+                              onInventoryUpdate={handleInventoryUpdate}
                             />
                           </span>
                         </TableCell>

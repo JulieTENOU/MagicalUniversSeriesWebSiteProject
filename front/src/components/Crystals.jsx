@@ -7,7 +7,7 @@ import { useTheme } from "@mui/material/styles";
 
 import { useTranslation } from "react-i18next";
 
-function CrystalRow({ label, field, crystals, theme }) {
+function CrystalRow({ label, field, crystals, theme, onCrystalUpdate }) {
   const value = crystals?.[field] ?? "—";
   return (
     <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
@@ -19,6 +19,7 @@ function CrystalRow({ label, field, crystals, theme }) {
           name={field}
           left={"40%"}
           dataToUpdate={label.toLowerCase()}
+          onCrystalUpdate={onCrystalUpdate}
         />
       </TableCell>
     </TableRow>
@@ -48,6 +49,9 @@ export default function Crystals(data) {
       });
   }, [character.Name_character]);
 
+  function handleCrystalsUpdate(patch) {
+    setCrystals((prev) => ({ ...prev, ...patch }));
+  }
   return (
     <div>
       <IconButton
@@ -122,96 +126,112 @@ export default function Crystals(data) {
                     field="crystal_verre"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.plasma")}
                     field="crystal_plasma"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.water")}
                     field="crystal_eau"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.lapis")}
                     field="lapis"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.purpleGems")}
                     field="diams_violet"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.greenGems")}
                     field="diams_vert"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.turquoiseGems")}
                     field="diams_turquoise"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.crimsonGems")}
                     field="diams_carmin"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.ochreGems")}
                     field="diams_ocre"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.prismaticOrbs")}
                     field="bille_arc"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.angel")}
                     field="crystal_ange"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.demon")}
                     field="crystal_dem"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.liquid")}
                     field="crystal_liquide"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.moonstone")}
                     field="pierre_lune"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.fire")}
                     field="crystal_feu"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                   <CrystalRow
                     label={t("crystal.gold")}
                     field="crystal_or"
                     crystals={crystals}
                     theme={theme}
+                    onCrystalUpdate={handleCrystalsUpdate}
                   />
                 </TableBody>
               </Table>

@@ -12,6 +12,8 @@ import { useState, useContext } from 'react';
 import { ConnexionContext } from '../components/provider';
 import Pencil from '../assets/img/pencil-outline.svg';
 import { useTheme } from "@mui/material/styles";
+import { useCharacter } from "../context/CharacterContext";
+
 
 function ModifierTitle(props) {
   const { children, onClose, ...other } = props;
@@ -44,6 +46,7 @@ ModifierTitle.propTypes = {
 
 export default function ModifierDialogs(data) {
   const theme = useTheme();
+  const { patchCharacter } = useCharacter();
 
   const { state: currentUser, setState: setCurrentUser, loading } = useContext(ConnexionContext);
 
@@ -66,6 +69,7 @@ export default function ModifierDialogs(data) {
   console.log("character.character", character.character)
 
   const handleSave = () => {
+
     if (name === 'force') {
       newDatas = {
         Force_character: text,
@@ -86,7 +90,7 @@ export default function ModifierDialogs(data) {
       newDatas = {
         Intell_character: text,
       };
-    } else if (name === 'charsime') {
+    } else if (name === 'charisme') {
       newDatas = {
         Charisme_character: text,
       };
@@ -153,10 +157,6 @@ export default function ModifierDialogs(data) {
     } else if (name === 'xaAnt') {
       newDatas = {
         XalytienAntique_character: text,
-      };
-    } else if (name === 'd4q') {
-      newDatas = {
-        XentoAntique_character: text,
       };
     } else if (name === 'xenAnt') {
       newDatas = {
@@ -266,6 +266,98 @@ export default function ModifierDialogs(data) {
       newDatas = {
         Parade_character: text,
       };
+
+
+    } else if (name === 'chant') {
+      newDatas = {
+        Chant_character: text,
+      };
+
+    } else if (name === 'chasse') {
+      newDatas = {
+        Chasse_character: text,
+      };
+
+    } else if (name === 'course') {
+      newDatas = {
+        Course_character: text,
+      };
+
+    } else if (name === 'crochetage') {
+      newDatas = {
+        Crochetage_character: text,
+      };
+
+    } else if (name === 'deguisement') {
+      newDatas = {
+        Deguisement_character: text,
+      };
+
+    } else if (name === 'discretion') {
+      newDatas = {
+        Discretion_character: text,
+      };
+
+    } else if (name === 'equitation') {
+      newDatas = {
+        Equitation_character: text,
+      };
+
+    } else if (name === 'eloquance') {
+      newDatas = {
+        Eloquance_character: text,
+      };
+
+    } else if (name === 'escalade') {
+      newDatas = {
+        Escalade_character: text,
+      };
+
+    } else if (name === 'hypnose') {
+      newDatas = {
+        Hypnose_character: text,
+      };
+
+    } else if (name === 'vigi') {
+      newDatas = {
+        Vigilence_character: text,
+      };
+
+    } else if (name === 'nage') {
+      newDatas = {
+        Nage_character: text,
+      };
+
+    } else if (name === 'observation') {
+      newDatas = {
+        Observation_character: text,
+      };
+
+    } else if (name === 'pieges') {
+      newDatas = {
+        Pieges_character: text,
+      };
+
+    } else if (name === 'professorat') {
+      newDatas = {
+        Professorat_character: text,
+      };
+
+    } else if (name === 'saut') {
+      newDatas = {
+        Saut_character: text,
+      };
+
+    } else if (name === 'soin') {
+      newDatas = {
+        Soin_character: text,
+      };
+
+    } else if (name === 'telekine') {
+      newDatas = {
+        Telekinesie_character: text,
+      };
+
     } else if (name === 'magicotech') {
       newDatas = {
         MagicoTech_character: text,
@@ -377,6 +469,9 @@ export default function ModifierDialogs(data) {
       return;
     }
 
+    const key = Object.keys(newDatas)[0];
+    newDatas = { [key]: value };
+
     fetch(`/api/characters/updateCharacter/${character.character.ID_character}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -387,12 +482,12 @@ export default function ModifierDialogs(data) {
         if (!res.ok) throw new Error(`HTTP ${res.status}: ${JSON.stringify(body)}`);
         return body;
       })
-      .then((updated) => {
-        console.log("Success:", updated);
+      .then(() => {
+        // ✅ EXACTEMENT ICI
+        patchCharacter(newDatas); // met à jour `character` global
         setOpen(false);
       })
-      .catch((err) => console.error("Error:", err));
-
+      .catch(console.error);
   };
 
   return (

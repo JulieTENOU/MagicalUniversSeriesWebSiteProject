@@ -7,14 +7,14 @@ import { useTheme } from "@mui/material/styles";
 
 import { useTranslation } from "react-i18next";
 
-function CreatureRow({ index, data, theme }) {
+function CreatureRow({ index, data, theme, onCreatureUpdate }) {
   const key = `creature${index}`;
   const value = data?.[key] ?? "—";
   return (
     <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
       <TableCell sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }} className="comp">
         {value}
-        <ModifierDialogs inventaire={data} name={key} left="100%" dataToUpdate={`${index}e créature`} />
+        <ModifierDialogs inventaire={data} name={key} left="100%" dataToUpdate={`${index}e créature`} onCreatureUpdate={onCreatureUpdate} />
       </TableCell>
     </TableRow>
   );
@@ -44,6 +44,10 @@ export default function Creatures(data) {
       });
   }, [character.ID_character]);
 
+  function handleCreatureUpdate(patch) {
+    setCreatures((prev) => ({ ...prev, ...patch }));
+  }
+
   return (
     <div>
       <IconButton size='large' edge='start' color='inherit' aria-label='logo' onClick={() => setIsDrawerOpen(true)} sx={{ width: '50px', position: 'fixed', right: "0vw", top: '54vh' }} >
@@ -60,7 +64,7 @@ export default function Creatures(data) {
               <Table className="comp">
                 <TableBody>
                   {[...Array(15)].map((_, i) => (
-                    <CreatureRow key={i} index={i + 1} data={creatures} theme={theme} />
+                    <CreatureRow key={i} index={i + 1} data={creatures} theme={theme} onCreatureUpdate={handleCreatureUpdate} />
                   ))}
                 </TableBody>
 

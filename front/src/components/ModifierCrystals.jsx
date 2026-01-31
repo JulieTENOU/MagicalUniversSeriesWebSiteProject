@@ -14,7 +14,7 @@ import { useTheme } from "@mui/material/styles";
 
 function ModifierTitle(props) {
   const { children, onClose, ...other } = props;
-  
+
   return (
     <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
       {children}
@@ -42,12 +42,12 @@ ModifierTitle.propTypes = {
 };
 
 export default function ModifierDialogs(data) {
-    const theme = useTheme();
-    console.log(data);
-    const crystals = data.inventaire;
-    const left = data.left;
-    const name = data.name;
-    const dataToUpdate = data.dataToUpdate;
+  const theme = useTheme();
+  console.log(data);
+  const crystals = data.inventaire;
+  const left = data.left;
+  const name = data.name;
+  const dataToUpdate = data.dataToUpdate;
   const [open, setOpen] = React.useState(false);
   const [text, setText] = useState("");
   let newDatas = {};
@@ -61,111 +61,114 @@ export default function ModifierDialogs(data) {
   console.log("crystals:", crystals)
 
   const handleSave = () => {
-    if(name === 'verre'){
+    if (name === 'crystal_verre') {
       newDatas = {
         crystal_verre: text,
-    };
-  } else if (name === 'plasma'){
-    newDatas = {
-      crystal_plasma: text,
-    };
-  } else if (name === 'eau'){
-    newDatas = {
-      crystal_eau: text,
-    };
-  } else if (name === 'lapis'){
-    newDatas = {
-      lapis: text,
-    };
-  } else if (name ==='violet'){
-    newDatas = {
-      diams_violet: text,
-    };
-  } else if (name ==='vert'){
-    newDatas = {
-      diams_vert: text,
-    };
-  } else if (name ==='turquoise'){
-    newDatas = {
-      diams_turquoise: text,
-    };
-  } else if (name ==='carmin'){
-    newDatas = {
-      diams_carmin: text,
-    };
-  } else if (name ==='ocre'){
-    newDatas = {
-      diams_ocre: text,
-    };
-  } else if (name ==='arc'){
-    newDatas = {
-      bille_arc: text,
-    };
-  } else if (name ==='ange'){
-    newDatas = {
-      crystal_ange: text,
-    };
-  } else if (name ==='dem'){
-    newDatas = {
-      crystal_dem: text,
-    };
-  } else if (name ==='liquide'){
-    newDatas = {
-      crystal_liquide: text,
-    };
-  } else if (name ==='lune'){
-    newDatas = {
-      pierre_lune: text,
-    };
-  }else if (name ==='feu'){
-    newDatas = {
-      crystal_feu: text,
-    };
-  } else if (name ==='or'){
-    newDatas = {
-      crystal_or: text,
-    };
-  } 
+      };
+    } else if (name === 'crystal_plasma') {
+      newDatas = {
+        crystal_plasma: text,
+      };
+    } else if (name === 'crystal_eau') {
+      newDatas = {
+        crystal_eau: text,
+      };
+    } else if (name === 'lapis') {
+      newDatas = {
+        lapis: text,
+      };
+    } else if (name === 'diams_violet') {
+      newDatas = {
+        diams_violet: text,
+      };
+    } else if (name === 'diams_vert') {
+      newDatas = {
+        diams_vert: text,
+      };
+    } else if (name === 'diams_turquoise') {
+      newDatas = {
+        diams_turquoise: text,
+      };
+    } else if (name === 'diams_carmin') {
+      newDatas = {
+        diams_carmin: text,
+      };
+    } else if (name === 'diams_ocre') {
+      newDatas = {
+        diams_ocre: text,
+      };
+    } else if (name === 'bille_arc') {
+      newDatas = {
+        bille_arc: text,
+      };
+    } else if (name === 'crystal_ange') {
+      newDatas = {
+        crystal_ange: text,
+      };
+    } else if (name === 'crystal_dem') {
+      newDatas = {
+        crystal_dem: text,
+      };
+    } else if (name === 'crystal_liquide') {
+      newDatas = {
+        crystal_liquide: text,
+      };
+    } else if (name === 'pierre_lune') {
+      newDatas = {
+        pierre_lune: text,
+      };
+    } else if (name === 'crystal_feu') {
+      newDatas = {
+        crystal_feu: text,
+      };
+    } else if (name === 'crystal_or') {
+      newDatas = {
+        crystal_or: text,
+      };
+    }
 
-    console.log(newDatas);
-    fetch(`/crystals/api/updateCrystals/${crystals.ID_character}`,{
+
+    fetch(`/api/crystals/updateCrystals/${crystals.Name_character}`, {
       method: "PUT",
-      headers:{
+      headers: {
         "content-type": "application/json",
       },
       body: JSON.stringify(newDatas),
     })
-      .then((response) => response.json())
-      .then((newDatas) => {
-        console.log("Success:", newDatas);
+      .then(async (res) => {
+        const body = await res.json().catch(() => null);
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${JSON.stringify(body)}`);
+        return body;
       })
-      .catch((error)=>{
-        console.error("Error:", error);
-      });
+      .then(() => {
+        data.onCrystalUpdate?.(newDatas);
+        setOpen(false);
+      })
+      .catch(console.error);
   }
 
   return (
-    <div style={{position: 'relative', height:'0px'}}>
-      <Button sx={{ position:'relative', display: 'flex', left:{left}, top:'-2.3vh' , border:'none'}} variant="outlined" onClick={handleClickOpen}>
-        <img src={Pencil} height={'15px'} color={theme.custom.mycustomblur.text}  alt="Modifier" id='modifier'/>
+    <div style={{ position: 'relative', height: '0px' }}>
+      <Button sx={{ position: 'relative', display: 'flex', left: { left }, top: '-2.3vh', border: 'none' }} variant="outlined" onClick={handleClickOpen}>
+        <img src={Pencil} height={'15px'} color={theme.custom.mycustomblur.text} alt="Modifier" id='modifier' />
       </Button>
       <Dialog
         onClose={handleClose}
         open={open}
-        PaperProps={{style:{minWidth:'30vw', minHeight:'30vh', backgroundColor:'beige'},}}
+        PaperProps={{ style: { minWidth: '30vw', minHeight: '30vh', backgroundColor: 'beige' }, }}
       >
-        <DialogTitle onClose={handleClose} sx={{outerWidth:'50vw'}}>
+        <DialogTitle onClose={handleClose} sx={{ outerWidth: '50vw' }}>
           Entrez la nouvelle valeur de {dataToUpdate}
         </DialogTitle>
         <DialogContent>
 
-            <div>
-              <TextField id="newNotes" multiline sx={{minHeight:'30px', minWidth:'30px'}} onChange={(e) => setText(e.target.value)} inputProps={{style:{ height:"150px"}}}/>
-              <Button onClick={() => {
-                handleSave();
-              }
-              }> Save new value</Button>
-            </div> 
+          <div>
+            <TextField id="newNotes" multiline sx={{ minHeight: '30px', minWidth: '30px' }} onChange={(e) => setText(e.target.value)} inputProps={{ style: { height: "150px" } }} />
+            <Button onClick={() => {
+              handleSave();
+            }
+            }> Save new value</Button>
+          </div>
         </DialogContent>
         <DialogActions>
         </DialogActions>

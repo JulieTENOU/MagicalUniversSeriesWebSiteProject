@@ -7,28 +7,34 @@ import { useTheme } from "@mui/material/styles";
 
 import { useTranslation } from "react-i18next";
 
-function IngredientRow({ label, nameKey, quantityKey, ingredients, theme }) {
-  const name = ingredients?.[nameKey] ?? "—";
-  const quantity = ingredients?.[quantityKey] ?? "—";
+function IngredientRow({ label, nameKey, quantityKey, data, theme, onIngredientUpdate }) {
+  const name = data?.[nameKey] ?? "—";
+  // const quantity = ingredients?.[quantityKey] ?? "—";
+  const quantity = quantityKey ? (data?.[quantityKey] ?? "—") : null;
 
+  console.log("ingredients IngredientRow:", data);
+  console.log("Name_character IngredientRow:", data.Name_character);
+  console.log("name: ", name, "\nquantity: ", quantity);
   return (
     <TableRow sx={{ border: theme.custom.mycustomblur.tableborder, }}>
       <TableCell sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }} className="diversName">
         {name}
         <ModifierDialogs
-          inventaire={ingredients}
+          inventaire={data}
           name={nameKey}
           left="80%"
           dataToUpdate={label}
+          onIngredientUpdate={onIngredientUpdate}
         />
       </TableCell>
       <TableCell sx={{ color: theme.custom.mycustomblur.text, border: theme.custom.mycustomblur.tableborder, }} className="diversQ">
         {quantity}
         <ModifierDialogs
-          inventaire={ingredients}
+          inventaire={data}
           name={quantityKey}
           left="40%"
           dataToUpdate={`quantité de ${label}`}
+          onIngredientUpdate={onIngredientUpdate}
         />
       </TableCell>
     </TableRow>
@@ -39,24 +45,33 @@ export default function Ingredients(data) {
   const { t } = useTranslation();
   const theme = useTheme();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  console.log("data:", data);
   const character = data.data;
-  console.log(character);
+  console.log("character:", character);
   const [ingredients, setIngredients] = useState({});
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
   };
   useEffect(() => {
-    fetch(`/ingredients/api/getOneIngredients/${character.ID_character}`)
+    fetch(`/api/ingredients/getOneIngredients/${character.Name_character}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.data);
+        console.log("ingerdients supposés:", data);
         setIngredients(data.data);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-  }, [character.ID_character]);
+  }, [character.Name_character]);
 
+  useEffect(() => {
+    console.log("ingredients mis à jour:", ingredients);
+  }, [ingredients]);
+
+
+  function handleIngerdientUpdate(patch) {
+    setIngredients((prev) => ({ ...prev, ...patch }));
+  }
   return (
     <div>
       <IconButton
@@ -120,15 +135,25 @@ export default function Ingredients(data) {
               <Table>
                 <TableBody>
                   {[...Array(15)].map((_, i) => {
-                    const num = i + 1;
+                    // const num = i + 1;
                     return (
+                      // <IngredientRow
+                      //   key={num}
+                      //   label={`${num}e ingrédient`}
+                      //   nameKey={`ingredient${num}`}
+                      //   quantityKey={`ingredient${num}Quantite`}
+                      //   ingredients={ingredients}
+                      //   theme={theme}
+                      //   onIngredientUpdate={handleIngerdientUpdate}
+                      // />
                       <IngredientRow
-                        key={num}
-                        label={`${num}e ingrédient`}
-                        nameKey={`ingredient${num}`}
-                        quantityKey={`ingredient${num}Quantite`}
-                        ingredients={ingredients}
+                        key={i + 1}
+                        label={`${i + 1}e ingrédient`}
+                        nameKey={`ingredient${i + 1}`}
+                        quantityKey={`ingredient${i + 1}Quantite`}
+                        data={ingredients}
                         theme={theme}
+                        onIngredientUpdate={handleIngerdientUpdate}
                       />
                     );
                   })}
