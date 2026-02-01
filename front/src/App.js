@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import ReadHome from "./pages/ReadHome";
 import ConnectGame from "./pages/ConnectGame";
+import ConnectGameCopy from "./pages/ConnectGameCopy";
 import ConnectGameMJ from "./pages/ConnectGameMJ";
 import JDR from "./pages/JDR.jsx";
 import ReadSeries from "./pages/ReadSeries";
@@ -32,6 +33,10 @@ function App() {
           <Route path="/read/MA/NPC_stories" element={<ReadHome />} />
           <Route path="/read/lexicon" element={<ReadHome />} />
           <Route path="/jdr" element={<JDR />} />
+          <Route
+            path="/jdr2/connectGame/:characterId"
+            element={<ConnectGameCopy />}
+          />{" "}
           <Route
             path="/jdr/connectGame/:characterId"
             element={<ConnectGame />}

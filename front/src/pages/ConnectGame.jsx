@@ -296,30 +296,6 @@ function ConnectGame() {
     setCurrentGauges((prev) => ({ ...prev, [manaName]: newValue }));
   }
 
-  // function handleCompUpdate(name, newValue) {
-  //   const field = compFieldByName[name];
-  //   if (!field) {
-  //     console.warn("Comp inconnue :", name);
-  //     return;
-  //   }
-  //   setComps((prev) => ({ ...prev, [field]: newValue }));
-  // }
-
-  function handleCharacterFieldUpdate(field, newValue) {
-    setCharacter((prev) => ({ ...prev, [field]: newValue }));
-  }
-
-  // Variante pratique (si tu veux continuer à passer `name` = "force")
-  function handleCompUpdate(name, newValue) {
-    const field = compFieldByName[name];
-    if (!field) {
-      console.warn("Comp inconnue :", name);
-      return;
-    }
-    setCharacter((prev) => ({ ...prev, [field]: newValue }));
-  }
-
-
   console.log("character datas : ", character);
 
   const isInvalidUser =
@@ -363,7 +339,7 @@ function ConnectGame() {
               justifyContent: "space-around",
             }}
           >
-            <div
+            <div class="manaBars"
               style={{
                 position: "fixed",
                 display: "flex",
@@ -386,7 +362,7 @@ function ConnectGame() {
                   textAlign: "center",
                 }}
               >
-                <div
+                <div class="manaComplet"
                   style={{
                     position: "fixed",
                     display: "flex",
@@ -404,49 +380,53 @@ function ConnectGame() {
                     top={"45vh"}
                     left={"35vw"}
                     sx={{ color: theme.custom.mycustomblur.text }}
+                    textSize="1rem"
                   >
                     <AirIcon />
                     <br />
                     {currentGauges.currentManaAir} pts
                   </Typography>
-                  <LinearProgress
-                    color="success"
-                    id="manaAir"
-                    variant="determinate"
-                    value={clampedManaAir}
-                    sx={{
-                      position: "fixed",
-                      top: "25vh",
-                      height: "18px",
-                      width: "200px",
-                      borderRadius: "25px",
-                      rotate: "-90deg",
-                    }}
-                  />
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      position: "fixed",
-                      left: "32vw",
-                      top: "22vh",
-                      color: theme.custom.mycustomblur.text,
-                    }}
-                  >
-                    <BtnAdd
-                      name={"mana d'air"}
-                      mana={currentGauges.currentManaAir}
-                      manaName={"currentManaAir"}
-                      character={character}
-                      onGaugeUpdate={handleGaugeUpdate}
+
+                  <div class="manaTest" style={{ display: "felx", flexDirection: "row" }}>
+                    <LinearProgress
+                      color="success"
+                      id="manaAir"
+                      variant="determinate"
+                      value={clampedManaAir}
+                      sx={{
+                        position: "fixed",
+                        top: "25vh",
+                        height: "1vh",
+                        width: "10vw",
+                        borderRadius: "25px",
+                        rotate: "-90deg",
+                      }}
                     />
-                    <BtnRm
-                      name={"mana d'air"}
-                      mana={currentGauges.currentManaAir}
-                      manaName={"currentManaAir"}
-                      character={character}
-                      onGaugeUpdate={handleGaugeUpdate}
-                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        position: "fixed",
+                        left: "32vw",
+                        top: "22vh",
+                        color: theme.custom.mycustomblur.text,
+                      }}
+                    >
+                      <BtnAdd
+                        name={"mana d'air"}
+                        mana={currentGauges.currentManaAir}
+                        manaName={"currentManaAir"}
+                        character={character}
+                        onGaugeUpdate={handleGaugeUpdate}
+                      />
+                      <BtnRm
+                        name={"mana d'air"}
+                        mana={currentGauges.currentManaAir}
+                        manaName={"currentManaAir"}
+                        character={character}
+                        onGaugeUpdate={handleGaugeUpdate}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -463,7 +443,7 @@ function ConnectGame() {
                   textAlign: "center",
                 }}
               >
-                <div
+                <div class="manaComplet"
                   style={{
                     position: "fixed",
                     display: "flex",
@@ -481,50 +461,54 @@ function ConnectGame() {
                     top={"45vh"}
                     left={"40vw"}
                     sx={{ color: theme.custom.mycustomblur.text }}
+                    textSize="1rem"
                   >
                     {" "}
                     <WaterDropIcon />
                     <br />
                     {currentGauges.currentManaEau} pts
                   </Typography>
-                  <LinearProgress
-                    color="info"
-                    id="manaEau"
-                    variant="determinate"
-                    value={clampedManaEau}
-                    sx={{
-                      position: "fixed",
-                      top: "25vh",
-                      height: "18px",
-                      width: "200px",
-                      borderRadius: "25px ",
-                      rotate: "-90deg",
-                    }}
-                  />
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      position: "fixed",
-                      left: "37vw",
-                      top: "22vh",
-                      color: theme.custom.mycustomblur.text,
-                    }}
-                  >
-                    <BtnAdd
-                      name={"mana d'eau"}
-                      mana={currentGauges.currentManaEau}
-                      manaName={"currentManaEau"}
-                      character={character}
-                      onGaugeUpdate={handleGaugeUpdate}
+
+                  <div class="manaTest" style={{ display: "felx", flexDirection: "row" }}>
+                    <LinearProgress
+                      color="info"
+                      id="manaEau"
+                      variant="determinate"
+                      value={clampedManaEau}
+                      sx={{
+                        position: "fixed",
+                        top: "25vh",
+                        height: "1vh",
+                        width: "10vw",
+                        borderRadius: "25px ",
+                        rotate: "-90deg",
+                      }}
                     />
-                    <BtnRm
-                      name={"mana d'eau"}
-                      mana={currentGauges.currentManaEau}
-                      manaName={"currentManaEau"}
-                      character={character}
-                      onGaugeUpdate={handleGaugeUpdate}
-                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        position: "fixed",
+                        left: "37vw",
+                        top: "22vh",
+                        color: theme.custom.mycustomblur.text,
+                      }}
+                    >
+                      <BtnAdd
+                        name={"mana d'eau"}
+                        mana={currentGauges.currentManaEau}
+                        manaName={"currentManaEau"}
+                        character={character}
+                        onGaugeUpdate={handleGaugeUpdate}
+                      />
+                      <BtnRm
+                        name={"mana d'eau"}
+                        mana={currentGauges.currentManaEau}
+                        manaName={"currentManaEau"}
+                        character={character}
+                        onGaugeUpdate={handleGaugeUpdate}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -541,7 +525,7 @@ function ConnectGame() {
                   textAlign: "center",
                 }}
               >
-                <div
+                <div class="manaComplet"
                   style={{
                     position: "fixed",
                     display: "flex",
@@ -559,48 +543,52 @@ function ConnectGame() {
                     left={"45vw"}
                     top={"45vh"}
                     sx={{ color: theme.custom.mycustomblur.text }}
+                    textSize="1rem"
                   >
                     <GrassIcon />
                     <br />
                     {currentGauges.currentManaTerre} pts
                   </Typography>
-                  <LinearProgress
-                    color="warning"
-                    id="manaTerre"
-                    variant="determinate"
-                    value={clampedManaTerre}
-                    sx={{
-                      position: "fixed",
-                      top: "25vh",
-                      height: "18px",
-                      width: "200px",
-                      borderRadius: "25px ",
-                      rotate: "-90deg",
-                    }}
-                  />
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      position: "fixed",
-                      left: "42vw",
-                      top: "22vh",
-                    }}
-                  >
-                    <BtnAdd
-                      name={"mana de terre"}
-                      mana={currentGauges.currentManaTerre}
-                      manaName={"currentManaTerre"}
-                      character={character}
-                      onGaugeUpdate={handleGaugeUpdate}
+
+                  <div class="manaTest" style={{ display: "felx", flexDirection: "row" }}>
+                    <LinearProgress
+                      color="warning"
+                      id="manaTerre"
+                      variant="determinate"
+                      value={clampedManaTerre}
+                      sx={{
+                        position: "fixed",
+                        top: "25vh",
+                        height: "1vh",
+                        width: "10vw",
+                        borderRadius: "25px ",
+                        rotate: "-90deg",
+                      }}
                     />
-                    <BtnRm
-                      name={"mana de terre"}
-                      mana={currentGauges.currentManaTerre}
-                      manaName={"currentManaTerre"}
-                      character={character}
-                      onGaugeUpdate={handleGaugeUpdate}
-                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        position: "fixed",
+                        left: "42vw",
+                        top: "22vh",
+                      }}
+                    >
+                      <BtnAdd
+                        name={"mana de terre"}
+                        mana={currentGauges.currentManaTerre}
+                        manaName={"currentManaTerre"}
+                        character={character}
+                        onGaugeUpdate={handleGaugeUpdate}
+                      />
+                      <BtnRm
+                        name={"mana de terre"}
+                        mana={currentGauges.currentManaTerre}
+                        manaName={"currentManaTerre"}
+                        character={character}
+                        onGaugeUpdate={handleGaugeUpdate}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -617,7 +605,7 @@ function ConnectGame() {
                   textAlign: "center",
                 }}
               >
-                <div
+                <div class="manaComplet"
                   style={{
                     position: "fixed",
                     display: "flex",
@@ -635,10 +623,13 @@ function ConnectGame() {
                     left={"50vw"}
                     top={"45vh"}
                     sx={{ color: theme.custom.mycustomblur.text }}
+                    textSize="1rem"
                   >
                     <LocalFireDepartmentIcon /> <br />{" "}
                     {currentGauges.currentManaFeu} pts
                   </Typography>
+
+                  <div class="manaTest" style={{ display: "felx", flexDirection: "row" }}></div>
                   <LinearProgress
                     color="error"
                     id="manaFeu"
@@ -647,8 +638,8 @@ function ConnectGame() {
                     sx={{
                       position: "fixed",
                       top: "25vh",
-                      height: "18px",
-                      width: "200px",
+                      height: "1vh",
+                      width: "10vw",
                       borderRadius: "25px ",
                       rotate: "-90deg",
                     }}
@@ -692,13 +683,13 @@ function ConnectGame() {
                   textAlign: "center",
                 }}
               >
-                <div
+                <div class="manaComplet"
                   style={{
                     position: "fixed",
                     display: "flex",
                     left: "50vw",
                     top: "15vh",
-                    flexDirection: "column",
+                    flexDirection: "row",
                     justifyContent: "center",
                     width: "auto",
                     textAlign: "center",
@@ -707,292 +698,207 @@ function ConnectGame() {
                   <Typography
                     variant="h6"
                     position={"fixed"}
-                    // postion={"relative"}
                     left={"55vw"}
                     top={"45vh"}
                     sx={{ color: theme.custom.mycustomblur.text }}
+                    textSize="1rem"
                   >
                     <SelfImprovementIcon />
                     <br />
                     {currentGauges.currentManaVolonte} pts
                   </Typography>
-                  <LinearProgress
-                    id="manaVolonte"
-                    variant="determinate"
-                    value={clampedManaVolonte}
-                    sx={{
-                      position: "fixed",
-                      top: "25vh",
-                      height: "18px",
-                      width: "200px",
-                      borderRadius: "25px ",
-                      rotate: "-90deg",
-                    }}
-                  />
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      position: "fixed",
-                      left: "52vw",
-                      top: "22vh",
-                    }}
-                  >
-                    <BtnAdd
-                      name={"mana de volonté"}
-                      mana={currentGauges.currentManaVolonte}
-                      manaName={"currentManaVolonte"}
-                      character={character}
-                      onGaugeUpdate={handleGaugeUpdate}
-                    />
-                    <BtnRm
-                      name={"mana de volonté"}
-                      mana={currentGauges.currentManaVolonte}
-                      manaName={"currentManaVolonte"}
-                      character={character}
-                      onGaugeUpdate={handleGaugeUpdate}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div width={"250px"}>
-                <div
-                  className="container"
-                  style={{
-                    position: "fixed",
-                    bottom: "-12vh",
-                    left: "30vw",
-                    width: "200px",
-                    height: "300px",
-                  }}
-                >
-                  <Typography
-                    className="label"
-                    variant="h5"
-                    position={"fixed"}
-                    left={"4vw"}
-                    top={"58vh"}
-                    sx={{ color: theme.custom.mycustomblur.text }}
-                    textAlign={"center"}
-                  >
-                    Mana Vital
-                  </Typography>
-
-                  <CircularProgressbar
-                    value={
-                      (currentGauges.currentManaVital / maxGauges.ManaVital) *
-                      100
-                    }
-                    circleRatio={0.5}
-                    text={`${currentGauges.currentManaVital} points`}
-                    styles={buildStyles({
-                      rotation: 0.75,
-                      strokeLinecap: "butt",
-                      textSize: "14px",
-                      pathTransitionDuration: 0.5,
-                      pathColor: `red`,
-                      textColor: "#f88",
-                      trailColor: "#af8c8d",
-                      backgroundColor: "#3e98c7",
-                    })}
-                  />
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      position: "fixed",
-                      left: "32vw",
-                      bottom: "1vh",
-                    }}
-                  >
-                    <BtnAdd
-                      name={"mana Vital"}
-                      mana={currentGauges.currentManaVital}
-                      manaName={"currentManaVital"}
-                      character={character}
-                      onGaugeUpdate={handleGaugeUpdate}
-                    />
-                    <BtnRm
-                      name={"mana Vital"}
-                      mana={currentGauges.currentManaVital}
-                      manaName={"currentManaVital"}
-                      character={character}
-                      onGaugeUpdate={handleGaugeUpdate}
-                    />
-                  </div>
-                </div>
-                <div
-                  style={{
-                    position: "fixed",
-                    display: "flex",
-                    left: "33vw",
-                    bottom: "5vh",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    width: "auto",
-                    textAlign: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "fixed",
-                      display: "flex",
-                      left: "45vw",
-                      top: "15vh",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      width: "auto",
-                      textAlign: "center",
-                    }}
-                  >
-                    <div
-                      id="tram"
-                      style={{
+                  <div class="manaTest" style={{ display: "felx", flexDirection: "row" }}>
+                    <LinearProgress
+                      id="manaVolonte"
+                      variant="determinate"
+                      value={clampedManaVolonte}
+                      sx={{
                         position: "fixed",
-                        left: "30vw",
-                        bottom: "10vh",
-                        height: "18px",
-                        width: "200px",
-                        background: "none",
-                        border: "solid white 2px",
-                        borderRadius: "5px ",
+                        top: "25vh",
+                        height: "1vh",
+                        width: "10vw",
+                        borderRadius: "25px ",
+                        rotate: "-90deg",
+                      }}
+                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        position: "fixed",
+                        left: "52vw",
+                        top: "22vh",
                       }}
                     >
-                      <div
-                        id="survie-"
-                        style={{
-                          position: "relative",
-                          height: "18px",
-                          background: "linear-gradient(to left, grey, black",
-                          borderLeft: "solid white 1px",
-                        }}
+                      <BtnAdd
+                        name={"mana de volonté"}
+                        mana={currentGauges.currentManaVolonte}
+                        manaName={"currentManaVolonte"}
+                        character={character}
+                        onGaugeUpdate={handleGaugeUpdate}
                       />
-                      <div
-                        id="survie+"
-                        style={{
-                          position: "relative",
-                          left: "100px",
-                          top: "-100%",
-                          height: "18px",
-                          width: "83px",
-                          background: "linear-gradient(to right, grey, white",
-                          borderRight: "solid black 1px",
-                        }}
+                      <BtnRm
+                        name={"mana de volonté"}
+                        mana={currentGauges.currentManaVolonte}
+                        manaName={"currentManaVolonte"}
+                        character={character}
+                        onGaugeUpdate={handleGaugeUpdate}
                       />
                     </div>
                   </div>
-                  <Typography
-                    className="label"
-                    sx={{ color: theme.custom.mycustomblur.text }}
-                    id="manaVolonte"
-                  >
-                    {t("jdr.transition")}
-                  </Typography>
-                </div>
-                <div
-                  className="container"
-                  style={{
-                    position: "fixed",
-                    bottom: "-12vh",
-                    left: "50vw",
-                    width: "200px",
-                    height: "300px",
-                  }}
-                >
-                  <Typography
-                    className="label"
-                    variant="h5"
-                    position={"fixed"}
-                    left={" 18vw"}
-                    top={"42vh"}
-                    sx={{ color: theme.custom.mycustomblur.text }}
-                    textAlign={"center"}
-                  >
-                    {t("jdr.stamina")}
-                  </Typography>
-
-                  <CircularProgressbar
-                    value={
-                      (currentGauges.currentStamina / maxGauges.Stamina) * 100
-                    }
-                    circleRatio={0.5}
-                    text={`${currentGauges.currentStamina} points`}
-                    styles={buildStyles({
-                      rotation: 0.75,
-                      strokeLinecap: "butt",
-                      textSize: "14px",
-                      pathTransitionDuration: 0.5,
-                      pathColor: `#42d750`,
-                      textColor: "#f88",
-                      trailColor: "#cfe9d2",
-                      backgroundColor: "#3e98c7",
-                    })}
-                  />
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      position: "fixed",
-                      left: "52.5vw",
-                      bottom: "1vh",
-                    }}
-                  >
-                    <BtnAdd
-                      name={"Stamina"}
-                      mana={currentGauges.currentStamina}
-                      manaName={"currentStamina"}
-                      character={character}
-                      onGaugeUpdate={handleGaugeUpdate}
-                    />
-                    <BtnRm
-                      name={"Stamina"}
-                      mana={currentGauges.currentStamina}
-                      manaName={"currentStamina"}
-                      character={character}
-                      onGaugeUpdate={handleGaugeUpdate}
-                    />
-                  </div>
-                </div>
-                <div style={{ position: "fixed", bottom: "5vh", left: "53vw" }}>
-                  <p
-                    contentEditable="true"
-                    style={{
-                      color: theme.custom.mycustomblur.text,
-                      fontSize: "1.3em",
-                      border: "solid whitesmoke 1px",
-                      borderRadius: "5px",
-                      paddingLeft: "1vw",
-                      paddingRight: "1vw",
-                    }}
-                  >
-                    {t("jdr.bm")}
-                    <br />
-                    ...................
-                    <br />
-                  </p>
-                  <Typography
-                    sx={{ color: theme.custom.mycustomblur.text }}
-                    id="chance"
-                  >
-                    {t("jdr.luck")}
-                  </Typography>
                 </div>
               </div>
             </div>
-            <div
-              style={{
-                height: "3em",
-                position: "fixed",
-                left: "2vw",
-                top: "12vh",
-              }}
-            >
-              <h2 style={{ color: theme.custom.mycustomblur.text }}>
-                {t("login.title")} {character.Name_character}
-              </h2>
-              <br />
+            <div width={"250px"}>
+              <div
+                className="container"
+                style={{
+                  position: "fixed",
+                  bottom: "10vh",
+                  left: "30vw",
+                  width: "15vw",
+                  height: "20vh",
+                }}
+              >
+                <Typography
+                  className="label"
+                  variant="h5"
+                  position={"fixed"}
+                  left={"36vw"}
+                  top={"68vh"}
+                  sx={{ color: theme.custom.mycustomblur.text }}
+                  textAlign={"center"}
+                  textSize="1rem"
+                >
+                  Mana Vital
+                </Typography>
+
+                <CircularProgressbar
+                  value={
+                    (currentGauges.currentManaVital / maxGauges.ManaVital) *
+                    100
+                  }
+                  circleRatio={0.5}
+                  text={`${currentGauges.currentManaVital} points`}
+                  styles={buildStyles({
+                    rotation: 0.75,
+                    strokeLinecap: "butt",
+                    textSize: "1.3em",
+                    pathTransitionDuration: 0.3,
+                    pathColor: `red`,
+                    textColor: "#f88",
+                    trailColor: "#af8c8d",
+                    backgroundColor: "#3e98c7",
+                  })}
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    position: "fixed",
+                    left: "32vw",
+                    bottom: "20vh",
+                  }}
+                >
+                  <BtnAdd
+                    name={"mana Vital"}
+                    mana={currentGauges.currentManaVital}
+                    manaName={"currentManaVital"}
+                    character={character}
+                    onGaugeUpdate={handleGaugeUpdate}
+                  />
+                  <BtnRm
+                    name={"mana Vital"}
+                    mana={currentGauges.currentManaVital}
+                    manaName={"currentManaVital"}
+                    character={character}
+                    onGaugeUpdate={handleGaugeUpdate}
+                  />
+                </div>
+              </div>
+
+              <div
+                className="container"
+                style={{
+                  position: "fixed",
+                  bottom: "10vh",
+                  left: "50vw",
+                  width: "15vw",
+                  height: "20vh",
+                }}
+              >
+                <Typography
+                  className="label"
+                  variant="h5"
+                  position={"fixed"}
+                  left={" 56vw"}
+                  top={"68vh"}
+                  sx={{ color: theme.custom.mycustomblur.text }}
+                  textAlign={"center"}
+                  textSize="1rem"
+                >
+                  {t("jdr.stamina")}
+                </Typography>
+
+                <CircularProgressbar
+                  value={
+                    (currentGauges.currentStamina / maxGauges.Stamina) * 100
+                  }
+                  circleRatio={0.5}
+                  text={`${currentGauges.currentStamina} points`}
+                  styles={buildStyles({
+                    rotation: 0.75,
+                    strokeLinecap: "butt",
+                    textSize: "1.3em",
+                    pathTransitionDuration: 0.3,
+                    pathColor: `#42d750`,
+                    textColor: "#f88",
+                    trailColor: "#cfe9d2",
+                    backgroundColor: "#3e98c7",
+                  })}
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    position: "fixed",
+                    left: "52.5vw",
+                    bottom: "20vh",
+                  }}
+                >
+                  <BtnAdd
+                    name={"Stamina"}
+                    mana={currentGauges.currentStamina}
+                    manaName={"currentStamina"}
+                    character={character}
+                    onGaugeUpdate={handleGaugeUpdate}
+                  />
+                  <BtnRm
+                    name={"Stamina"}
+                    mana={currentGauges.currentStamina}
+                    manaName={"currentStamina"}
+                    character={character}
+                    onGaugeUpdate={handleGaugeUpdate}
+                  />
+                </div>
+              </div>
+
             </div>
           </div>
+          <div
+            style={{
+              height: "3em",
+              position: "fixed",
+              left: "2vw",
+              top: "12vh",
+            }}
+          >
+            <h2 style={{ color: theme.custom.mycustomblur.text }}>
+              {t("login.title")} {character.Name_character}
+            </h2>
+            <br />
+          </div>
+          {/* </div> */}
 
           <div
             id="idCard"
@@ -1102,7 +1008,7 @@ function ConnectGame() {
         </CharacterProvider>
       </div>
       {/* <Btn style={{ position: "fixed", bottom: "-5vh", left: "50vw", display: "flex", flexDirection: "row", textAlign: "center", justifyContent: "center" }} onClick={navigate(-1)} msg="Close Holocom" sx={{ color: 'white', position: "absolute", fontSize: '20px', bottom: "5vh" }} /> */}
-    </div>
+    </div >
   );
 }
 

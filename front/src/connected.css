@@ -10,6 +10,123 @@
   align-self: end;
 }
 #idBottom {
-  position: relative;
-  top: 50vh;
+  position: sticky;
+  /* top: 50vh; */
+}
+
+#holocom {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  grid-gap: 15px;
+  grid-auto-rows: minmax(100px, auto);
+}
+
+* {
+  box-sizing: border-box;
+}
+.wrapper {
+  max-width: 940px;
+  margin: 0 auto;
+}
+
+.wrapper > div {
+  border-radius: 5px;
+  padding: 1em;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 15px;
+  grid-auto-rows: minmax(100px, auto);
+}
+
+.vital {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.stamina {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.manaGauges {
+  grid-row: 1;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-gap: 10px;
+  grid-auto-columns: minmax(100px, auto);
+}
+
+.circularGauges {
+  grid-row: 2;
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-gap: 10px;
+  grid-auto-columns: minmax(100px, auto);
+}
+
+.air {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.eau {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.terre {
+  grid-column: 3;
+  grid-row: 1;
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.feu {
+  grid-column: 4;
+  grid-row: 1;
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.volonte {
+  grid-column: 5;
+  grid-row: 1;
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.name {
+  grid-row: 1;
+  grid-column: 3;
+}
+
+.manaNUpdate {
+  grid-row: 1;
+  grid-column: 3;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.btn {
+  margin-top: 6vh;
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.progress {
+  grid-column: 2;
+  grid-row: 2;
 }
