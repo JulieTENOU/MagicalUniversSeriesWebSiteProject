@@ -155,7 +155,7 @@ export default function ModifierDialogs(data) {
       <Dialog
         onClose={handleClose}
         open={open}
-        PaperProps={{ style: { minWidth: '30vw', minHeight: '30vh', backgroundColor: 'beige' }, }}
+        PaperProps={{ style: { minWidth: '30vw', minHeight: '30vh', backgroundColor: 'beige', color: "black" }, }}
       >
         <DialogTitle onClose={handleClose} sx={{ outerWidth: '50vw' }}>
           Entrez la nouvelle valeur de {dataToUpdate}
@@ -163,7 +163,7 @@ export default function ModifierDialogs(data) {
         <DialogContent>
 
           <div>
-            <TextField id="newNotes" multiline sx={{ minHeight: '30px', minWidth: '30px' }} onChange={(e) => setText(e.target.value)} inputProps={{ style: { height: "150px" } }} />
+            <TextField autoFocus id="newCrystals" multiline sx={{ minHeight: '10vh', minWidth: '10vw', border: 'solid black 3px ' }} onChange={(e) => setText(e.target.value)} inputProps={{ style: { height: "150px", color: 'black' } }} />
             <Button onClick={() => {
               handleSave();
             }
