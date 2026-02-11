@@ -34,13 +34,24 @@ function JDR() {
         : [...prev, character],
     );
   };
+  useEffect(() => {
+    if (!loading && !isConnected) {
+      navigate("/", { replace: true });
+      return null;
+    }
+  }, [loading, isConnected, navigate]);
+  console.log("loading:", loading);
+  console.log("isConnected:", isConnected);
+  console.log(
+    "stats:",
+    stats,
+    "type:",
+    typeof stats,
+    "isArray:",
+    Array.isArray(stats),
+  );
 
-  if (!loading && !isConnected) {
-    navigate("/", { replace: true });
-    return null;
-  }
-
-  if (loading) {
+  if (loading || !Array.isArray(stats)) {
     return <Loader />;
   }
 
@@ -95,7 +106,7 @@ function JDR() {
             }}
           />
         )}
-        {stats.map((stat) => {
+        {(stats ?? []).map((stat) => {
           const player = `${stat?.Name_character}`;
           if (
             isConnected?.users_status === "p" &&
