@@ -1,22 +1,19 @@
-const express = require('express');
+const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const cors = require('cors');
+const cors = require("cors");
 const port = 3333;
-const Sequelize = require('sequelize');
+const Sequelize = require("sequelize");
 const dbConfig = require("./src/config/db-config");
+const http = require("http");
+const { Server } = require("socket.io");
 
-const sequelize = new Sequelize(
-  dbConfig.DB,
-  dbConfig.USER,
-  dbConfig.PASSWORD,
-  {
-    host: dbConfig.HOST,
-    dialect: dbConfig.DIALECT
-  }
-);
+const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+  host: dbConfig.HOST,
+  dialect: dbConfig.DIALECT,
+});
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + "/public"));
 
 // This is used to parse json post request in the body. It's essential to handle forms
 app.use(express.json());
@@ -24,27 +21,26 @@ app.use(cors());
 
 // We need body-Parser in order for this app to handle urlencoded POST requests properly
 app.use(
-    bodyParser.urlencoded({
-        extended: true,
-    })
+  bodyParser.urlencoded({
+    extended: true,
+  }),
 );
-
 
 // We need to set up the cookie requirement for the authenticated token
 const authConfig = require("./src/config/authKey");
 const cookieSession = require("cookie-session");
 
-app.set('trust proxy', 1); 
+app.set("trust proxy", 1);
 
 app.use(
   cookieSession({
     name: "MAGame-session",
     secret: authConfig.secret,
     httpOnly: true,
-    maxAge: 1000*60*60*24*30,
-    sameSite: 'lax',
+    maxAge: 1000 * 60 * 60 * 24 * 30,
+    sameSite: "lax",
     secure: false,
-  })
+  }),
 );
 
 app.use((req, _res, next) => {
@@ -56,7 +52,6 @@ app.use((req, _res, next) => {
   next();
 });
 
-
 sequelize
   .authenticate()
   .then(() => {
@@ -67,28 +62,28 @@ sequelize
   });
 
 // This is the app requireing the route that will receive the http request and interact with the controller
-const user = require('./src/routes/user');
-const books = require('./src/routes/books');
-const chapters = require('./src/routes/chapters');
-const book_parts = require('./src/routes/book_parts');
-const series = require('./src/routes/series');
+const user = require("./src/routes/user");
+const books = require("./src/routes/books");
+const chapters = require("./src/routes/chapters");
+const book_parts = require("./src/routes/book_parts");
+const series = require("./src/routes/series");
 const authService = require("./src/routes/authService");
-const characters = require('./src/routes/characters');
-const inventories = require('./src/routes/inventories');
-const ingredients = require('./src/routes/ingredients');
-const crystals = require('./src/routes/crystals');
-const creatures = require('./src/routes/creatures');
-const currentGauges = require('./src/routes/currentGauges');
-const draconiqueHeart = require('./src/routes/draconiqueHeart');
-const preferences = require('./src/routes/preferences');
-const competences = require('./src/routes/competences');
-const races = require('./src/routes/races');
-const planete = require('./src/routes/planete');
-const metiers = require('./src/routes/metiers');
-const energies = require('./src/routes/energies');
-const bonus_carac = require('./src/routes/bonus_carac');
-const bonus_energies = require('./src/routes/bonus_energies');
-const agences = require('./src/routes/agences');
+const characters = require("./src/routes/characters");
+const inventories = require("./src/routes/inventories");
+const ingredients = require("./src/routes/ingredients");
+const crystals = require("./src/routes/crystals");
+const creatures = require("./src/routes/creatures");
+const currentGauges = require("./src/routes/currentGauges");
+const draconiqueHeart = require("./src/routes/draconiqueHeart");
+const preferences = require("./src/routes/preferences");
+const competences = require("./src/routes/competences");
+const races = require("./src/routes/races");
+const planete = require("./src/routes/planete");
+const metiers = require("./src/routes/metiers");
+const energies = require("./src/routes/energies");
+const bonus_carac = require("./src/routes/bonus_carac");
+const bonus_energies = require("./src/routes/bonus_energies");
+const agences = require("./src/routes/agences");
 
 // This actually calls the route!
 app.use("/users", user);
@@ -103,17 +98,72 @@ app.use("/api/crystals", crystals);
 app.use("/api/creatures", creatures);
 app.use("/api/gauges", currentGauges);
 app.use("/api", authService);
-app.use("/api/draconiqueHeart", draconiqueHeart)
-app.use('/api/preferences', preferences);
-app.use('/api/competences', competences);
-app.use('/api/races', races);
-app.use('/api/planete', planete);
-app.use('/api/metiers', metiers);
-app.use('/api/energies', energies);
-app.use('/api/bonus_carac', bonus_carac);
-app.use('/api/bonus_energies', bonus_energies);
-app.use('/api/agences', agences);
+app.use("/api/draconiqueHeart", draconiqueHeart);
+app.use("/api/preferences", preferences);
+app.use("/api/competences", competences);
+app.use("/api/races", races);
+app.use("/api/planete", planete);
+app.use("/api/metiers", metiers);
+app.use("/api/energies", energies);
+app.use("/api/bonus_carac", bonus_carac);
+app.use("/api/bonus_energies", bonus_energies);
+app.use("/api/agences", agences);
 
-app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${port}`)
+// app.listen(port, "0.0.0.0", () => {
+//   console.log(`Server running on http://localhost:${port}`);
+// });
+
+const httpServer = http.createServer(app);
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: true,
+    credentials: true,
+  },
+});
+
+// Socket events
+io.on("connection", (socket) => {
+  console.log("socket connected:", socket.id);
+
+  io.engine.on("connection_error", (err) => {
+    console.log("socket connection_error:", {
+      code: err.code,
+      message: err.message,
+      context: err.context,
+    });
+  });
+
+  // le joueur rejoint une room basée sur son characterId
+  socket.on("join:character", ({ characterId }) => {
+    if (!characterId) return;
+    socket.join(`character:${characterId}`);
+    console.log(`socket ${socket.id} joined character:${characterId}`);
+  });
+
+  // MJ envoie une alerte vers une liste de persos
+  socket.on("mj:sendAlert", ({ targets, message, severity }) => {
+    if (!Array.isArray(targets) || !message?.trim()) return;
+
+    const payload = {
+      message: message.trim(),
+      severity: severity || "info",
+      at: Date.now(),
+    };
+
+    targets
+      .map(Number)
+      .filter(Boolean)
+      .forEach((id) => {
+        io.to(`character:${id}`).emit("mj:alert", payload);
+      });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("socket disconnected:", socket.id);
+  });
+});
+
+httpServer.listen(port, "0.0.0.0", () => {
+  console.log(`Server running on http://localhost:${port}`);
 });

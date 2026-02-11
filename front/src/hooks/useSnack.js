@@ -20,7 +20,7 @@ export function useSnack() {
   const Snack = (
     <Snackbar
       open={open}
-      autoHideDuration={3000}
+      autoHideDuration={10000}
       onClose={() => setOpen(false)}
       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
     >

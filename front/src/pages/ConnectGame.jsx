@@ -23,9 +23,14 @@ import AirIcon from "@mui/icons-material/Air";
 import GrassIcon from "@mui/icons-material/Grass";
 import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import { useNavigate } from "react-router-dom";
+import ModifierIdDialogs from "../components/ModifierIdChara.jsx";
 
 import { useTranslation } from "react-i18next";
 import { CharacterProvider } from "../context/CharacterContext";
+import { socket } from "../service/socket";
+import { useSnack } from "../hooks/useSnack";
+import { useRef } from "react";
+import DiceChoice from "../components/DiceChoice.jsx";
 
 
 function ConnectGame() {
@@ -39,6 +44,8 @@ function ConnectGame() {
   } = useContext(ConnexionContext);
   // console.log(currentUser.users_ID);
   console.log(`currentUser : ${currentUser}`);
+
+  const boardRef = useRef(null);
 
   let navigate = useNavigate();
 
@@ -107,7 +114,7 @@ function ConnectGame() {
   const clampedManaFeu = Math.min(100, Math.max(0, percentManaFeu));
 
   const percentManaVolonte =
-    (currentGauges.currentVolonte / maxGauges.ManaVolonte) * 100;
+    (currentGauges.currentManaVolonte / maxGauges.ManaVolonte) * 100;
   const clampedManaVolonte = Math.min(100, Math.max(0, percentManaVolonte));
 
   const compFieldByName = {
@@ -296,17 +303,34 @@ function ConnectGame() {
     setCurrentGauges((prev) => ({ ...prev, [manaName]: newValue }));
   }
 
-  console.log("character datas : ", character);
+  const { showSnack, Snack } = useSnack();
+
+  useEffect(() => {
+    if (!characterId) return;
+
+    socket.emit("join:character", { characterId: Number(characterId) });
+
+    const onAlert = ({ message, severity }) => {
+      showSnack(message, severity);
+    };
+
+    socket.on("mj:alert", onAlert);
+    return () => socket.off("mj:alert", onAlert);
+  }, [characterId, showSnack]);
+
+  // console.log("character datas : ", character);
 
   const isInvalidUser =
     !currentUser ||
     (Array.isArray(currentUser) && currentUser.length === 0) ||
     (typeof currentUser === "object" && Object.keys(currentUser).length === 0);
 
-  if (!loading && isInvalidUser) {
-    navigate("/", { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    if (!loading && isInvalidUser) {
+      navigate("/", { replace: true });
+      return null;
+    }
+  }, [loading, isInvalidUser, navigate]);
 
   if (loading) {
     return <Loader />;
@@ -316,6 +340,7 @@ function ConnectGame() {
     <div className="main">
       <BG />
       <Top started={currentUser} />
+      {Snack}
       <div
         id="holocom"
         style={{
@@ -339,7 +364,8 @@ function ConnectGame() {
               justifyContent: "space-around",
             }}
           >
-            <div class="manaBars"
+            <div
+              class="manaBars"
               style={{
                 position: "fixed",
                 display: "flex",
@@ -362,7 +388,8 @@ function ConnectGame() {
                   textAlign: "center",
                 }}
               >
-                <div class="manaComplet"
+                <div
+                  class="manaComplet"
                   style={{
                     position: "fixed",
                     display: "flex",
@@ -379,7 +406,7 @@ function ConnectGame() {
                     position={"fixed"}
                     top={"45vh"}
                     left={"35vw"}
-                    sx={{ color: theme.custom.mycustomblur.text }}
+                    sx={{ color: "lightblue" }}
                     textSize="1rem"
                   >
                     <AirIcon />
@@ -387,7 +414,10 @@ function ConnectGame() {
                     {currentGauges.currentManaAir} pts
                   </Typography>
 
-                  <div class="manaTest" style={{ display: "felx", flexDirection: "row" }}>
+                  <div
+                    class="manaTest"
+                    style={{ display: "felx", flexDirection: "row" }}
+                  >
                     <LinearProgress
                       color="success"
                       id="manaAir"
@@ -443,7 +473,8 @@ function ConnectGame() {
                   textAlign: "center",
                 }}
               >
-                <div class="manaComplet"
+                <div
+                  class="manaComplet"
                   style={{
                     position: "fixed",
                     display: "flex",
@@ -460,7 +491,7 @@ function ConnectGame() {
                     position={"fixed"}
                     top={"45vh"}
                     left={"40vw"}
-                    sx={{ color: theme.custom.mycustomblur.text }}
+                    sx={{ color: "lightblue" }}
                     textSize="1rem"
                   >
                     {" "}
@@ -469,7 +500,10 @@ function ConnectGame() {
                     {currentGauges.currentManaEau} pts
                   </Typography>
 
-                  <div class="manaTest" style={{ display: "felx", flexDirection: "row" }}>
+                  <div
+                    class="manaTest"
+                    style={{ display: "felx", flexDirection: "row" }}
+                  >
                     <LinearProgress
                       color="info"
                       id="manaEau"
@@ -525,7 +559,8 @@ function ConnectGame() {
                   textAlign: "center",
                 }}
               >
-                <div class="manaComplet"
+                <div
+                  class="manaComplet"
                   style={{
                     position: "fixed",
                     display: "flex",
@@ -542,7 +577,7 @@ function ConnectGame() {
                     position={"fixed"}
                     left={"45vw"}
                     top={"45vh"}
-                    sx={{ color: theme.custom.mycustomblur.text }}
+                    sx={{ color: "lightblue" }}
                     textSize="1rem"
                   >
                     <GrassIcon />
@@ -550,7 +585,10 @@ function ConnectGame() {
                     {currentGauges.currentManaTerre} pts
                   </Typography>
 
-                  <div class="manaTest" style={{ display: "felx", flexDirection: "row" }}>
+                  <div
+                    class="manaTest"
+                    style={{ display: "felx", flexDirection: "row" }}
+                  >
                     <LinearProgress
                       color="warning"
                       id="manaTerre"
@@ -605,7 +643,8 @@ function ConnectGame() {
                   textAlign: "center",
                 }}
               >
-                <div class="manaComplet"
+                <div
+                  class="manaComplet"
                   style={{
                     position: "fixed",
                     display: "flex",
@@ -622,14 +661,17 @@ function ConnectGame() {
                     position={"fixed"}
                     left={"50vw"}
                     top={"45vh"}
-                    sx={{ color: theme.custom.mycustomblur.text }}
+                    sx={{ color: "lightblue" }}
                     textSize="1rem"
                   >
                     <LocalFireDepartmentIcon /> <br />{" "}
                     {currentGauges.currentManaFeu} pts
                   </Typography>
 
-                  <div class="manaTest" style={{ display: "felx", flexDirection: "row" }}></div>
+                  <div
+                    class="manaTest"
+                    style={{ display: "felx", flexDirection: "row" }}
+                  ></div>
                   <LinearProgress
                     color="error"
                     id="manaFeu"
@@ -683,7 +725,8 @@ function ConnectGame() {
                   textAlign: "center",
                 }}
               >
-                <div class="manaComplet"
+                <div
+                  class="manaComplet"
                   style={{
                     position: "fixed",
                     display: "flex",
@@ -700,14 +743,17 @@ function ConnectGame() {
                     position={"fixed"}
                     left={"55vw"}
                     top={"45vh"}
-                    sx={{ color: theme.custom.mycustomblur.text }}
+                    sx={{ color: "lightblue" }}
                     textSize="1rem"
                   >
                     <SelfImprovementIcon />
                     <br />
                     {currentGauges.currentManaVolonte} pts
                   </Typography>
-                  <div class="manaTest" style={{ display: "felx", flexDirection: "row" }}>
+                  <div
+                    class="manaTest"
+                    style={{ display: "felx", flexDirection: "row" }}
+                  >
                     <LinearProgress
                       id="manaVolonte"
                       variant="determinate"
@@ -766,7 +812,7 @@ function ConnectGame() {
                   position={"fixed"}
                   left={"36vw"}
                   top={"68vh"}
-                  sx={{ color: theme.custom.mycustomblur.text }}
+                  sx={{ color: "lightblue" }}
                   textAlign={"center"}
                   textSize="1rem"
                 >
@@ -775,8 +821,7 @@ function ConnectGame() {
 
                 <CircularProgressbar
                   value={
-                    (currentGauges.currentManaVital / maxGauges.ManaVital) *
-                    100
+                    (currentGauges.currentManaVital / maxGauges.ManaVital) * 100
                   }
                   circleRatio={0.5}
                   text={`${currentGauges.currentManaVital} points`}
@@ -833,7 +878,7 @@ function ConnectGame() {
                   position={"fixed"}
                   left={" 56vw"}
                   top={"68vh"}
-                  sx={{ color: theme.custom.mycustomblur.text }}
+                  sx={{ color: "lightblue" }}
                   textAlign={"center"}
                   textSize="1rem"
                 >
@@ -882,7 +927,6 @@ function ConnectGame() {
                   />
                 </div>
               </div>
-
             </div>
           </div>
           <div
@@ -897,6 +941,7 @@ function ConnectGame() {
               {t("login.title")} {character.Name_character}
             </h2>
             <br />
+
           </div>
           {/* </div> */}
 
@@ -983,22 +1028,47 @@ function ConnectGame() {
                 </p>
               </div>
             </div>
-            <div id="idBottom" style={{ padding: "10px" }}>
-              <p style={{ color: theme.custom.mycustomblur.text }}>
-                {t("jdr.trait")}{" "}
-                <span id="particularity">{character.Signes_character}</span>
-              </p>
-              <br />
-              <p style={{ color: theme.custom.mycustomblur.text }}>
-                {t("jdr.background")}{" "}
-                <span id="caracter">{character.Traits_character}</span>
-              </p>
-            </div>
+
+            <CharacterProvider
+              character={character}
+              setCharacter={setCharacter}
+            >
+              <div id="idBottom" style={{ padding: "10px" }}>
+                <p style={{ color: theme.custom.mycustomblur.text }}>
+                  {t("jdr.trait")}{" "}
+                  <span id="particularity">{character.Signes_character}</span>
+                  <span>
+                    <ModifierIdDialogs
+                      character={character}
+                      name={"signes"}
+                      left={"90%"}
+                      dataToUpdate={"signe"}
+                    />
+                  </span>
+                </p>
+                <br />
+                <p style={{ color: theme.custom.mycustomblur.text }}>
+                  {t("jdr.background")}{" "}
+                  <span id="caracter">{character.Traits_character}</span>
+                  <span>
+                    <ModifierIdDialogs
+                      character={character}
+                      name={"bg"}
+                      left={"90%"}
+                      dataToUpdate={"bg"}
+                    />
+                  </span>
+                </p>
+                <div>
+                  <DiceChoice />
+                </div>
+              </div>
+            </CharacterProvider>
           </div>
         </div>
+
         <CharacterProvider character={character} setCharacter={setCharacter}>
           <SideMenu character={character} />
-
           <Inventory data={character} />
           <Combat data={character} />
           <Crystals data={character} />
@@ -1008,7 +1078,7 @@ function ConnectGame() {
         </CharacterProvider>
       </div>
       {/* <Btn style={{ position: "fixed", bottom: "-5vh", left: "50vw", display: "flex", flexDirection: "row", textAlign: "center", justifyContent: "center" }} onClick={navigate(-1)} msg="Close Holocom" sx={{ color: 'white', position: "absolute", fontSize: '20px', bottom: "5vh" }} /> */}
-    </div >
+    </div>
   );
 }
 
