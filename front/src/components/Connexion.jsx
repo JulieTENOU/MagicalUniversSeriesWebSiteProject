@@ -66,7 +66,7 @@ export default function Connexion() {
         ) {
           setCurrentUser(user);
           console.log("currentUser:", currentUser);
-          console.log("Success:", data);
+          console.log("Success:", currentUser.users_pseudo, " is connected");
           // window.location.href = "http://localhost:3003/"
         } else {
           console.warn("Unknown user status:", user.users_status);
