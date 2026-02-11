@@ -7,11 +7,11 @@ import React, {
   useState,
 } from "react";
 import * as THREE from "three";
-import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
 const Dice3D = forwardRef(function Dice3D(
   {
     sides, // 6 | 20 | 100
+    dice = null,
     size = 220,
     color = "#f2f3f5",
     textColor = "#111",
@@ -22,7 +22,7 @@ const Dice3D = forwardRef(function Dice3D(
     style,
     className,
   },
-  ref
+  ref,
 ) {
   const mountRef = useRef(null);
   const rendererRef = useRef(null);
@@ -36,6 +36,10 @@ const Dice3D = forwardRef(function Dice3D(
   const targetQuatRef = useRef(null);
   const startQuatRef = useRef(null);
   const startTimeRef = useRef(0);
+
+  const multiRef = useRef({
+    instances: [], // [{ sides, mesh, extra, anim }]
+  });
 
   // anim pour d100 (2 dés)
   const d100AnimRef = useRef({
@@ -52,9 +56,11 @@ const Dice3D = forwardRef(function Dice3D(
   const randInt = (min, max) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
 
+  const [viewport, setViewport] = useState({ w: 1, h: 1 });
+
   function makeNumberTexture(
     n,
-    { size: texSize = 256, textColor: tc = textColor, bg = null } = {}
+    { size: texSize = 256, textColor: tc = textColor, bg = null } = {},
   ) {
     const canvas = document.createElement("canvas");
     canvas.width = texSize;
@@ -68,7 +74,7 @@ const Dice3D = forwardRef(function Dice3D(
     }
     ctx.fillStyle = tc;
     ctx.font = `${Math.floor(
-      texSize * 0.6
+      texSize * 0.6,
     )}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -94,17 +100,6 @@ const Dice3D = forwardRef(function Dice3D(
   function projectOnPlane(v, n) {
     const t = n.clone().multiplyScalar(v.dot(n));
     return v.clone().sub(t);
-  }
-
-  // direction objet -> caméra
-  const _pA = new THREE.Vector3();
-  const _pB = new THREE.Vector3();
-  function dirToCameraFrom(obj) {
-    const cam = cameraRef.current;
-    if (!cam) return new THREE.Vector3(0, 1, 0);
-    obj.getWorldPosition(_pA);
-    cam.getWorldPosition(_pB);
-    return _pB.sub(_pA).normalize();
   }
 
   // up (vertical) de la caméra en monde
@@ -143,7 +138,7 @@ const Dice3D = forwardRef(function Dice3D(
     const cosA = THREE.MathUtils.clamp(upAfter.dot(upScreen), -1, 1);
     const angle = Math.acos(cosA);
     const sign = Math.sign(
-      new THREE.Vector3().crossVectors(upAfter, upScreen).dot(toCam)
+      new THREE.Vector3().crossVectors(upAfter, upScreen).dot(toCam),
     );
     const q2 = new THREE.Quaternion().setFromAxisAngle(toCam, sign * angle);
 
@@ -166,11 +161,11 @@ const Dice3D = forwardRef(function Dice3D(
     const cosA = THREE.MathUtils.clamp(upAfter.dot(upScreenLocal), -1, 1);
     const angle = Math.acos(cosA);
     const sign = Math.sign(
-      new THREE.Vector3().crossVectors(upAfter, upScreenLocal).dot(toCamLocal)
+      new THREE.Vector3().crossVectors(upAfter, upScreenLocal).dot(toCamLocal),
     );
     const q2 = new THREE.Quaternion().setFromAxisAngle(
       toCamLocal,
-      sign * angle
+      sign * angle,
     );
 
     return q2.multiply(q1); // q2 ∘ q1
@@ -203,7 +198,7 @@ const Dice3D = forwardRef(function Dice3D(
     const edges = new THREE.EdgesGeometry(geom);
     const line = new THREE.LineSegments(
       edges,
-      new THREE.LineBasicMaterial({ color: 0x333366 })
+      new THREE.LineBasicMaterial({ color: 0x333366 }),
     );
     mesh.add(line);
     return mesh;
@@ -218,8 +213,8 @@ const Dice3D = forwardRef(function Dice3D(
     mesh.add(
       new THREE.LineSegments(
         edges,
-        new THREE.LineBasicMaterial({ color: 0x333366 })
-      )
+        new THREE.LineBasicMaterial({ color: 0x333366 }),
+      ),
     );
 
     const pos = geom.getAttribute("position");
@@ -243,11 +238,11 @@ const Dice3D = forwardRef(function Dice3D(
         new THREE.MeshBasicMaterial({
           map: makeNumberTexture(String(i + 1), { bg: "transparent" }),
           transparent: true,
-        })
+        }),
       );
       const quat = new THREE.Quaternion().setFromUnitVectors(
         new THREE.Vector3(0, 0, 1),
-        normal
+        normal,
       );
       plate.quaternion.copy(quat);
       plate.position.copy(center.add(normal.clone().multiplyScalar(0.03)));
@@ -309,7 +304,7 @@ const Dice3D = forwardRef(function Dice3D(
     const geom = new THREE.BufferGeometry();
     geom.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute(verts.flat(), 3)
+      new THREE.Float32BufferAttribute(verts.flat(), 3),
     );
     geom.setIndex(indices);
     geom.computeVertexNormals();
@@ -331,14 +326,14 @@ const Dice3D = forwardRef(function Dice3D(
       B = [];
     for (let i = 0; i < n; i++) {
       T.push(
-        new THREE.Vector3(R * Math.cos(i * phi), +Z / 2, R * Math.sin(i * phi))
+        new THREE.Vector3(R * Math.cos(i * phi), +Z / 2, R * Math.sin(i * phi)),
       );
       B.push(
         new THREE.Vector3(
           R * Math.cos(i * phi + twist),
           -Z / 2,
-          R * Math.sin(i * phi + twist)
-        )
+          R * Math.sin(i * phi + twist),
+        ),
       );
     }
 
@@ -446,11 +441,11 @@ const Dice3D = forwardRef(function Dice3D(
         .multiplyScalar(0.25);
       const n1 = new THREE.Vector3().crossVectors(
         new THREE.Vector3().subVectors(Bv, A),
-        new THREE.Vector3().subVectors(C, A)
+        new THREE.Vector3().subVectors(C, A),
       );
       const n2 = new THREE.Vector3().crossVectors(
         new THREE.Vector3().subVectors(C, A),
-        new THREE.Vector3().subVectors(D, A)
+        new THREE.Vector3().subVectors(D, A),
       );
       const normal = new THREE.Vector3().addVectors(n1, n2).normalize();
       if (normal.dot(center) < 0) normal.multiplyScalar(-1);
@@ -461,7 +456,7 @@ const Dice3D = forwardRef(function Dice3D(
     const geom = new THREE.BufferGeometry();
     geom.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute(positions, 3)
+      new THREE.Float32BufferAttribute(positions, 3),
     );
     geom.computeVertexNormals();
 
@@ -474,7 +469,7 @@ const Dice3D = forwardRef(function Dice3D(
     // matériau lisible même si certaines faces sont proches du plan de vue
     const body = new THREE.Mesh(
       geom,
-      new THREE.MeshBasicMaterial({color: baseColor, side: THREE.FrontSide})
+      new THREE.MeshBasicMaterial({ color: baseColor, side: THREE.FrontSide }),
     );
 
     // contour discret
@@ -486,8 +481,8 @@ const Dice3D = forwardRef(function Dice3D(
           color: 0x333366,
           // opacity: 0.6,
           // transparent: true,
-        })
-      )
+        }),
+      ),
     );
 
     // plaques numérotées : jamais de z-fighting
@@ -506,17 +501,17 @@ const Dice3D = forwardRef(function Dice3D(
           polygonOffset: true,
           polygonOffsetFactor: -2,
           polygonOffsetUnits: -2,
-        })
+        }),
       );
       const quat = new THREE.Quaternion().setFromUnitVectors(
         new THREE.Vector3(0, 0, 1),
-        facesNormals[i]
+        facesNormals[i],
       );
       plate.quaternion.copy(quat);
       plate.position.copy(
         facesCenters[i]
           .clone()
-          .add(facesNormals[i].clone().multiplyScalar(0.065))
+          .add(facesNormals[i].clone().multiplyScalar(0.065)),
       );
       plate.renderOrder = 2;
       body.add(plate);
@@ -557,17 +552,20 @@ const Dice3D = forwardRef(function Dice3D(
     return { group, units, tens };
   }
 
-  function fitCameraToObject(camera, object, margin = 1.25) {
+  function fitCameraToObject(camera, object, margin = 1.45) {
     const box = new THREE.Box3().setFromObject(object);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
 
     const maxDim = Math.max(size.x, size.y, size.z);
     const fov = (camera.fov * Math.PI) / 180;
+
     let dist = maxDim / 2 / Math.tan(fov / 2);
     dist *= margin;
 
-    camera.position.set(center.x, center.y + dist * 0.35, center.z + dist);
+    const xOffset = maxDim * 0.25;
+
+    camera.position.set(center.x + xOffset, center.y + dist * 0.45, center.z + dist * 1.15);
     camera.lookAt(center);
   }
 
@@ -613,7 +611,7 @@ const Dice3D = forwardRef(function Dice3D(
     renderer.setSize(size, size);
     renderer.setClearColor(
       new THREE.Color(background),
-      background === "transparent" ? 0 : 1
+      background === "transparent" ? 0 : 1,
     );
     mountRef.current.appendChild(renderer.domElement);
 
@@ -634,44 +632,148 @@ const Dice3D = forwardRef(function Dice3D(
         color: 0x555a66,
         transparent: true,
         opacity: 0.35,
-      })
+      }),
     );
     ground.rotation.x = -Math.PI / 2;
     ground.position.y = -1.1;
     scene.add(ground);
 
+    const isBoard = dice != null;
+
+    const layoutPositions = (n, spacing = 2.1) => {
+      const cols = Math.ceil(Math.sqrt(n));
+      const rows = Math.ceil(n / cols);
+      const out = [];
+      const x0 = -((cols - 1) * spacing) / 2;
+      const z0 = -((rows - 1) * spacing) / 2;
+
+      for (let i = 0; i < n; i++) {
+        const c = i % cols;
+        const r = Math.floor(i / cols);
+        out.push({ x: x0 + c * spacing, z: z0 + r * spacing });
+      }
+      return out;
+    };
+
+    const buildOneDie = (s) => {
+      if (s === 6) return buildD6();
+      if (s === 10)
+        return buildD10({
+          labels: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+          baseColor: color,
+        });
+      if (s === 20) return buildD20();
+      if (s === 100) return buildD100Group(); // { group, units, tens }
+      return buildD6();
+    };
+
     let mesh;
-    if (sides === 6) {
-      mesh = buildD6();
-    } else if (sides === 20) {
-      mesh = buildD20();
-    } else if (sides === 100) {
-      const { group, units, tens } = buildD100Group();
-      mesh = group;
-      d100Ref.current = { units, tens };
 
-      // d100 plus petit
-      group.scale.setScalar(0.75); // ← ajuste 0.72–0.85 selon ton goût
-      group.position.y = -0.12;
+    if (!isBoard) {
+      // ✅ MODE HISTORIQUE : strictement ton comportement
+      if (sides === 6) {
+        mesh = buildD6();
+      } else if (sides === 10) {
+        mesh = buildD10({
+          labels: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+          baseColor: color,
+        });
+      } else if (sides === 20) {
+        mesh = buildD20();
+      } else if (sides === 100) {
+        const { group, units, tens } = buildD100Group();
+        mesh = group;
+        d100Ref.current = { units, tens };
 
-      // cadrage un peu plus large
-      // fitCameraToObject(camera, group, 1.6);
+        group.scale.setScalar(0.75);
+        group.position.y = -0.12;
+      } else {
+        mesh = buildD6();
+      }
+
+      if (sides !== 100) mesh.scale.setScalar(1.3);
+      if (mesh.rotation) mesh.rotation.set(0.7, 0.9, 0.2);
+
+      scene.add(mesh);
+      meshRef.current = mesh;
     } else {
-      mesh = buildD6();
+      // ✅ MODE BOARD : 1 seul plateau, plusieurs dés sur la même scène
+      // reset board state
+      multiRef.current.instances = [];
+
+      // fabrique la liste à afficher
+      const flat = [];
+      const n6 = Math.max(0, Number(dice.d6 ?? 0));
+      const n10 = Math.max(0, Number(dice.d10 ?? 0));
+      const n20 = Math.max(0, Number(dice.d20 ?? 0));
+      const n100 = Math.max(0, Number(dice.d100 ?? 0));
+
+      for (let i = 0; i < n6; i++) flat.push(6);
+      for (let i = 0; i < n10; i++) flat.push(10); // si tu l’actives plus tard
+      for (let i = 0; i < n20; i++) flat.push(20);
+      for (let i = 0; i < n100; i++) flat.push(100);
+
+      const parent = new THREE.Group();
+      const pos = layoutPositions(flat.length, 2.2);
+
+      for (let i = 0; i < flat.length; i++) {
+        const s = flat[i];
+        const p = pos[i];
+
+        let dieMesh;
+        let extra = null;
+
+        if (s === 100) {
+          const { group, units, tens } = buildD100Group();
+          dieMesh = group;
+          extra = { units, tens };
+          group.scale.setScalar(0.75);
+          group.position.y = -0.12;
+        } else {
+          dieMesh = buildOneDie(s);
+          dieMesh.scale.setScalar(1.3);
+        }
+
+        dieMesh.position.set(p.x, 0, p.z);
+        dieMesh.rotation.set(
+          0.7 + (Math.random() * 0.25 - 0.125),
+          0.9 + (Math.random() * 0.25 - 0.125),
+          0.2 + (Math.random() * 0.25 - 0.125),
+        );
+
+        parent.add(dieMesh);
+        multiRef.current.instances.push({
+          sides: s,
+          mesh: dieMesh,
+          extra,
+          anim: null,
+        });
+      }
+
+      scene.add(parent);
+      // Zoom out automatique pour tout voir
+      fitCameraToObject(camera, parent);
+      camera.updateProjectionMatrix();
+
+      // ⚠️ IMPORTANT : en board on ne touche PAS d100Ref (réservé au single)
+      d100Ref.current = null;
+
+      // on peut stocker le root dans meshRef si tu veux, mais il ne sera pas traité comme “un dé”
+      meshRef.current = parent;
     }
 
-    // échelle globale seulement pour d6/d20
-    if (sides !== 100) {
-      mesh.scale.setScalar(1.3);
-    }
-    // orientation de départ
-    if (mesh.rotation) mesh.rotation.set(0.7, 0.9, 0.2);
-    scene.add(mesh);
+    // // orientation de départ
+    // if (mesh.rotation) mesh.rotation.set(0.7, 0.9, 0.2);
+    // scene.add(mesh);
+
+    // rendererRef.current = renderer;
+    // sceneRef.current = scene;
+    // cameraRef.current = camera;
+    // meshRef.current = mesh;
 
     rendererRef.current = renderer;
     sceneRef.current = scene;
     cameraRef.current = camera;
-    meshRef.current = mesh;
 
     const render = () => {
       animRef.current = requestAnimationFrame(render);
@@ -717,7 +819,7 @@ const Dice3D = forwardRef(function Dice3D(
         meshRef.current.quaternion.slerpQuaternions(
           startQuatRef.current,
           targetQuatRef.current,
-          ease
+          ease,
         );
         meshRef.current.rotateX(wobble * 0.01);
         meshRef.current.rotateY(wobble * 0.013);
@@ -731,7 +833,45 @@ const Dice3D = forwardRef(function Dice3D(
             onRollEnd(currentValueRef.current);
         }
       } else {
-        // idle
+        const isBoard = dice != null;
+
+        if (isBoard && startTimeRef.current) {
+          const now = performance.now();
+          const elapsed = now - startTimeRef.current;
+          const tNorm = Math.min(1, elapsed / durationMs);
+          const ease = easeOutCubic(tNorm);
+
+          for (const inst of multiRef.current.instances) {
+            if (!inst.anim) continue;
+
+            if (inst.anim.kind === "d100" && inst.extra) {
+              const { units, tens } = inst.extra;
+              units.quaternion.slerpQuaternions(
+                inst.anim.startUnits,
+                inst.anim.targetUnits,
+                ease,
+              );
+              tens.quaternion.slerpQuaternions(
+                inst.anim.startTens,
+                inst.anim.targetTens,
+                ease,
+              );
+            } else if (inst.anim.kind === "single") {
+              inst.mesh.quaternion.slerpQuaternions(
+                inst.anim.startQuat,
+                inst.anim.targetQuat,
+                ease,
+              );
+            }
+          }
+
+          if (tNorm >= 1) {
+            startTimeRef.current = 0;
+            for (const inst of multiRef.current.instances) inst.anim = null;
+            if (onRollEnd && currentValueRef.current != null)
+              onRollEnd(currentValueRef.current);
+          }
+        }
       }
 
       renderer.render(scene, camera);
@@ -754,11 +894,21 @@ const Dice3D = forwardRef(function Dice3D(
     d100Ref.current = null;
   }
 
+
   useLayoutEffect(() => {
+    disposeScene();
     initScene();
     return () => disposeScene();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    sides,
+    size,
+    color,
+    textColor,
+    background,
+    durationMs,
+    JSON.stringify(dice),
+  ]);
 
   useEffect(() => {
     if (initialValue != null) {
@@ -772,6 +922,177 @@ const Dice3D = forwardRef(function Dice3D(
 
   // roll ----------------------------------------------------------
   function doRoll(force) {
+    const isBoard = dice != null;
+
+    if (isBoard) {
+      if (!multiRef.current.instances.length) return [];
+
+      const results = [];
+      // anime tout le monde avec un startTime unique
+      startTimeRef.current = performance.now();
+
+      for (const inst of multiRef.current.instances) {
+        const s = inst.sides;
+
+        if (s === 100 && inst.extra) {
+          const val =
+            force != null ? Math.max(1, Math.min(100, force)) : randInt(1, 100);
+          results.push(val);
+
+          const { units, tens } = inst.extra;
+
+          const tensVal =
+            val === 100
+              ? "00"
+              : String(Math.floor(val / 10) * 10).padStart(2, "0");
+          const unitsVal = val === 100 ? "0" : String(val % 10);
+
+          const mapUnits = units.userData.d10.faceByLabel;
+          const mapTens = tens.userData.d10.faceByLabel;
+
+          const nUnitsLocal = mapUnits[unitsVal].normal.clone();
+          const nTensLocal = mapTens[tensVal].normal.clone();
+
+          // caméra -> local (même logique que ton single d100)
+          const invU = units.parent
+            .getWorldQuaternion(new THREE.Quaternion())
+            .invert();
+          const invT = tens.parent
+            .getWorldQuaternion(new THREE.Quaternion())
+            .invert();
+
+          const toCamU = dirToCameraFrom(units)
+            .applyQuaternion(invU)
+            .normalize();
+          const toCamT = dirToCameraFrom(tens)
+            .applyQuaternion(invT)
+            .normalize();
+
+          const upW = cameraWorldUp();
+          const upU = upW.clone().applyQuaternion(invU).normalize();
+          const upT = upW.clone().applyQuaternion(invT).normalize();
+
+          const qU = quatFaceTowardCameraUpright_LOCAL(
+            nUnitsLocal,
+            toCamU,
+            upU,
+          );
+          const qT = quatFaceTowardCameraUpright_LOCAL(nTensLocal, toCamT, upT);
+
+          const spinAmp = 1.6;
+          const preU = new THREE.Quaternion().setFromEuler(
+            new THREE.Euler(
+              (Math.random() * 2 - 1) * spinAmp,
+              (Math.random() * 2 - 1) * spinAmp,
+              (Math.random() * 2 - 1) * spinAmp,
+            ),
+          );
+          const preT = new THREE.Quaternion().setFromEuler(
+            new THREE.Euler(
+              (Math.random() * 2 - 1) * spinAmp,
+              (Math.random() * 2 - 1) * spinAmp,
+              (Math.random() * 2 - 1) * spinAmp,
+            ),
+          );
+
+          inst.anim = {
+            kind: "d100",
+            startUnits: units.quaternion.clone().multiply(preU),
+            targetUnits: qU,
+            startTens: tens.quaternion.clone().multiply(preT),
+            targetTens: qT,
+          };
+        } else {
+          // d6 / d20
+          const val =
+            s === 10
+              ? force != null
+                ? Math.max(0, Math.min(9, force))
+                : randInt(0, 9)
+              : force != null
+                ? Math.max(1, Math.min(s, force))
+                : randInt(1, s);
+
+          results.push(val);
+
+          const geom = inst.mesh.geometry;
+          const toCam = dirToCameraFrom(inst.mesh);
+
+          let target;
+          if (s === 6) {
+            const normalMap = {
+              1: new THREE.Vector3(0, 1, 0),
+              2: new THREE.Vector3(1, 0, 0),
+              3: new THREE.Vector3(0, 0, 1),
+              4: new THREE.Vector3(0, 0, -1),
+              5: new THREE.Vector3(-1, 0, 0),
+              6: new THREE.Vector3(0, -1, 0),
+            };
+            target = quatFaceTowardCameraUpright(normalMap[val].clone(), toCam);
+          } else if (s === 20) {
+            // d20
+            const pos = geom.getAttribute("position");
+            const i = Math.max(0, Math.min(pos.count / 3 - 1, val - 1));
+            const a = new THREE.Vector3().fromBufferAttribute(pos, i * 3 + 0);
+            const b = new THREE.Vector3().fromBufferAttribute(pos, i * 3 + 1);
+            const c = new THREE.Vector3().fromBufferAttribute(pos, i * 3 + 2);
+            const n = new THREE.Vector3()
+              .subVectors(b, a)
+              .cross(new THREE.Vector3().subVectors(c, a))
+              .normalize();
+            target = quatFaceTowardCameraUpright(n, toCam);
+          } else if (s === 10) {
+            const die = inst.mesh;
+            const lbl = String(val);
+            const map = die.userData.d10?.faceByLabel;
+            if (!map || !map[lbl]) {
+              // fallback (au cas où)
+              target = die.quaternion.clone();
+            } else {
+              const nLocal = map[lbl].normal.clone();
+
+              // caméra -> local du D10 (comme ton D100)
+              const parentQuat = die.parent
+                ? die.parent.getWorldQuaternion(new THREE.Quaternion())
+                : new THREE.Quaternion();
+              const invParent = parentQuat.clone().invert();
+
+              const toCamLocal = dirToCameraFrom(die)
+                .applyQuaternion(invParent)
+                .normalize();
+              const upCamLocal = cameraWorldUp()
+                .clone()
+                .applyQuaternion(invParent)
+                .normalize();
+
+              target = quatFaceTowardCameraUpright_LOCAL(
+                nLocal,
+                toCamLocal,
+                upCamLocal,
+              );
+            }
+          }
+
+          const preSpin = new THREE.Quaternion().setFromEuler(
+            new THREE.Euler(
+              Math.random() * 1.2,
+              Math.random() * 1.2,
+              Math.random() * 1.2,
+            ),
+          );
+
+          inst.anim = {
+            kind: "single",
+            startQuat: inst.mesh.quaternion.clone().multiply(preSpin),
+            targetQuat: target,
+          };
+        }
+      }
+
+      currentValueRef.current = results;
+      return results;
+    }
+
     if (!meshRef.current) return -1;
 
     if (sides === 100) {
@@ -822,12 +1143,12 @@ const Dice3D = forwardRef(function Dice3D(
       const qUnitsLocal = quatFaceTowardCameraUpright_LOCAL(
         nUnitsLocal,
         toCamU_LOCAL,
-        upCamU_LOCAL
+        upCamU_LOCAL,
       );
       const qTensLocal = quatFaceTowardCameraUpright_LOCAL(
         nTensLocal,
         toCamT_LOCAL,
-        upCamT_LOCAL
+        upCamT_LOCAL,
       );
 
       // on fait TOUJOURS bouger les deux dés (pré-spin), même si la valeur ne change pas
@@ -836,15 +1157,15 @@ const Dice3D = forwardRef(function Dice3D(
         new THREE.Euler(
           (Math.random() * 2 - 1) * spinAmp,
           (Math.random() * 2 - 1) * spinAmp,
-          (Math.random() * 2 - 1) * spinAmp
-        )
+          (Math.random() * 2 - 1) * spinAmp,
+        ),
       );
       const preT = new THREE.Quaternion().setFromEuler(
         new THREE.Euler(
           (Math.random() * 2 - 1) * spinAmp,
           (Math.random() * 2 - 1) * spinAmp,
-          (Math.random() * 2 - 1) * spinAmp
-        )
+          (Math.random() * 2 - 1) * spinAmp,
+        ),
       );
 
       d100AnimRef.current.startUnits = units.quaternion.clone().multiply(preU);
@@ -854,6 +1175,34 @@ const Dice3D = forwardRef(function Dice3D(
 
       startTimeRef.current = performance.now();
       setOverlay(null);
+      return val;
+    }
+
+    if (sides === 10) {
+      const val =
+        force != null ? Math.max(0, Math.min(9, force)) : randInt(0, 9);
+      currentValueRef.current = val;
+
+      const die = meshRef.current;
+      const lbl = String(val);
+      const map = die.userData.d10.faceByLabel;
+      const nLocal = map[lbl].normal.clone();
+
+      const toCam = dirToCameraFrom(die);
+      // en single, die est directement dans la scène => local == world ok
+      const target = quatFaceTowardCameraUpright(nLocal, toCam);
+
+      const preSpin = new THREE.Quaternion().setFromEuler(
+        new THREE.Euler(
+          Math.random() * 1.2,
+          Math.random() * 1.2,
+          Math.random() * 1.2,
+        ),
+      );
+
+      startQuatRef.current = die.quaternion.clone().multiply(preSpin);
+      targetQuatRef.current = target;
+      startTimeRef.current = performance.now();
       return val;
     }
 
@@ -871,8 +1220,8 @@ const Dice3D = forwardRef(function Dice3D(
       new THREE.Euler(
         Math.random() * 1.2,
         Math.random() * 1.2,
-        Math.random() * 1.2
-      )
+        Math.random() * 1.2,
+      ),
     );
     startQuatRef.current = meshRef.current.quaternion.clone().multiply(preSpin);
     targetQuatRef.current = target;
@@ -897,7 +1246,7 @@ const Dice3D = forwardRef(function Dice3D(
     <div
       ref={mountRef}
       className={className}
-      style={{ width: size, height: size, position: "relative", ...style }}
+      style={{ width: "100%", height: "100%", position: "relative", ...style }}
     >
       {/* overlay retiré pour d100 réel */}
     </div>

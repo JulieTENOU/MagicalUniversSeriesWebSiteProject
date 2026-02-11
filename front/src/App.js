@@ -16,6 +16,7 @@ import NewCharacter from "./pages/NewCharacter.jsx";
 import ForgottenPassWord from "./pages/ForgottenPassWord.jsx";
 import ResetPassWord from "./pages/ResetPassWord.jsx";
 import NewCharacterAdmin from "./pages/NewCharacterAdmin.jsx";
+import DiceChoice from "./components/DiceChoice.jsx";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
             path="/jdr/connectGame/admin/:ids"
             element={<ConnectGameMJ />}
           />
+          <Route path="/diceRoll" element={<DiceChoice />} />
         </Routes>
       </Router>
     </MyProvider>
