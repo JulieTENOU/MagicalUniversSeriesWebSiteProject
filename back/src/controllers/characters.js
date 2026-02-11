@@ -333,6 +333,120 @@ async function applyAllBonuses(payload, { transaction }) {
   return computed;
 }
 
+function calcBonusFromCarac(score) {
+  const s = Number(score) || 0;
+  if (s < 20) return Math.round(s / 10);
+  if (s < 40) return Math.round(10 + s / 10);
+  if (s < 60) return Math.round(20 + s / 10);
+  return 60;
+}
+
+const CARAC_FIELD_BY_LETTER = {
+  f: "Force_character",
+  d: "Dexte_character",
+  i: "Intell_character",
+  v: "Resilience_character",
+  r: "Resistance_character",
+  c: "Charisme_character",
+};
+
+const SKILL_FIELD_TO_CARAC_LETTER = {
+  // Dextérité
+  Arcs_character: "d",
+  Tir_character: "d",
+  Contondantes_character: "d",
+  Jets_character: "d",
+  ArmesHast_character: "d",
+  Esquive_character: "d",
+  Tranchantes_character: "d",
+  MainsNues_character: "d",
+  Parade_character: "d",
+  Telekinesie_character: "d",
+
+  MagieAir_character: "d",
+  MagieEau_character: "d",
+  MagieFeu_character: "d",
+  MagieTerre_character: "d",
+  MagieElec_character: "d",
+
+  Cartographie_character: "d",
+  Potions_character: "d",
+
+  // Résilience
+  Crea_character: "v",
+  Animaturgie_character: "v",
+  Vigilence_character: "v",
+  Hypnose_character: "v",
+  Medecine_character: "v",
+  // (si tu veux : PsyInt_character/PsyExt... faut savoir ta règle exacte)
+
+  // Intelligence
+  Instinct_character: "i",
+  Aura_character: "i",
+  MagieVie_character: "i",
+  Temps_character: "i",
+  Mort_character: "i",
+  Lumiere_character: "i",
+  MagieSpectrale_character: "i",
+  Cosmos_character: "i",
+
+  Chasse_character: "i",
+  Pieges_character: "i",
+  Deguisement_character: "i",
+  Observation_character: "i",
+  Professorat_character: "i",
+  Soin_character: "i",
+  Survie_character: "i",
+  Herboristerie_character: "i",
+  TheorieMagique_character: "i",
+  HistoireMagique_character: "i",
+  MagicoTech_character: "i",
+
+  // Résistance
+  Course_character: "r",
+  Equitation_character: "r",
+  Nage_character: "r",
+  Tenebres_character: "r",
+
+  // Force
+  Escalade_character: "f",
+  Saut_character: "f",
+
+  // Charisme
+  Chant_character: "c",
+  Eloquance_character: "c", // <- ton champ est "Eloquance_character"
+};
+
+function applyDerivedBonusesToCharacter(characterPlain) {
+  const out = { ...characterPlain };
+
+  // calcule bonus par carac
+  const bonusByLetter = {};
+  for (const [letter, caracField] of Object.entries(CARAC_FIELD_BY_LETTER)) {
+    bonusByLetter[letter] = calcBonusFromCarac(out[caracField]);
+  }
+
+  // applique bonus sur chaque compétence
+  for (const [skillField, letter] of Object.entries(
+    SKILL_FIELD_TO_CARAC_LETTER,
+  )) {
+    if (!(skillField in out)) continue;
+
+    const base = Number(out[skillField]) || 0;
+    const bonus = Number(bonusByLetter[letter]) || 0;
+
+    // Option recommandée : renvoyer les 3 infos
+    out[skillField] = base + bonus;
+    out[`${skillField}_base`] = base;
+    out[`${skillField}_bonus`] = bonus;
+  }
+
+  // utile côté front/debug
+  out.__bonusCaracs = bonusByLetter;
+
+  return out;
+}
+
 module.exports = {
   create: async function (req, res) {
     const t = await sequelize.transaction();
@@ -641,12 +755,36 @@ module.exports = {
     }
   },
 
+  // findAll: async function (req, res) {
+  //   characters
+  //     .findAll(req.params)
+  //     .then((data) => {
+  //       if (data) {
+  //         res.send(data);
+  //       } else {
+  //         res.status(404).send({
+  //           message: "There isn't any account registered yet!",
+  //         });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error("FINDALL ERROR:", err);
+  //       res.status(500).send({
+  //         message: "Error retrieving accounts...",
+  //         error: err.message, // Ajoute ça pour voir l’erreur réelle !
+  //       });
+  //     });
+  // },
+
   findAll: async function (req, res) {
     characters
       .findAll(req.params)
-      .then((data) => {
-        if (data) {
-          res.send(data);
+      .then((rows) => {
+        if (rows) {
+          const computedRows = rows.map((r) =>
+            applyDerivedBonusesToCharacter(r.get({ plain: true })),
+          );
+          res.send(computedRows);
         } else {
           res.status(404).send({
             message: "There isn't any account registered yet!",
@@ -657,16 +795,50 @@ module.exports = {
         console.error("FINDALL ERROR:", err);
         res.status(500).send({
           message: "Error retrieving accounts...",
-          error: err.message, // Ajoute ça pour voir l’erreur réelle !
+          error: err.message,
         });
       });
   },
 
   // This function find and returns one registered user based on one parameter.
 
+  // findOneCharacter: async function (req, res) {
+  //   const character = req.params.Name_character;
+  //   console.log("Name_character:" + character);
+  //   characters
+  //     .findOne({
+  //       where: {
+  //         Name_character: character,
+  //       },
+  //     })
+  //     .then(async (data) => {
+  //       console.log(data);
+  //       if (data) {
+  //         console.log("Success");
+  //         res.status(200).send({
+  //           message: `Successfully connected to your profile`,
+  //           data,
+  //         });
+  //       } else {
+  //         console.log("find one character Error 404");
+  //         res.status(404).send({
+  //           message: `Cannot find your character.`,
+  //         });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log("Error Server 500");
+  //       console.log(err);
+  //       res.status(500).send({
+  //         message: `Error retrieving your character`,
+  //       });
+  //     });
+  // },
+
   findOneCharacter: async function (req, res) {
     const character = req.params.Name_character;
     console.log("Name_character:" + character);
+
     characters
       .findOne({
         where: {
@@ -675,15 +847,23 @@ module.exports = {
       })
       .then(async (data) => {
         console.log(data);
+
         if (data) {
           console.log("Success");
-          res.status(200).send({
+
+          // ✅ IMPORTANT: data est une instance Sequelize -> on passe en plain object
+          const plain = data.get({ plain: true });
+
+          // ✅ on calcule les valeurs finales (base + bonus dynamiques)
+          const computed = applyDerivedBonusesToCharacter(plain);
+
+          return res.status(200).send({
             message: `Successfully connected to your profile`,
-            data,
+            data: computed, // ✅ on renvoie computed, pas data
           });
         } else {
           console.log("find one character Error 404");
-          res.status(404).send({
+          return res.status(404).send({
             message: `Cannot find your character.`,
           });
         }
@@ -691,20 +871,48 @@ module.exports = {
       .catch((err) => {
         console.log("Error Server 500");
         console.log(err);
-        res.status(500).send({
+        return res.status(500).send({
           message: `Error retrieving your character`,
         });
       });
   },
 
+  // findOneCharacterById: async function (req, res) {
+  //   const id = req.params.ID_character;
+  //   characters
+  //     .findOne({ where: { ID_character: id } })
+  //     .then((data) => {
+  //       if (data) res.status(200).send({ message: "Character found", data });
+  //       else
+  //         res.status(404).send({ message: "No character found with this id." });
+  //     })
+  //     .catch((err) =>
+  //       res.status(500).send({ message: "Error retrieving character.", err }),
+  //     );
+  // },
+
   findOneCharacterById: async function (req, res) {
     const id = req.params.ID_character;
+
     characters
       .findOne({ where: { ID_character: id } })
       .then((data) => {
-        if (data) res.status(200).send({ message: "Character found", data });
-        else
-          res.status(404).send({ message: "No character found with this id." });
+        if (data) {
+          // ✅ instance Sequelize → objet simple
+          const plain = data.get({ plain: true });
+
+          // ✅ calcul des bonus dynamiques
+          const computed = applyDerivedBonusesToCharacter(plain);
+
+          return res.status(200).send({
+            message: "Character found",
+            data: computed, // ✅ PAS data brut
+          });
+        } else {
+          return res
+            .status(404)
+            .send({ message: "No character found with this id." });
+        }
       })
       .catch((err) =>
         res.status(500).send({ message: "Error retrieving character.", err }),
