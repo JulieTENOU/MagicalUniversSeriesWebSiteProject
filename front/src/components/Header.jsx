@@ -8,6 +8,8 @@ import { ConnexionContext } from "./provider";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import SmartWatchIcon from "./icons/SmartWatchIcon";
+import BooksIcon from "./icons/BooksIcon";
 
 export default function Top() {
   const {
@@ -70,23 +72,27 @@ export default function Top() {
           {isConnected ? (
             <>
               <Btn
-                path="/read/xalyt"
-                msg={t("buttons.xalyt")}
+                path="/read"
+                msg={<BooksIcon sx={{ color: theme.custom.myheader.text }} />}
                 sx={{
                   textDecoration: "none",
                   color: theme.custom.myheader.text,
                 }}
               />
-              {/* <Btn path='/read/Magical_Academy' msg={"M.A. Stories"} sx={{ textDecoration: 'none', color: theme.custom.myheader.text }} /> */}
               <Btn
                 path="/jdr"
-                msg={t("buttons.jdr")}
+                msg={<SmartWatchIcon sx={{ color: theme.custom.myheader.text }} />}
                 sx={{
                   textDecoration: "none",
                   color: theme.custom.myheader.text,
                 }}
               />
-              {/* <Btn path='/read/lexicon' msg={"Lexique Magique"} msg2={"Bestiaire"} sx={{ textDecoration: 'none', color: theme.custom.myheader.text }} /> */}
+              {/* <Btn path='/read/Lexicon' msg={"Lexique Magique"} sx={{ textDecoration: 'none', color: theme.custom.myheader.text }} />
+              <Btn path='/read/Bestiary' msg={"Bestiaire"} sx={{ textDecoration: 'none', color: theme.custom.myheader.text }} />
+              <Btn path='/read/Characters' msg={"Les secrets"} msg2={"des personnages"} sx={{ textDecoration: 'none', color: theme.custom.myheader.text }} />
+              <Btn path='/read/Magic_history' msg={"Histoire"} msg2={"de la magie"} sx={{ textDecoration: 'none', color: theme.custom.myheader.text }} />
+              <Btn path='/read/Magical_Academy' msg={"M.A. Stories"} sx={{ textDecoration: 'none', color: theme.custom.myheader.text }} /> */}
+
               <Btn
                 path="/settings"
                 msg={
