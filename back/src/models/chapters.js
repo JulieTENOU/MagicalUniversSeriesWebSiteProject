@@ -27,6 +27,10 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.TEXT,
         allowNull: false,
       },
+      required_level_access: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       path: {
         type: DataTypes.STRING(150),
         allowNull: false,

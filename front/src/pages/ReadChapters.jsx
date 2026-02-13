@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Typography, Grid } from "@mui/material";
 import { ConnexionContext } from "../components/provider.jsx";
 import axios from "axios";
+import BtnRtn from "../components/BtnRtn.jsx";
 
 function ChaptersList() {
   const { state: isConnected } = useContext(ConnexionContext);
@@ -24,7 +25,7 @@ function ChaptersList() {
       try {
         // Récupère les chapitres
         const chaptersRes = await axios.get(
-          `/chapters/getAllByBookPath/${serie}/${book}`
+          `/chapters/getAllByBookPath/${serie}/${book}`,
         );
         const chaptersData = chaptersRes.data;
 
@@ -65,13 +66,15 @@ function ChaptersList() {
           zIndex: 1000, // bien au-dessus
         }}
       >
-        <Btn
+        {/* <Btn
           onClick={() => navigate(-1)}
           msg="Go back"
           src={logoReturn}
           height="100px"
           sx={{ color: "whitesmoke" }}
-        />
+        /> */}
+
+        <BtnRtn msg={"Go back"} />
       </div>
       <div
         style={{

@@ -84,6 +84,7 @@ const energies = require("./src/routes/energies");
 const bonus_carac = require("./src/routes/bonus_carac");
 const bonus_energies = require("./src/routes/bonus_energies");
 const agences = require("./src/routes/agences");
+const awakening = require("./src/routes/awakening");
 
 // This actually calls the route!
 app.use("/users", user);
@@ -108,6 +109,7 @@ app.use("/api/energies", energies);
 app.use("/api/bonus_carac", bonus_carac);
 app.use("/api/bonus_energies", bonus_energies);
 app.use("/api/agences", agences);
+app.use("/api/awakening", awakening);
 
 // app.listen(port, "0.0.0.0", () => {
 //   console.log(`Server running on http://localhost:${port}`);

@@ -30,9 +30,6 @@ function App() {
           <Route path="/read/:serie" element={<ReadSeries />} />
           <Route path="/read/:serie/:book" element={<ChaptersList />} />
           <Route path="/read/:serie/:book/:chapter" element={<ReadBook />} />
-          <Route path="/read/MA/whats_to_know" element={<ReadHome />} />
-          <Route path="/read/MA/NPC_stories" element={<ReadHome />} />
-          <Route path="/read/lexicon" element={<ReadHome />} />
           <Route path="/jdr" element={<JDR />} />
           <Route
             path="/jdr2/connectGame/:characterId"

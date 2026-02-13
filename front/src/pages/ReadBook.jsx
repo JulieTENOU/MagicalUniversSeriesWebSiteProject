@@ -20,28 +20,18 @@ function ReadBook() {
   const { serie, book, chapter } = useParams();
   const [currentChapter, setCurrentChapter] = useState(null);
 
-  useEffect(() => {
-    const fetchChapter = async () => {
-      try {
-        const res = await axios.get(
-          `/chapters/getByPath/${serie}/${book}/${chapter}`
-        );
-        console.log("✔️ Chapitre reçu :", res.data);
-        setCurrentChapter(res.data);
-      } catch (error) {
-        console.error("Erreur chargement chapitre :", error);
-      }
-    };
+  const [gate, setGate] = useState(null); // infos du verrou
+  const [awakeningAnswer, setAwakeningAnswer] = useState("");
+  const [awakeningError, setAwakeningError] = useState(null);
+  const [awakeningLoading, setAwakeningLoading] = useState(false);
 
-    fetchChapter();
-  }, [serie, book, chapter]);
-
-  let navigate = useNavigate();
   const {
     state: isConnected,
     setState: setIsConnected,
     loading,
   } = useContext(ConnexionContext);
+
+  let navigate = useNavigate();
   const { mode, defaultMode, changeTheme } = useThemeMode();
   const [localReadingMode, setLocalReadingMode] = useState(mode);
 
@@ -56,10 +46,68 @@ function ReadBook() {
     };
   }, [localReadingMode, defaultMode, changeTheme]);
 
-  if (!loading && !isConnected) {
-    navigate("/", { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    const fetchChapter = async () => {
+      try {
+        const res = await axios.get(
+          `/chapters/getByPath/${serie}/${book}/${chapter}`,
+        );
+        setGate(null);
+        setAwakeningError(null);
+        setCurrentChapter(res.data);
+      } catch (error) {
+        const status = error?.response?.status;
+        const data = error?.response?.data;
+
+        // ✅ Gate Éveil
+        if (status === 403 && data?.error === "AWAKEN_LOCKED") {
+          try {
+            const puzzleRes = await axios.get(
+              `/api/awakening/puzzle/${data.puzzle_key}`,
+            );
+            setGate({ ...data, ...puzzleRes.data }); // ajoute question/hint
+          } catch (e) {
+            setGate(data); // fallback si la route puzzle plante
+          }
+          setCurrentChapter(null);
+          return;
+        }
+
+        console.error("Erreur chargement chapitre :", error);
+      }
+    };
+
+    fetchChapter();
+  }, [serie, book, chapter]);
+
+  const submitAwakening = async () => {
+    setAwakeningLoading(true);
+    setAwakeningError(null);
+
+    try {
+      console.log("axios withCredentials =", axios.defaults.withCredentials);
+
+      const res = await axios.post("/api/awakening/solve", {
+        puzzle_key: gate?.puzzle_key || "level_1",
+        answer: awakeningAnswer,
+      });
+
+      if (res.data?.ok) {
+        // succès -> on retente de charger le chapitre
+        setGate(null);
+        setAwakeningAnswer("");
+        // relance fetch en rechargeant la page ou en rappelant fetchChapter
+        window.location.reload();
+      } else {
+        setAwakeningError("Réponse incorrecte.");
+      }
+    } catch (err) {
+      console.error(err);
+      setAwakeningError("Erreur serveur.");
+    } finally {
+      setAwakeningLoading(false);
+    }
+  };
 
   const parseChapterContent = (text, mode) => {
     if (!text) return null;
@@ -76,11 +124,7 @@ function ReadBook() {
 
         return (
           <div key={index} style={{ textAlign: "center", margin: "1rem 0" }}>
-            <img
-              src={imgSrc}
-              alt="Séparateur"
-              style={{ maxHeight: "40px" }}
-            />
+            <img src={imgSrc} alt="Séparateur" style={{ maxHeight: "40px" }} />
           </div>
         );
       }
@@ -91,7 +135,11 @@ function ReadBook() {
         return (
           <Typography
             key={index}
-            sx={{ fontStyle: "italic", whiteSpace: "pre-line", textAlign: "justify" }}
+            sx={{
+              fontStyle: "italic",
+              whiteSpace: "pre-line",
+              textAlign: "justify",
+            }}
             color={theme.custom.mycustomblur.text}
           >
             {italicMatch[1]}
@@ -137,7 +185,6 @@ function ReadBook() {
     });
   };
 
-
   return (
     <div className="main">
       <BG />
@@ -156,7 +203,7 @@ function ReadBook() {
           path={
             currentChapter?.prev
               ? `/read/${serie}/${book}/${currentChapter.prev}`
-              : `/book/${serie}/${book}`
+              : `/read/${serie}/${book}`
           }
           msg="Chapitre précédent"
           src={logoReturn}
@@ -179,7 +226,7 @@ function ReadBook() {
           path={
             currentChapter?.next
               ? `/read/${serie}/${book}/${currentChapter.next}`
-              : "/summary"
+              : `/read/${serie}/${book}`
           }
           msg={currentChapter?.next ? "Chapitre suivant" : "Retour au sommaire"}
           src={logoNext}
@@ -259,10 +306,67 @@ function ReadBook() {
               userSelect: "none",
             }}
           >
-            {currentChapter?.title || "Chargement..."}
+            {gate
+              ? "Accès verrouillé"
+              : currentChapter?.title || "Chargement..."}
           </Typography>
 
-          {currentChapter?.content && parseChapterContent(currentChapter.content, localReadingMode)}
+          {gate ? (
+            <div style={{ textAlign: "center", padding: 24 }}>
+              <Typography
+                variant="h5"
+                color={theme.custom.mycustomblur.text}
+                sx={{ mb: 2 }}
+              >
+                {gate.question ||
+                  "Pour accéder à cette information tu devras d'abord Eveiller tes pouvoirs."}
+              </Typography>
+
+              {!!gate.hint && (
+                <Typography
+                  sx={{ mb: 2, opacity: 0.8 }}
+                  color={theme.custom.mycustomblur.text}
+                >
+                  {gate.hint}
+                </Typography>
+              )}
+              <Typography color={theme.custom.mycustomblur.text} sx={{ mb: 2 }}>
+                Niveau requis : {gate.required_level} — Ton niveau :{" "}
+                {gate.current_level}
+              </Typography>
+
+              <input
+                value={awakeningAnswer}
+                onChange={(e) => setAwakeningAnswer(e.target.value)}
+                placeholder="Entre la réponse…"
+                style={{
+                  padding: "10px 12px",
+                  borderRadius: 8,
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  width: "min(420px, 80vw)",
+                  background: "transparent",
+                  color: theme.custom.mycustomblur.text,
+                }}
+              />
+
+              <div style={{ marginTop: 12 }}>
+                <Btn
+                  onClick={submitAwakening}
+                  msg={awakeningLoading ? "Validation..." : "Déverrouiller"}
+                  sx={{ color: "whitesmoke" }}
+                />
+              </div>
+
+              {awakeningError && (
+                <Typography sx={{ mt: 2 }} color="error">
+                  {awakeningError}
+                </Typography>
+              )}
+            </div>
+          ) : (
+            currentChapter?.content &&
+            parseChapterContent(currentChapter.content, localReadingMode)
+          )}
         </div>
       </Box>
     </div>

@@ -1,12 +1,13 @@
-import { useContext, useEffect, useState } from 'react';
-import '../index.css';
-import '../general.css';
-import Btn from '../components/Btn';
-import Top from '../components/Header';
-import BG from '../components/Background';
+import { useContext, useEffect, useState } from "react";
+import "../index.css";
+import "../general.css";
+import Btn from "../components/Btn";
+import Top from "../components/Header";
+import BG from "../components/Background";
 import logoReturn from "../assets/img/return.png";
-import { useNavigate } from 'react-router-dom';
-import { ConnexionContext } from '../components/provider.jsx';
+import { useNavigate } from "react-router-dom";
+import { ConnexionContext } from "../components/provider.jsx";
+import BtnRtn from "../components/BtnRtn.jsx";
 
 function ReadHome() {
   const navigate = useNavigate();
@@ -34,26 +35,29 @@ function ReadHome() {
   }
 
   return (
-    <div className='main'>
+    <div className="main">
       <BG />
       <Top started={isConnected} />
 
-      <div style={{
-        width: '100vw',
-        display: 'flex',
-        flexDirection: 'row',
-        position: 'fixed',
-        bottom: '25vh',
-        justifyContent: 'space-around',
-        alignItems: 'center'
-      }}>
-        <Btn
+      <div
+        style={{
+          width: "100vw",
+          display: "flex",
+          flexDirection: "row",
+          position: "fixed",
+          bottom: "25vh",
+          justifyContent: "space-around",
+          alignItems: "center",
+        }}
+      >
+        <BtnRtn msg={"Go back"} />
+        {/* <Btn
           onClick={() => navigate(-1)}
           msg="Go back"
           src={logoReturn}
           height={'100px'}
           sx={{ color: 'whitesmoke' }}
-        />
+        /> */}
         {seriesList.forEach((serie, i) => {
           console.log("serie", i, serie);
         })}
@@ -62,13 +66,13 @@ function ReadHome() {
           console.log("keys", i, Object.keys(serie));
         })}
 
-        {seriesList.map(serie => (
+        {seriesList.map((serie) => (
           <Btn
             key={serie.ID_series}
             path={`/read/${serie.path}`}
             msg={`Go to ${serie.series_title}`}
             src={serie.image}
-            sx={{ color: 'whitesmoke' }}
+            sx={{ color: "whitesmoke" }}
           />
         ))}
       </div>

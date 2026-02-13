@@ -12,7 +12,7 @@ module.exports = function (sequelize, DataTypes) {
         primaryKey: true,
       },
       users_ID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false,
         references: {
           model: "users",

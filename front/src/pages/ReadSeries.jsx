@@ -1,13 +1,14 @@
-import { useContext, useEffect, useState } from 'react';
-import '../index.css';
-import '../general.css';
-import Btn from '../components/Btn.jsx';
-import Top from '../components/Header.jsx';
-import BG from '../components/Background.jsx';
+import { useContext, useEffect, useState } from "react";
+import "../index.css";
+import "../general.css";
+import Btn from "../components/Btn.jsx";
+import Top from "../components/Header.jsx";
+import BG from "../components/Background.jsx";
 import logoReturn from "../assets/img/return.png";
-import { useNavigate, useParams } from 'react-router-dom';
-import { ConnexionContext } from '../components/provider.jsx';
-import UnavailableContent from '../components/UnavailableContent.jsx';
+import { useNavigate, useParams } from "react-router-dom";
+import { ConnexionContext } from "../components/provider.jsx";
+import UnavailableContent from "../components/UnavailableContent.jsx";
+import BtnRtn from "../components/BtnRtn.jsx";
 
 function ReadSeries() {
   const navigate = useNavigate();
@@ -23,11 +24,9 @@ function ReadSeries() {
         const res = await fetch(`/books/getBySerie/${serie}`);
         if (res.status === 404) {
           booksData = [];
-        }
-        else if (!res.ok) {
+        } else if (!res.ok) {
           throw new Error(`HTTP ${res.status}`);
-        }
-        else {
+        } else {
           const text = await res.text();
           try {
             const parsed = JSON.parse(text);
@@ -38,7 +37,7 @@ function ReadSeries() {
         }
       } catch (err) {
         console.error("Erreur de chargement des tomes :", err);
-        booksData = [];;
+        booksData = [];
       } finally {
         setBooks(booksData);
         setBooksLoaded(true);
@@ -59,44 +58,50 @@ function ReadSeries() {
   // chargé mais aucun livre → page indisponible
   if (books.length === 0) {
     return (
-      <div className='main'>
+      <div className="main">
         <BG />
         <Top started={isConnected} />
-        <div style={{
-          width: '100vw',
-          display: 'flex',
-          flexDirection: 'row',
-          position: 'fixed',
-          bottom: '25vh',
-          justifyContent: 'space-around',
-          alignItems: 'center'
-        }}>
+        <div
+          style={{
+            width: "100vw",
+            display: "flex",
+            flexDirection: "row",
+            position: "fixed",
+            bottom: "25vh",
+            justifyContent: "space-around",
+            alignItems: "center",
+          }}
+        >
           <UnavailableContent />;
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <div className='main'>
+    <div className="main">
       <BG />
       <Top started={isConnected} />
-      <div style={{
-        width: '100vw',
-        display: 'flex',
-        flexDirection: 'row',
-        position: 'fixed',
-        bottom: '25vh',
-        justifyContent: 'space-around',
-        alignItems: 'center'
-      }}>
-        <Btn
+      <div
+        style={{
+          width: "100vw",
+          display: "flex",
+          flexDirection: "row",
+          position: "fixed",
+          bottom: "25vh",
+          justifyContent: "space-around",
+          alignItems: "center",
+        }}
+      >
+        {/* <Btn
           onClick={() => navigate(-1)}
           msg="Go back"
           src={logoReturn}
           height={'100px'}
           sx={{ color: 'whitesmoke' }}
-        />
+        /> */}
+
+        <BtnRtn msg={"Go back"} />
 
         {books.map((book) => (
           <Btn
@@ -104,7 +109,7 @@ function ReadSeries() {
             path={`/read/${serie}/${book.path}`}
             msg={book.book_Name}
             src={book.image}
-            sx={{ color: 'whitesmoke' }}
+            sx={{ color: "whitesmoke" }}
           />
         ))}
       </div>

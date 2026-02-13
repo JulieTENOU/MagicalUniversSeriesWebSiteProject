@@ -7,7 +7,7 @@ module.exports = function (sequelize, DataTypes) {
     {
       users_ID: {
         autoIncrement: true,
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false,
         primaryKey: true,
       },
@@ -55,6 +55,6 @@ module.exports = function (sequelize, DataTypes) {
           fields: [{ name: "users_email" }],
         },
       ],
-    }
+    },
   );
 };
