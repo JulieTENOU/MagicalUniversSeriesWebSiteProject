@@ -1,7 +1,7 @@
 import { Drawer, Box, IconButton, Divider, Button, Grid, List, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from "react";
-import Shield from '../assets/img/icons8-shield.svg';
+import Shield from '../assets/svg/icons8-shield.svg';
 import ModifierDialogs from "./ModifierInventory";
 import { useTheme } from "@mui/material/styles";
 

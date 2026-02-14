@@ -2,7 +2,7 @@ import { Drawer, Box, IconButton, Grid, Typography, Table, TableBody, TableCell,
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
 import ModifierDialogs from "./ModifierCrystals";
-import Crystal from "../assets/img/icons8-crystal.svg";
+import Crystal from "../assets/svg/icons8-crystal.svg";
 import { useTheme } from "@mui/material/styles";
 
 import { useTranslation } from "react-i18next";

@@ -10,8 +10,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import TextField from "@mui/material/TextField";
 import { useState, useContext } from "react";
 import { ConnexionContext } from "./provider";
-// import Pencil from "../assets/img/pencil-outline.svg";
-import { ReactComponent as Pencil } from "../assets/img/pencil-outline.svg";
+// import Pencil from "../assets/svg/pencil-outline.svg";
+import { ReactComponent as Pencil } from "../assets/svg/pencil-outline.svg";
 import { useTheme } from "@mui/material/styles";
 import { useCharacter } from "../context/CharacterContext";
 

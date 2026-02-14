@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
-import Pencil from '../assets/img/pencil-outline.svg';
+import Pencil from '../assets/svg/pencil-outline.svg';
 import { useTheme } from "@mui/material/styles";
 
 

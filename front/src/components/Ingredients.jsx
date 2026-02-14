@@ -2,7 +2,7 @@ import { Drawer, Box, IconButton, Grid, Typography, TableRow, TableCell, Table, 
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
 import ModifierDialogs from "./ModifierIngredients";
-import Ingredient from "../assets/img/icons8-potion.svg";
+import Ingredient from "../assets/svg/icons8-potion.svg";
 import { useTheme } from "@mui/material/styles";
 
 import { useTranslation } from "react-i18next";
