@@ -10,35 +10,42 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 
 const db = {};
 
-
 fs.readdirSync(__dirname)
-  .filter(file => file !== "index.js" && file.endsWith(".js"))
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+  .filter((file) => file !== "index.js" && file.endsWith(".js"))
+  .forEach((file) => {
+    const model = require(path.join(__dirname, file))(
+      sequelize,
+      Sequelize.DataTypes,
+    );
     db[model.name] = model;
   });
 
 // Associations définies manuellement
 const {
-  users,
-  characters,
-  inventory,
-  currentGauges,
-  ingredients,
-  crystals,
-  draconiqueHeart,
-  competences,
+  agences,
   bonus_carac,
   bonus_energies,
-  energies,
-  races,
-  planete,
-  metiers,
-  agences,
-  series,
-  books,
   book_parts,
+  books,
   chapters,
+  characters,
+  competences,
+  creatures,
+  crystals,
+  currentGauges,
+  draconiqueHeart,
+  energies,
+  equipement_initial,
+  ingredients,
+  inventory,
+  media,
+  metiers,
+  planete,
+  preferences,
+  races,
+  series,
+  user_read_progress,
+  users,
 } = db;
 
 // === Associations ===
@@ -69,12 +76,11 @@ bonus_carac.belongsTo(competences, { foreignKey: "competence_id" });
 energies.hasMany(bonus_energies, { foreignKey: "ressource_id" });
 bonus_energies.belongsTo(energies, { foreignKey: "ressource_id" });
 
-Object.keys(db).forEach(modelName => {
+Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
-
 
 // Debug log
 console.log("✅ Models initialized & associations defined:", Object.keys(db));

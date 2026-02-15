@@ -9,8 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
-import Grimoire from '../assets/img/grimoire.jpg';
+// import Grimoire from '../assets/img/grimoire.jpg';
 import { useState, useEffect } from 'react';
 
 function BootstrapDialogTitle(props) {
@@ -43,6 +42,9 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function CustomizedDialogs(data) {
+
+  const API_BASE = process.env.REACT_APP_API_BASE || window.location.origin;
+  const Grimoire = `${API_BASE}/api/media/getOneMedia/4`;
   const character = data.data;
   console.log(character);
   const [inventaires, setInventaires] = useState({})

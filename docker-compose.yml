@@ -32,24 +32,27 @@ services:
     env_file:
       - ./.env
       - ./back/.env
-#    volumes:
-#      - ./back:/app
+    #    volumes:
+    #      - ./back:/app
+    volumes:
+      #   - /data/apps/mus-website/back:/app
+      - /var/www/mus_storage:/var/www/mus_storage
     depends_on:
       - db
     networks:
       - mu-network
 
-#   front:
-#     build: ./front
-#     container_name: frontMA
-#     ports:
-#       - "3003:3003"
-# #    volumes:
-# #      - ./front:/app
-#     depends_on:
-#       - back
-#     networks:
-#       - mu-network
+  #   front:
+  #     build: ./front
+  #     container_name: frontMA
+  #     ports:
+  #       - "3003:3003"
+  # #    volumes:
+  # #      - ./front:/app
+  #     depends_on:
+  #       - back
+  #     networks:
+  #       - mu-network
 
   nginx:
     build: ./front
@@ -65,7 +68,7 @@ services:
     restart: unless-stopped
     networks:
       - mu-network
-      
+
   certbot:
     image: certbot/certbot
     volumes:

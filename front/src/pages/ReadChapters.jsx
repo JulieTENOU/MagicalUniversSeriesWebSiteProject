@@ -4,7 +4,6 @@ import "../general.css";
 import Btn from "../components/Btn";
 import Top from "../components/Header";
 import BG from "../components/Background";
-import logoReturn from "../assets/img/return.png";
 import { useNavigate, useParams } from "react-router-dom";
 import { Typography, Grid } from "@mui/material";
 import { ConnexionContext } from "../components/provider.jsx";

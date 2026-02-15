@@ -4,7 +4,6 @@ import "../general.css";
 import Btn from "../components/Btn.jsx";
 import Top from "../components/Header.jsx";
 import BG from "../components/Background.jsx";
-import logoReturn from "../assets/img/return.png";
 import { useNavigate, useParams } from "react-router-dom";
 import { ConnexionContext } from "../components/provider.jsx";
 import UnavailableContent from "../components/UnavailableContent.jsx";

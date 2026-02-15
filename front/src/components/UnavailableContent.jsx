@@ -2,12 +2,14 @@ import { useContext } from 'react';
 import '../index.css';
 import '../general.css';
 import Btn from './Btn';
-import logoMA from '../assets/img/ma.webp';
-import Pile from "../assets/img/pile.png";
 import { ConnexionContext } from './provider';
 
 
 export default function UnavailableContent() {
+
+    const API_BASE = process.env.REACT_APP_API_BASE || window.location.origin;
+    const logoMA = `${API_BASE}/api/media/getOneMedia/5`;
+    const Pile = `${API_BASE}/api/media/getOneMedia/7`;
     const { state: currentUser, setState: setCurrentUser, loading } = useContext(ConnexionContext);
     console.log(currentUser);
     return (

@@ -22,5 +22,7 @@ controller.energies = require("./energies");
 controller.bonus_carac = require("./bonus_carac");
 controller.bonus_energies = require("./bonus_energies");
 controller.agences = require("./agences");
+controller.awakening = require("./awakening");
+controller.media = require("./media");
 
 module.exports = controller;
