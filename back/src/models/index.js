@@ -23,6 +23,7 @@ fs.readdirSync(__dirname)
 // Associations définies manuellement
 const {
   agences,
+  awakening_puzzles,
   bonus_carac,
   bonus_energies,
   book_parts,

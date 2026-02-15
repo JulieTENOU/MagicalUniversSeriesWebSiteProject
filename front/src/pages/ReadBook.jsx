@@ -6,8 +6,6 @@ import "../general.css";
 import Btn from "../components/Btn";
 import Top from "../components/Header";
 import BG from "../components/Background";
-import logoReturn from "../assets/img/return.png";
-import logoNext from "../assets/img/next.png";
 import { useNavigate } from "react-router-dom";
 import { ConnexionContext } from "../components/provider.jsx";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -17,6 +15,9 @@ import { useThemeMode } from "../context/ThemeContext.js";
 import axios from "axios";
 
 function ReadBook() {
+  const API_BASE = process.env.REACT_APP_API_BASE || window.location.origin;
+  const LogoReturn = `${API_BASE}/api/media/getOneMedia/8`;
+  const LogoNext = `${API_BASE}/api/media/getOneMedia/6`;
   const { serie, book, chapter } = useParams();
   const [currentChapter, setCurrentChapter] = useState(null);
 
@@ -24,6 +25,9 @@ function ReadBook() {
   const [awakeningAnswer, setAwakeningAnswer] = useState("");
   const [awakeningError, setAwakeningError] = useState(null);
   const [awakeningLoading, setAwakeningLoading] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+  const [showHint, setShowHint] = useState(false);
+  const [nearHint, setNearHint] = useState(null);
 
   const {
     state: isConnected,
@@ -66,8 +70,17 @@ function ReadBook() {
               `/api/awakening/puzzle/${data.puzzle_key}`,
             );
             setGate({ ...data, ...puzzleRes.data }); // ajoute question/hint
+            setNearHint(null);
+            setAttempts(0);
+            setShowHint(false);
+            setAwakeningAnswer("");
+
           } catch (e) {
             setGate(data); // fallback si la route puzzle plante
+            setNearHint(null);
+            setAttempts(0);
+            setShowHint(false);
+            setAwakeningAnswer("");
           }
           setCurrentChapter(null);
           return;
@@ -96,10 +109,19 @@ function ReadBook() {
         // succès -> on retente de charger le chapitre
         setGate(null);
         setAwakeningAnswer("");
-        // relance fetch en rechargeant la page ou en rappelant fetchChapter
+        setAttempts(0);
+        setShowHint(false);
+        setNearHint(null);
         window.location.reload();
       } else {
+        setAttempts(prev => prev + 1);
         setAwakeningError("Réponse incorrecte.");
+
+        if (res.data?.near && res.data?.near_hint) {
+          setNearHint(res.data.near_hint); // ✅ affichage direct
+        } else {
+          setNearHint(null);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -206,7 +228,7 @@ function ReadBook() {
               : `/read/${serie}/${book}`
           }
           msg="Chapitre précédent"
-          src={logoReturn}
+          src={LogoReturn}
           height={"50px"}
           sx={{ textDecoration: "none", color: "whitesmoke" }}
         />
@@ -229,7 +251,7 @@ function ReadBook() {
               : `/read/${serie}/${book}`
           }
           msg={currentChapter?.next ? "Chapitre suivant" : "Retour au sommaire"}
-          src={logoNext}
+          src={LogoNext}
           height={"50px"}
           sx={{ textDecoration: "none", color: "whitesmoke" }}
         />
@@ -322,14 +344,31 @@ function ReadBook() {
                   "Pour accéder à cette information tu devras d'abord Eveiller tes pouvoirs."}
               </Typography>
 
-              {!!gate.hint && (
-                <Typography
-                  sx={{ mb: 2, opacity: 0.8 }}
-                  color={theme.custom.mycustomblur.text}
-                >
-                  {gate.hint}
+              {attempts >= (gate?.hint_after_attemps ?? 3) && gate?.hint && (
+                <div style={{ marginTop: 20 }}>
+                  <Btn
+                    onClick={() => setShowHint(prev => !prev)}
+                    msg={showHint ? "Masquer l’indice" : "Révéler un indice"}
+                    sx={{ color: "whitesmoke" }}
+                  />
+                  {showHint && (
+                    <Typography
+                      sx={{ mb: 2, opacity: 0.8 }}
+                      color={theme.custom.mycustomblur.text}
+                    >
+                      {gate.hint}
+                    </Typography>
+                  )}
+                </div>
+              )}
+
+              {nearHint && (
+                <Typography sx={{ mt: 2, opacity: 0.9 }} color={theme.custom.mycustomblur.text}>
+                  {nearHint}
                 </Typography>
               )}
+
+
               <Typography color={theme.custom.mycustomblur.text} sx={{ mb: 2 }}>
                 Niveau requis : {gate.required_level} — Ton niveau :{" "}
                 {gate.current_level}

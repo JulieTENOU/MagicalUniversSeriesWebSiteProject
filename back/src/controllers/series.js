@@ -8,12 +8,12 @@ module.exports = {
     console.log(req.body);
     if (req.body) {
       try {
-        let { ID_series, series_title, image, path } = req.body;
+        let { ID_series, series_title, ID_media, path } = req.body;
 
         const newSerie = await series.create({
           ID_series,
           series_title,
-          image,
+          ID_media,
           path,
         });
         return res.status(201).send({ newSerie });
@@ -88,11 +88,11 @@ module.exports = {
       })
       .then(async (response) => {
         // We update the book
-        const { ID_series, series_title, image, path } = req.body;
+        const { ID_series, series_title, ID_media, path } = req.body;
         const bookUpdate = {
           ID_series,
           series_title,
-          image,
+          ID_media,
           path,
         };
         response.update(bookUpdate);
