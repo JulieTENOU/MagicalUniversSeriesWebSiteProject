@@ -6,6 +6,8 @@ import React, {
   useEffect,
 } from "react";
 import Dice3D from "./Dice3D";
+import Button from "@mui/material/Button";
+import Btn from "./Btn";
 
 export default function DiceChoice({
   hidden = false,
@@ -249,48 +251,115 @@ export default function DiceChoice({
         }}
       >
         {/* D6 */}
-        <button onClick={() => addDie(6)} disabled={totalDice >= maxDice}>
+        <Button size="small"
+          sx={{
+            minWidth: "fit-content",
+            width: "fit-content",
+            px: 1,          // padding horizontal
+            py: 0.5,        // padding vertical
+            lineHeight: 1.2,
+          }} onClick={() => addDie(6)} disabled={totalDice >= maxDice}>
           + D6
-        </button>
-        <button onClick={() => removeDie(6)} disabled={counts[6] === 0}>
+        </Button>
+        <Button size="small"
+          sx={{
+            minWidth: "fit-content",
+            width: "fit-content",
+            px: 1,          // padding horizontal
+            py: 0.5,        // padding vertical
+            lineHeight: 1.2,
+          }} onClick={() => removeDie(6)} disabled={counts[6] === 0}>
           - D6
-        </button>
+        </Button>
 
         {/* D10 */}
-        <button
-          onClick={() => addDie(10)}
-          disabled={!allowD10 || totalDice >= maxDice}
-        >
+        <Button size="small"
+          sx={{
+            minWidth: "fit-content",
+            width: "fit-content",
+            px: 1,          // padding horizontal
+            py: 0.5,        // padding vertical
+            lineHeight: 1.2,
+          }} onClick={() => addDie(10)} disabled={totalDice >= maxDice}>
           + D10
-        </button>
-        <button onClick={() => removeDie(10)} disabled={counts[10] === 0}>
+        </Button>
+        <Button size="small"
+          sx={{
+            minWidth: "fit-content",
+            width: "fit-content",
+            px: 1,          // padding horizontal
+            py: 0.5,        // padding vertical
+            lineHeight: 1.2,
+          }} onClick={() => removeDie(10)} disabled={counts[10] === 0}>
           - D10
-        </button>
+        </Button>
 
         {/* D20 */}
-        <button onClick={() => addDie(20)} disabled={totalDice >= maxDice}>
+        <Button size="small"
+          sx={{
+            minWidth: "fit-content",
+            width: "fit-content",
+            px: 1,          // padding horizontal
+            py: 0.5,        // padding vertical
+            lineHeight: 1.2,
+          }} onClick={() => addDie(20)} disabled={totalDice >= maxDice}>
           + D20
-        </button>
-        <button onClick={() => removeDie(20)} disabled={counts[20] === 0}>
+        </Button>
+        <Button size="small"
+          sx={{
+            minWidth: "fit-content",
+            width: "fit-content",
+            px: 1,          // padding horizontal
+            py: 0.5,        // padding vertical
+            lineHeight: 1.2,
+          }} onClick={() => removeDie(20)} disabled={counts[20] === 0}>
           - D20
-        </button>
+        </Button>
 
         {/* D100 */}
-        <button onClick={() => addDie(100)} disabled={totalDice >= maxDice}>
+        <Button size="small"
+          sx={{
+            minWidth: "fit-content",
+            width: "fit-content",
+            px: 1,          // padding horizontal
+            py: 0.5,        // padding vertical
+            lineHeight: 1.2,
+          }} onClick={() => addDie(100)} disabled={totalDice >= maxDice}>
           + D100
-        </button>
-        <button onClick={() => removeDie(100)} disabled={counts[100] === 0}>
+        </Button>
+        <Button size="small"
+          sx={{
+            minWidth: "fit-content",
+            width: "fit-content",
+            px: 1,          // padding horizontal
+            py: 0.5,        // padding vertical
+            lineHeight: 1.2,
+          }} onClick={() => removeDie(100)} disabled={counts[100] === 0}>
           - D100
-        </button>
+        </Button>
 
         {/* spacer */}
         <div style={{ height: 8, gridColumn: "1 / -1" }} />
 
         {/* Actions */}
-        <button onClick={reroll} disabled={!totalDice} style={{ gridColumn: "1 / -1" }}>
+        <Button size="small"
+          sx={{
+            minWidth: "fit-content",
+            width: "fit-content",
+            px: 1,          // padding horizontal
+            py: 0.5,        // padding vertical
+            lineHeight: 1.2,
+          }} onClick={reroll} disabled={!totalDice} style={{ gridColumn: "1 / -1" }}>
           Relancer
-        </button>
-        <button
+        </Button>
+        <Button size="small"
+          sx={{
+            minWidth: "fit-content",
+            width: "fit-content",
+            px: 1,          // padding horizontal
+            py: 0.5,        // padding vertical
+            lineHeight: 1.2,
+          }}
           onClick={reset}
           disabled={!totalDice}
           style={{
@@ -299,7 +368,7 @@ export default function DiceChoice({
           }}
         >
           Reset
-        </button>
+        </Button>
       </div>
     </div>
   );

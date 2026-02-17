@@ -1,40 +1,80 @@
-.d-flex{
-    display: flex;
+.d-flex {
+  display: flex;
 }
-.text-align-center{
-    text-align: center;
+.text-align-center {
+  text-align: center;
 }
-.justify-content-space-between{
-    justify-content: space-between;
+.justify-content-space-between {
+  justify-content: space-between;
 }
-.justify-content-space-arount{
-    justify-content: space-around;
+.justify-content-space-arount {
+  justify-content: space-around;
 }
-.justify-content-space-evenly{
-    justify-content: space-evenly;
+.justify-content-space-evenly {
+  justify-content: space-evenly;
 }
-.justify-content-center{
-    justify-content:center
+.justify-content-center {
+  justify-content: center;
 }
-.justify-content-end{
-    justify-content: end;
+.justify-content-end {
+  justify-content: end;
 }
-.justify-content-start{
-    justify-content: start;
+.justify-content-start {
+  justify-content: start;
 }
-.row{
-    flex-direction: row;
-}
-
-#survie-{
-    --survieW:0px;
-    width: var(--survieW);
-    left:calc(100px - var(--survieW));
-}
-.label{
-    font-size: 1.2em !important;
+.row {
+  flex-direction: row;
 }
 
-.filter-white{
-    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);
+#survie- {
+  --survieW: 0px;
+  width: var(--survieW);
+  left: calc(100px - var(--survieW));
+}
+.label {
+  font-size: 1.2em !important;
+}
+
+.filter-white {
+  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg)
+    brightness(102%) contrast(102%);
+}
+
+.readHomeGridWrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 25vh;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+/* la grille des séries */
+.readHomeGrid {
+  flex: 1;
+  display: grid;
+
+  /* mobile par défaut : 2 colonnes => 4 lignes si tu as 8 items */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+
+  /* si ça déborde en hauteur, tu peux scroller dans la zone */
+  max-height: 40vh;
+  overflow-y: auto;
+
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+/* desktop : 4 colonnes => 2 lignes si tu as 8 items */
+@media (min-width: 900px) {
+  .readHomeGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    max-height: 30vh;
   }
+}
