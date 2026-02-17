@@ -46,9 +46,9 @@ module.exports = function (sequelize, DataTypes) {
     },
   );
 
-  ChapterTranslation.associate = function (models) {
-    ChapterTranslation.belongsTo(models.chapters, { foreignKey: "ID_chapter" });
-  };
+  // ChapterTranslation.associate = function (models) {
+  //   ChapterTranslation.belongsTo(models.chapters, { foreignKey: "ID_chapter" });
+  // };
 
   return ChapterTranslation;
 };

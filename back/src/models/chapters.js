@@ -72,20 +72,20 @@ module.exports = function (sequelize, DataTypes) {
     },
   );
 
-  Chapter.associate = function (models) {
-    Chapter.belongsTo(models.books, {
-      foreignKey: "ID_book",
-    });
+  // Chapter.associate = function (models) {
+  //   Chapter.belongsTo(models.books, {
+  //     foreignKey: "ID_book",
+  //   });
 
-    Chapter.belongsTo(models.book_parts, {
-      foreignKey: "ID_part",
-      as: "part",
-    });
-    Chapter.hasMany(models.chapter_translations, {
-      foreignKey: "ID_chapter",
-      as: "translations",
-    });
-  };
+  //   Chapter.belongsTo(models.book_parts, {
+  //     foreignKey: "ID_part",
+  //     as: "part",
+  //   });
+  //   Chapter.hasMany(models.chapter_translations, {
+  //     foreignKey: "ID_chapter",
+  //     as: "translations",
+  //   });
+  // };
 
   return Chapter;
 };
