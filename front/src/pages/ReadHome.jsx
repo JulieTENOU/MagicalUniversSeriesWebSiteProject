@@ -17,7 +17,7 @@ function ReadHome() {
   useEffect(() => {
     const fetchSeries = async () => {
       try {
-        const res = await fetch(`/series/findAllSeries`);
+        const res = await fetch(`/series/findAllSeriesReadable`);
         const data = await res.json();
         setSeriesList(data);
       } catch (error) {
@@ -39,43 +39,28 @@ function ReadHome() {
       <BG />
       <Top started={isConnected} />
 
-      <div
-        style={{
-          width: "100vw",
-          display: "flex",
-          flexDirection: "row",
-          position: "fixed",
-          bottom: "25vh",
-          justifyContent: "space-around",
-          alignItems: "center",
-        }}
-      >
+      <div className="readHomeGridWrap">
         <BtnRtn msg={"Go back"} />
-        {seriesList.forEach((serie, i) => {
-          console.log("serie", i, serie);
-        })}
 
-        {seriesList.forEach((serie, i) => {
-          console.log("keys", i, Object.keys(serie));
-        })}
+        <div className="readHomeGrid">
+          {seriesList.map((serie) => {
+            const imgUrl = serie.ID_media
+              ? `${API_BASE}/api/media/getOneMedia/${serie.ID_media}`
+              : null;
 
-        {seriesList.map((serie) => {
-          const imgUrl = serie.ID_media
-            ? `${API_BASE}/api/media/getOneMedia/${serie.ID_media}`
-            : null;
-
-          return (
-            <Btn
-              key={serie.ID_series}
-              path={`/read/${serie.path}`}
-              msg={`Go to ${serie.series_title}`}
-              src={imgUrl}
-              height="80"
-              width="60"
-              sx={{ color: "whitesmoke" }}
-            />
-          );
-        })}
+            return (
+              <Btn
+                key={serie.ID_series}
+                path={`/read/${serie.path}`}
+                msg={serie.series_title} // évite "Go to ..." si tu veux plus clean
+                src={imgUrl}
+                height="80"
+                width="60"
+                sx={{ color: "whitesmoke" }}
+              />
+            );
+          })}
+        </div>
       </div>
     </div>
   );

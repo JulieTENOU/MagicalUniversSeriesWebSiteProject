@@ -6,5 +6,7 @@ const verifyToken = require("../middleware/index");
 router.post("/createSerie", series.create);
 router.get("/api/getOneSerie", series.findOne);
 router.get("/findAllSeries", series.findAll);
+router.get("/findAllSeriesReadable", series.findAllReadable);
 router.put("/api/updateSeries/:ID_series", series.update);
+
 module.exports = router;

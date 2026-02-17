@@ -1,7 +1,4 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../models").sequelize;
-const bcrypt = require("bcrypt");
-const series = require("../models/series")(sequelize, DataTypes);
+const { series, books, chapters } = require("../models");
 
 module.exports = {
   create: async function (req, res) {
@@ -105,27 +102,39 @@ module.exports = {
       });
   },
 
-  // This function deletes a user.
+  findAllReadable: async function (req, res) {
+    try {
+      const data = await series.findAll({
+        // ✅ garde tes champs série
+        attributes: ["ID_series", "series_title", "ID_media", "path"],
 
-  // delete: async function (req, res) {
-  //   const email = req.user;
-  //   users
-  //     .findOne({
-  //       where: {
-  //         userEmail: email,
-  //       },
-  //     })
-  //     .then((response) => {
-  //       response.destroy();
-  //       res.send("Profil has been deleted succesfully!");
-  //     })
-  //     .catch((err) => {
-  //       res
-  //         .status(404)
-  //         .send(
-  //           "We were unable to delete your profil. Please feel free to retry! Justification: " +
-  //             err
-  //         );
-  //     });
-  // },
+        // ✅ seulement les séries qui ont au moins 1 book
+        //    qui a au moins 1 chapter
+        include: [
+          {
+            model: books,
+            attributes: [], // on n'a pas besoin des books ici
+            required: true, // inner join => il faut au moins 1 book
+            include: [
+              {
+                model: chapters,
+                attributes: [], // on n'a pas besoin des chapters ici
+                required: true, // inner join => il faut au moins 1 chapter
+              },
+            ],
+          },
+        ],
+
+        // ✅ évite les doublons (1 série peut avoir N chapters)
+        distinct: true,
+
+        order: [["ID_series", "ASC"]],
+      });
+
+      res.status(200).json(data);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Error retrieving readable series." });
+    }
+  },
 };

@@ -20,7 +20,7 @@ function ReadSeries() {
     const fetchBooks = async () => {
       let booksData = [];
       try {
-        const res = await fetch(`/books/getBySerie/${serie}`);
+        const res = await fetch(`/books/getBySerieReadable/${serie}`);
         if (res.status === 404) {
           booksData = [];
         } else if (!res.ok) {

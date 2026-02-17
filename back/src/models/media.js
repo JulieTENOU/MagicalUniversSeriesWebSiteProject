@@ -10,7 +10,10 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false,
         primaryKey: true,
       },
-
+      owner_user_id: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: true, // NULL = media système
+      },
       kind: {
         type: DataTypes.STRING(20),
         allowNull: false,
@@ -48,6 +51,18 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false,
       },
 
+      visibility: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        defaultValue: "public",
+      },
+
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      },
+
       alt: {
         type: DataTypes.STRING(500),
         allowNull: true,
@@ -68,6 +83,16 @@ module.exports = function (sequelize, DataTypes) {
           name: "idx_media_filename",
           using: "BTREE",
           fields: [{ name: "filename" }],
+        },
+        {
+          name: "idx_media_owner_user",
+          using: "BTREE",
+          fields: [{ name: "owner_user_id" }],
+        },
+        {
+          name: "idx_media_visibility",
+          using: "BTREE",
+          fields: [{ name: "visibility" }],
         },
       ],
     },

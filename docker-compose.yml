@@ -32,10 +32,9 @@ services:
     env_file:
       - ./.env
       - ./back/.env
-    #    volumes:
-    #      - ./back:/app
     volumes:
-      #   - /data/apps/mus-website/back:/app
+      - ./back:/app
+      - /app/node_modules
       - /var/www/mus_storage:/var/www/mus_storage
     depends_on:
       - db

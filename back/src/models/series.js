@@ -38,10 +38,4 @@ module.exports = function (sequelize, DataTypes) {
       ],
     },
   );
-
-  series.associate = function (models) {
-    series.hasMany(models.books, {
-      foreignKey: "ID_series",
-    });
-  };
 };

@@ -1,7 +1,5 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../models").sequelize;
-const bcrypt = require("bcrypt");
-const { books, series } = require("../models");
+const { Op } = require("sequelize");
+const { books, series, chapters } = require("../models");
 
 module.exports = {
   create: async function (req, res) {
@@ -170,27 +168,51 @@ module.exports = {
       });
   },
 
-  // This function deletes a user.
+  getBooksBySerieReadable: async function (req, res) {
+    const { serie } = req.params;
 
-  // delete: async function (req, res) {
-  //   const email = req.user;
-  //   users
-  //     .findOne({
-  //       where: {
-  //         userEmail: email,
-  //       },
-  //     })
-  //     .then((response) => {
-  //       response.destroy();
-  //       res.send("Profil has been deleted succesfully!");
-  //     })
-  //     .catch((err) => {
-  //       res
-  //         .status(404)
-  //         .send(
-  //           "We were unable to delete your profil. Please feel free to retry! Justification: " +
-  //             err
-  //         );
-  //     });
-  // },
+    try {
+      const result = await books.findAll({
+        include: [
+          {
+            model: series,
+            where: { path: serie },
+            attributes: ["series_title", "path", "ID_media"],
+            required: true,
+          },
+          {
+            // ✅ force: au moins 1 chapitre non vide
+            model: chapters,
+            attributes: [], // on ne renvoie pas les chapitres ici
+            required: true, // INNER JOIN => il en faut au moins un
+            where: {
+              content_chapter: {
+                [Op.and]: [
+                  { [Op.ne]: null },
+                  { [Op.ne]: "" },
+                  // TRIM(content) <> '' (compatible MySQL)
+                  // Sequelize.where(fn('TRIM', col(...)), { [Op.ne]: '' })
+                ],
+              },
+            },
+          },
+        ],
+
+        // ✅ évite les doublons (1 book a N chapitres)
+        distinct: true,
+
+        order: [["ID_book", "ASC"]],
+      });
+
+      // si tu veux garder ton comportement 404 quand vide:
+      if (!result || result.length === 0) {
+        return res.status(404).json({ message: "Aucun tome lisible trouvé." });
+      }
+
+      res.status(200).json(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur serveur." });
+    }
+  },
 };

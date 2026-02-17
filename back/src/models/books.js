@@ -49,21 +49,21 @@ module.exports = function (sequelize, DataTypes) {
           fields: [{ name: "ID_series" }],
         },
       ],
-    }
+    },
   );
-  Book.associate = function (models) {
-    Book.belongsTo(models.series, {
-      foreignKey: "ID_series",
-    });
+  // Book.associate = function (models) {
+  //   Book.belongsTo(models.series, {
+  //     foreignKey: "ID_series",
+  //   });
 
-    Book.hasMany(models.chapters, {
-      foreignKey: "ID_book",
-    });
+  //   Book.hasMany(models.chapters, {
+  //     foreignKey: "ID_book",
+  //   });
 
-    Book.hasMany(models.book_parts, {
-      foreignKey: "ID_book",
-    });
-  };
+  //   Book.hasMany(models.book_parts, {
+  //     foreignKey: "ID_book",
+  //   });
+  // };
 
   return Book;
 };
