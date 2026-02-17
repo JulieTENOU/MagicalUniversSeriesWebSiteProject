@@ -28,6 +28,8 @@ import {
   Button,
   TextField,
 } from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
+
 
 function ConnectGameMJ() {
   const { ids } = useParams();
@@ -44,6 +46,7 @@ function ConnectGameMJ() {
   console.log(currentUser?.users_ID);
   const [characters, setCharacters] = useState([]);
   console.log(characters);
+
   useEffect(() => {
     Promise.all(
       idArray.map((id) =>
@@ -127,12 +130,65 @@ function ConnectGameMJ() {
   const [gaugesByCharId, setGaugesByCharId] = useState({});
   // Exemple: gaugesByCharId[12] = { currentManaAir: 10, ... }
 
+  // useEffect(() => {
+  //   if (!characters.length) return;
+
+  //   let cancelled = false;
+
+  //   async function loadAllGauges() {
+  //     try {
+  //       const results = await Promise.all(
+  //         characters.map(async (char) => {
+  //           const name = encodeURIComponent(char.Name_character);
+  //           const res = await fetch(`/api/gauges/getOneGauges/${name}`);
+  //           const json = await res.json().catch(() => null);
+
+  //           if (!res.ok || !json?.data) {
+  //             // fallback : si pas de gauges, on peut retourner les valeurs du perso
+  //             return [
+  //               char.ID_character,
+  //               {
+  //                 currentManaAir: char.ManaAir_character,
+  //                 currentManaEau: char.ManaEau_character,
+  //                 currentManaTerre: char.ManaTerre_character,
+  //                 currentManaFeu: char.ManaFeu_character,
+  //                 currentManaVolonte: char.ManaVolonte_character,
+  //                 currentManaVital: char.ManaVital_character,
+  //                 currentStamina: char.Stamina_character,
+  //               },
+  //             ];
+  //           }
+
+  //           return [char.ID_character, json.data];
+  //         }),
+  //       );
+
+  //       if (cancelled) return;
+
+  //       // results = [[id, gauges], [id, gauges], ...]
+  //       setGaugesByCharId(Object.fromEntries(results));
+  //     } catch (e) {
+  //       console.error("Erreur loadAllGauges:", e);
+  //     }
+  //   }
+
+  //   loadAllGauges();
+
+
+  //   const interval = setInterval(loadAllGauges, 1500);
+
+  //   return () => {
+  //     cancelled = true;
+  //     clearInterval(interval);
+  //   };
+  // }, [characters]);
+
   useEffect(() => {
     if (!characters.length) return;
 
     let cancelled = false;
 
-    async function loadAllGauges() {
+    async function loadAllGaugesOnce() {
       try {
         const results = await Promise.all(
           characters.map(async (char) => {
@@ -141,7 +197,6 @@ function ConnectGameMJ() {
             const json = await res.json().catch(() => null);
 
             if (!res.ok || !json?.data) {
-              // fallback : si pas de gauges, on peut retourner les valeurs du perso
               return [
                 char.ID_character,
                 {
@@ -161,23 +216,189 @@ function ConnectGameMJ() {
         );
 
         if (cancelled) return;
-
-        // results = [[id, gauges], [id, gauges], ...]
         setGaugesByCharId(Object.fromEntries(results));
       } catch (e) {
         console.error("Erreur loadAllGauges:", e);
       }
     }
 
-    loadAllGauges();
+    loadAllGaugesOnce();
 
-    const interval = setInterval(loadAllGauges, 1500);
 
     return () => {
       cancelled = true;
-      clearInterval(interval);
     };
   }, [characters]);
+
+  useEffect(() => {
+    // ✅ écoute streaming (1 seule fois tant que characters est stable)
+    const onGaugeUpdate = ({ name, patch }) => {
+      console.log("MJ RECEIVED UPDATE", name, patch);
+
+      if (!name || !patch) return;
+
+      const char = characters.find(
+        (c) => c.Name_character === name
+      );
+
+      if (!char) {
+        console.log("No character found for", name);
+        return;
+      }
+
+      const id = char.ID_character;
+
+      setGaugesByCharId((prev) => ({
+        ...prev,
+        [id]: { ...(prev[id] || {}), ...patch },
+      }));
+    };
+
+
+    socket.on("gauges:update", onGaugeUpdate);
+
+    return () => {
+      socket.off("gauges:update", onGaugeUpdate);
+    };
+  }, [characters]);
+
+  useEffect(() => {
+    console.log("MJ socket before");
+
+    const joinRoom = () => {
+      console.log("MJ socket connected");
+      socket.emit("join:mj");
+    };
+
+    if (socket.connected) {
+      // Cas 1 : déjà connecté
+      joinRoom();
+    } else {
+      // Cas 2 : pas encore connecté
+      socket.on("connect", joinRoom);
+    }
+
+    return () => {
+      socket.off("connect", joinRoom);
+    };
+  }, []);
+
+
+
+  const BASE_STAT_OPTIONS = [
+    { label: "Force", field: "Force_character" },
+    { label: "Dextérité", field: "Dexte_character" },
+    { label: "Résistance", field: "Resistance_character" },
+    { label: "Résilience", field: "Resilience_character" },
+    { label: "Intelligence", field: "Intell_character" },
+    { label: "Charisme", field: "Charisme_character" },
+    { label: "Chance", field: "Chance_character" },
+
+    { label: "Mana Vital (max)", field: "ManaVital_character" },
+    { label: "Mana Air (max)", field: "ManaAir_character" },
+    { label: "Mana Eau (max)", field: "ManaEau_character" },
+    { label: "Mana Terre (max)", field: "ManaTerre_character" },
+    { label: "Mana Feu (max)", field: "ManaFeu_character" },
+    { label: "Mana Volonté (max)", field: "ManaVolonte_character" },
+    { label: "Stamina (max)", field: "Stamina_character" },
+  ];
+
+  const COMP_OPTIONS = (allCompetences || [])
+    .filter((c) => !!c.code)
+    .map((c) => ({
+      label: c.nom,
+      field: `${c.code}_character`,
+    }));
+
+  const STAT_OPTIONS = [...BASE_STAT_OPTIONS, ...COMP_OPTIONS];
+
+  const [endOpen, setEndOpen] = useState(false);
+
+  // { [charId]: [{ field: string, delta: number }, ...] }
+  const [rewardsByCharId, setRewardsByCharId] = useState({});
+
+  const ensureRewardRows = (charId) => {
+    setRewardsByCharId((prev) => {
+      if (prev[charId]?.length) return prev;
+      return { ...prev, [charId]: [{ field: "", delta: 0 }] };
+    });
+  };
+
+  const addRewardRow = (charId) => {
+    setRewardsByCharId((prev) => ({
+      ...prev,
+      [charId]: [...(prev[charId] || [{ field: "", delta: 0 }]), { field: "", delta: 0 }],
+    }));
+  };
+
+  const removeRewardRow = (charId, idx) => {
+    setRewardsByCharId((prev) => ({
+      ...prev,
+      [charId]: (prev[charId] || []).filter((_, i) => i !== idx),
+    }));
+  };
+
+  const updateRewardRow = (charId, idx, patch) => {
+    setRewardsByCharId((prev) => ({
+      ...prev,
+      [charId]: (prev[charId] || []).map((row, i) => (i === idx ? { ...row, ...patch } : row)),
+    }));
+  };
+
+  const buildFieldLabel = (field) => {
+    const found = STAT_OPTIONS.find((o) => o.field === field);
+    return found?.label || field;
+  };
+
+  const handleEndScenario = async () => {
+    const targets = [...selected].map(Number).filter(Boolean);
+    if (!targets.length) return;
+
+    // Nettoyage du payload (on enlève lignes vides / delta 0)
+    const rewardsByChar = {};
+    for (const id of targets) {
+      const rows = rewardsByCharId[id] || [];
+      rewardsByChar[id] = rows
+        .filter((r) => r?.field && Number(r.delta))
+        .map((r) => ({ field: r.field, delta: Number(r.delta) }));
+    }
+
+    const hasAny = Object.values(rewardsByChar).some((arr) => arr.length);
+    if (!hasAny) return;
+
+    const res = await fetch("/api/scenario/end", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      // si ton verifyToken lit un cookie => OK
+      // si c'est un Bearer token => il faudra ajouter Authorization ici
+      body: JSON.stringify({ targets, rewardsByChar }),
+    });
+
+    const json = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      console.error("end scenario error:", json);
+      return;
+    }
+
+    // Construire summaryByTarget pour le socket (pop-up joueur)
+    // On se base sur ce que tu as envoyé (rewardsByChar),
+    // pas besoin d'attendre le result pour ça.
+    const summaryByTarget = {};
+    for (const id of targets) {
+      const rows = rewardsByChar[id] || [];
+      summaryByTarget[id] = {
+        title: "Fin de scénario",
+        lines: rows.map((r) => `+${r.delta} ${buildFieldLabel(r.field)}`),
+      };
+    }
+
+    socket.emit("mj:scenarioEnd", { targets, summaryByTarget });
+
+    // Option: reset UI
+    setEndOpen(false);
+    // setRewardsByCharId({}); // si tu veux tout vider
+  };
 
   const isInvalidUser =
     !currentUser ||
@@ -429,7 +650,7 @@ function ConnectGameMJ() {
 
                         const currentManaVolonte = n(
                           gauges?.currentManaVolonte ??
-                            char.ManaVolonte_character,
+                          char.ManaVolonte_character,
                         );
                         // console.log("currentManaVolonte: ", currentManaVolonte);
 
@@ -738,12 +959,21 @@ function ConnectGameMJ() {
                       })}
                     </TableBody>
                   </Table>
+
+                  <Button
+                    variant="contained"
+                    onClick={() => setEndOpen(true)}
+                    sx={{ position: "fixed", right: 16, bottom: 16, zIndex: 9999 }}
+                  >
+                    Fin de scénario
+                  </Button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
       <Dialog
         open={alertOpen}
         onClose={() => setAlertOpen(false)}
@@ -773,6 +1003,100 @@ function ConnectGameMJ() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog open={endOpen} onClose={() => setEndOpen(false)} fullWidth maxWidth="md">
+        <DialogTitle>Fin de scénario</DialogTitle>
+
+        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Typography variant="body2" sx={{ opacity: 0.8 }}>
+            Les joueurs concernés = ta sélection actuelle. Ajoute les gains, puis valide.
+            Les jauges seront remises au max (après augmentation éventuelle des max).
+          </Typography>
+
+          {characters
+            .filter((c) => selected.has(c.ID_character))
+            .map((char) => {
+              const charId = char.ID_character;
+              const rows = rewardsByCharId[charId] || [];
+
+              return (
+                <div
+                  key={charId}
+                  style={{
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    borderRadius: 10,
+                    padding: 12,
+                  }}
+                >
+                  <Typography variant="h6">{char.Name_character}</Typography>
+
+                  <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                    <Button
+                      size="small"
+                      onClick={() => {
+                        ensureRewardRows(charId);
+                        addRewardRow(charId);
+                      }}
+                    >
+                      + Ajouter une stat
+                    </Button>
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 10 }}>
+                    {(rows.length ? rows : [{ field: "", delta: 0 }]).map((row, idx) => (
+                      <div key={idx} style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                        <TextField
+                          select
+                          fullWidth
+                          label="Stat / Compétence"
+                          value={row.field || ""}
+                          onChange={(e) => updateRewardRow(charId, idx, { field: e.target.value })}
+                        >
+                          <MenuItem value="">— Choisir —</MenuItem>
+                          {STAT_OPTIONS.map((opt) => (
+                            <MenuItem key={opt.field} value={opt.field}>
+                              {opt.label}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+
+                        <TextField
+                          label="+"
+                          type="number"
+                          value={row.delta ?? 0}
+                          onChange={(e) => updateRewardRow(charId, idx, { delta: Number(e.target.value) })}
+                          sx={{ width: 120 }}
+                        />
+
+                        <Button
+                          size="small"
+                          color="error"
+                          onClick={() => removeRewardRow(charId, idx)}
+                          disabled={(rewardsByCharId[charId] || []).length <= 1}
+                        >
+                          Supprimer
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+
+          {selected.size === 0 && (
+            <Typography sx={{ opacity: 0.8 }}>
+              Aucun joueur sélectionné. Coche des joueurs dans le tableau avant.
+            </Typography>
+          )}
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setEndOpen(false)}>Annuler</Button>
+          <Button variant="contained" onClick={handleEndScenario} disabled={selected.size === 0}>
+            Valider fin de scénario
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </div>
   );
 }

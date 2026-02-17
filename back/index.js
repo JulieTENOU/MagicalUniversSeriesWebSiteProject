@@ -86,6 +86,8 @@ const bonus_energies = require("./src/routes/bonus_energies");
 const agences = require("./src/routes/agences");
 const awakening = require("./src/routes/awakening");
 const media = require("./src/routes/media");
+const character_media = require("./src/routes/character_media");
+const scenario = require("./src/routes/scenario");
 
 // This actually calls the route!
 app.use("/users", user);
@@ -112,6 +114,8 @@ app.use("/api/bonus_energies", bonus_energies);
 app.use("/api/agences", agences);
 app.use("/api/awakening", awakening);
 app.use("/api/media", media);
+app.use("/api/character_media", character_media);
+app.use("/api/scenario", scenario);
 // app.listen(port, "0.0.0.0", () => {
 //   console.log(`Server running on http://localhost:${port}`);
 // });
@@ -125,6 +129,9 @@ const io = new Server(httpServer, {
   },
 });
 
+// ✅ rendre io accessible partout (controllers inclus)
+app.locals.io = io;
+
 // Socket events
 io.on("connection", (socket) => {
   console.log("socket connected:", socket.id);
@@ -135,6 +142,12 @@ io.on("connection", (socket) => {
       message: err.message,
       context: err.context,
     });
+  });
+
+  // ✅ MJ rejoint la room "mj"
+  socket.on("join:mj", () => {
+    socket.join("mj");
+    console.log(`socket ${socket.id} joined mj`);
   });
 
   // le joueur rejoint une room basée sur son characterId
@@ -159,6 +172,24 @@ io.on("connection", (socket) => {
       .filter(Boolean)
       .forEach((id) => {
         io.to(`character:${id}`).emit("mj:alert", payload);
+      });
+  });
+
+  // MJ envoie la fin de scénario (récompenses) vers une liste de persos
+  socket.on("mj:scenarioEnd", ({ targets, summaryByTarget }) => {
+    if (!Array.isArray(targets) || !summaryByTarget) return;
+
+    targets
+      .map(Number)
+      .filter(Boolean)
+      .forEach((id) => {
+        const payload = summaryByTarget[id];
+        if (!payload) return;
+
+        io.to(`character:${id}`).emit("player:scenarioEnd", {
+          ...payload,
+          at: Date.now(),
+        });
       });
   });
 

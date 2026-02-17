@@ -30,6 +30,7 @@ const {
   books,
   chapters,
   characters,
+  character_media,
   competences,
   creatures,
   crystals,
@@ -76,6 +77,75 @@ bonus_carac.belongsTo(competences, { foreignKey: "competence_id" });
 
 energies.hasMany(bonus_energies, { foreignKey: "ressource_id" });
 bonus_energies.belongsTo(energies, { foreignKey: "ressource_id" });
+
+media.hasMany(character_media, { foreignKey: "ID_media" });
+character_media.belongsTo(media, { foreignKey: "ID_media" });
+
+// Si tu as le modèle Character :
+characters.hasMany(character_media, { foreignKey: "ID_character" });
+character_media.belongsTo(characters, { foreignKey: "ID_character" });
+
+// ============================
+// ASSOCIATIONS (centralisées)
+// ============================
+
+// SERIES -> BOOKS
+db.series.hasMany(db.books, {
+  foreignKey: "ID_series",
+  sourceKey: "ID_series",
+});
+db.books.belongsTo(db.series, {
+  foreignKey: "ID_series",
+  targetKey: "ID_series",
+});
+
+// BOOKS -> CHAPTERS
+db.books.hasMany(db.chapters, {
+  foreignKey: "ID_book",
+  sourceKey: "ID_book",
+});
+db.chapters.belongsTo(db.books, {
+  foreignKey: "ID_book",
+  targetKey: "ID_book",
+});
+
+// BOOKS -> BOOK_PARTS
+db.books.hasMany(db.book_parts, {
+  foreignKey: "ID_book",
+  sourceKey: "ID_book",
+});
+db.book_parts.belongsTo(db.books, {
+  foreignKey: "ID_book",
+  targetKey: "ID_book",
+});
+
+// BOOK_PARTS -> CHAPTERS
+// ⚠️ important: dans ton modèle Chapter tu as: belongsTo(book_parts, { as: "part" })
+// donc ici on garde le même alias "part" côté belongsTo
+db.book_parts.hasMany(db.chapters, {
+  foreignKey: "ID_part",
+  sourceKey: "ID_part",
+  as: "chapters",
+});
+db.chapters.belongsTo(db.book_parts, {
+  foreignKey: "ID_part",
+  targetKey: "ID_part",
+  as: "part",
+});
+
+// CHAPTERS -> CHAPTER_TRANSLATIONS
+if (db.chapter_translations) {
+  db.chapters.hasMany(db.chapter_translations, {
+    foreignKey: "ID_chapter",
+    sourceKey: "ID_chapter",
+    as: "translations",
+  });
+  db.chapter_translations.belongsTo(db.chapters, {
+    foreignKey: "ID_chapter",
+    targetKey: "ID_chapter",
+    as: "chapter",
+  });
+}
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {

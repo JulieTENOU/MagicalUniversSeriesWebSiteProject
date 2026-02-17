@@ -24,13 +24,20 @@ import GrassIcon from "@mui/icons-material/Grass";
 import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import { useNavigate } from "react-router-dom";
 import ModifierIdDialogs from "../components/ModifierIdChara.jsx";
-
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import EditIcon from "@mui/icons-material/Edit";
+import PersonIcon from "@mui/icons-material/Person";
+import { alpha } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import { CharacterProvider } from "../context/CharacterContext";
 import { socket } from "../service/socket";
 import { useSnack } from "../hooks/useSnack";
 import { useRef } from "react";
 import DiceChoice from "../components/DiceChoice.jsx";
+import { useCharacterMedia } from "../hooks/useCharacterMedia";
+import { uploadImage, attachMediaToCharacter } from "../service/mediaApi";
 
 
 function ConnectGame() {
@@ -44,6 +51,8 @@ function ConnectGame() {
   } = useContext(ConnexionContext);
   // console.log(currentUser.users_ID);
   console.log(`currentUser : ${currentUser}`);
+
+  const { avatar, gallery, refresh } = useCharacterMedia(Number(characterId));
 
   const boardRef = useRef(null);
 
@@ -314,8 +323,61 @@ function ConnectGame() {
       showSnack(message, severity);
     };
 
+    const onScenarioEnd = async ({ title, lines }) => {
+      // lines = ["+5 Force", "+3 Course", ...]
+      const msg = `${title || "Fin de scénario"}\n${(lines || []).join("\n")}`;
+      showSnack(msg, "success");
+
+      try {
+        const resChar = await fetch(
+          `/api/characters/getOneCharacterById/${characterId}`
+        );
+        const jsonChar = await resChar.json();
+        const updatedChar = jsonChar?.data ?? jsonChar;
+
+        if (updatedChar) {
+          setCharacter(updatedChar);
+        }
+
+        const name = updatedChar?.Name_character;
+        if (name) {
+          const resG = await fetch(
+            `/api/gauges/getOneGauges/${encodeURIComponent(name)}`
+          );
+          const jsonG = await resG.json();
+          const updatedG = jsonG?.data ?? jsonG;
+
+          if (updatedG) {
+            const g = updatedG?.data ?? updatedG;
+
+            setCurrentGauges({
+              currentManaAir: g.currentManaAir,
+              currentManaEau: g.currentManaEau,
+              currentManaTerre: g.currentManaTerre,
+              currentManaFeu: g.currentManaFeu,
+              currentManaVolonte: g.currentManaVolonte,
+              currentManaVital: g.currentManaVital,
+              currentStamina: g.currentStamina,
+            });
+          }
+        }
+      } catch (e) {
+        console.error("refresh after scenario end failed:", e);
+      }
+
+    };
+
+
     socket.on("mj:alert", onAlert);
-    return () => socket.off("mj:alert", onAlert);
+    socket.on("player:scenarioEnd", onScenarioEnd);
+
+
+    return () => {
+      socket.off("mj:alert", onAlert);
+      socket.off("player:scenarioEnd", onScenarioEnd);
+    };
+
+
   }, [characterId, showSnack]);
 
   // console.log("character datas : ", character);
@@ -324,6 +386,58 @@ function ConnectGame() {
     !currentUser ||
     (Array.isArray(currentUser) && currentUser.length === 0) ||
     (typeof currentUser === "object" && Object.keys(currentUser).length === 0);
+
+  const API_BASE = process.env.REACT_APP_API_BASE || window.location.origin;
+
+  async function uploadImage(file, zone = "gallery") {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(
+      `${API_BASE}/api/media/upload?zone=${zone}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Upload failed");
+    }
+
+    const data = await response.json();
+    return data.ID_media;
+  }
+
+  async function loadCharacterMedia(ID_character) {
+    const response = await fetch(
+      `${API_BASE}/api/character_media/characters/${ID_character}/media`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    return await response.json();
+  }
+  const [avatarUrl, setAvatarUrl] = useState(null);
+
+  useEffect(() => {
+    async function load() {
+      const media = await loadCharacterMedia(characterId);
+      const avatar = media.find(m => m.slot === "avatar");
+      if (avatar) {
+        setAvatarUrl(avatar.url);
+      }
+    }
+
+    load();
+  }, [characterId]);
+
 
   useEffect(() => {
     if (!loading && isInvalidUser) {
@@ -335,6 +449,8 @@ function ConnectGame() {
   if (loading) {
     return <Loader />;
   }
+
+
 
   return (
     <div className="main">
@@ -1026,6 +1142,103 @@ function ConnectGame() {
                   {t("jdr.hair")}
                   <span id="hair">{character.Cheveux_character}</span>
                 </p>
+              </div>
+
+              <div id="idAvatar">
+                <Box
+                  sx={{
+                    position: "relative",
+                    width: 80,   // adapte (ou mets width: 80 / height: 80 pour un carré)
+                    height: 80,
+                    borderRadius: "50%",
+                    overflow: "hidden",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    display: "inline-block",
+                  }}
+                >
+                  {/* Image */}
+                  {avatar?.url ? (
+                    <Box
+                      component="img"
+                      src={avatar.url}
+                      alt="avatar"
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        display: "block",
+                      }}
+                    />
+                  ) : (
+                    // fallback si pas d'avatar
+                    <Box
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        bgcolor: "action.hover",
+                        display: "grid",
+                        placeItems: "center",
+                      }}
+                    >
+                      <PersonIcon
+                        sx={{
+                          fontSize: 40,
+                          color: "text.secondary",
+                          opacity: 0.6,
+                        }}
+                      />
+                    </Box>
+
+                  )}
+
+                  {/* Bouton "éditer" overlay */}
+                  <Tooltip title="Modifier l’avatar">
+                    <IconButton
+                      component="label"
+                      size="small"
+                      sx={{
+                        position: "absolute",
+                        right: 6,
+                        bottom: 6,
+                        bgcolor: (theme) => alpha(theme.palette.background.paper, 0.6),
+                        backdropFilter: "blur(6px)",
+                        border: "1px solid",
+                        borderColor: "divider",
+                        "&:hover": {
+                          bgcolor: (theme) => alpha(theme.palette.background.paper, 0.85),
+                        },
+                      }}
+                    >
+                      <EditIcon fontSize="small" />
+
+                      <input
+                        hidden
+                        type="file"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file || !character?.ID_character) return;
+
+                          try {
+                            const ID_media = await uploadImage(file, "avatar");
+                            const r = await attachMediaToCharacter(
+                              character.ID_character,
+                              ID_media,
+                              "avatar"
+                            );
+                            await refresh();
+                          } catch (err) {
+                            console.error("AVATAR ERROR:", err);
+                            alert(String(err?.message || err));
+                          } finally {
+                            e.target.value = "";
+                          }
+                        }}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
               </div>
             </div>
 

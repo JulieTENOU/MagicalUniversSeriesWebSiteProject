@@ -24,5 +24,7 @@ controller.bonus_energies = require("./bonus_energies");
 controller.agences = require("./agences");
 controller.awakening = require("./awakening");
 controller.media = require("./media");
+controller.character_media = require("./character_media");
+controller.scenarioEnd = require("./scenarioEnd");
 
 module.exports = controller;

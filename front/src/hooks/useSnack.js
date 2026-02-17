@@ -29,7 +29,7 @@ export function useSnack() {
         severity={severity}
         sx={{ width: "100%" }}
       >
-        {message}
+        <span style={{ whiteSpace: "pre-line" }}>{message}</span>
       </Alert>
     </Snackbar>
   );
