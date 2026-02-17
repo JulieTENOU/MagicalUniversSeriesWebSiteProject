@@ -1,15 +1,36 @@
 import { Button, Typography } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
-import LogoReturn from "../assets/img/return.png";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 
 export default function BtnRtn(props) {
+  const API_BASE = process.env.REACT_APP_API_BASE || window.location.origin;
+  const LogoReturn = `${API_BASE}/api/media/getOneMedia/8`;
   const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
+
+
+  const handleBack = () => {
+    // Si on a un "from" explicite, on retourne dessus
+    if (location.state?.from) {
+      navigate(location.state.from, { replace: true });
+      return;
+    }
+
+    // Sinon, si l'historique est suffisant, on back
+    if (window.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+
+    // Fallback: route sûre (ex: accueil)
+    navigate("/", { replace: true });
+  };
+
   return (
     <div style={props.style}>
       {/* <Link to={props.path}> */}
-      <Button sx={props.sx} onClick={() => navigate(-1)}>
+      <Button sx={props.sx} onClick={handleBack}>
         <div
           style={{
             display: "flex",
