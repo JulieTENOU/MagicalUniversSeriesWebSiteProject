@@ -58,3 +58,13 @@ export async function loadCharacterMedia(ID_character, slot) {
 
   return data;
 }
+
+export async function deleteMedia(ID_media) {
+  const res = await fetchWithCreds(`${API_BASE}/api/media/${ID_media}`, {
+    method: "DELETE",
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data?.message || "Delete failed");
+  return data;
+}

@@ -16,4 +16,6 @@ router.post(
   media.uploadOne,
 );
 
+router.delete("/:ID_media", verifyToken, media.deleteOne);
+
 module.exports = router;

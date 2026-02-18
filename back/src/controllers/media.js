@@ -100,4 +100,82 @@ module.exports = {
       return res.status(500).send({ error: error.message });
     }
   },
+
+  deleteOne: async function (req, res) {
+    try {
+      const userId = getUserId(req);
+      if (!userId) return res.status(401).send({ message: "Non authentifié" });
+
+      const id = parseInt(req.params.ID_media, 10);
+      if (Number.isNaN(id)) {
+        return res.status(400).send({ message: "ID_media invalide" });
+      }
+
+      const item = await media.findOne({ where: { ID_media: id } });
+      if (!item) return res.status(404).send({ message: "Media introuvable" });
+
+      // ownership
+      if (!item.owner_user_id || item.owner_user_id !== userId) {
+        return res
+          .status(403)
+          .send({ message: "Ce media ne t'appartient pas" });
+      }
+
+      // ⚠️ On vérifie tous les liens character_media de ce media
+      const CharacterMedia = require("../models/character_media")(
+        sequelize,
+        DataTypes,
+      );
+      const Character = require("../models/characters")(sequelize, DataTypes);
+
+      const links = await CharacterMedia.findAll({ where: { ID_media: id } });
+
+      // Si le media est lié à un personnage qui n'appartient pas à l'user => refuse
+      if (links.length > 0) {
+        const charIds = [...new Set(links.map((l) => l.ID_character))];
+
+        const owned = await Character.findAll({
+          where: { ID_character: charIds, users_ID: userId },
+          attributes: ["ID_character"],
+        });
+
+        const ownedSet = new Set(owned.map((c) => c.ID_character));
+        const notOwned = charIds.filter((cid) => !ownedSet.has(cid));
+
+        if (notOwned.length) {
+          return res.status(403).send({
+            message: "Media lié à un personnage non autorisé",
+          });
+        }
+
+        // ok => on supprime tous les liens
+        await CharacterMedia.destroy({ where: { ID_media: id } });
+      }
+
+      // sécurité disque
+      if (!item.disk_path || !item.disk_path.startsWith(ALLOWED_PREFIX)) {
+        return res.status(403).send({ message: "Chemin non autorisé" });
+      }
+
+      // delete fichier si existe
+      if (fs.existsSync(item.disk_path)) {
+        try {
+          fs.unlinkSync(item.disk_path);
+        } catch (e) {
+          console.error("unlink failed:", e);
+          return res
+            .status(500)
+            .send({ message: "Impossible de supprimer le fichier" });
+        }
+      }
+
+      // delete row media
+      await media.destroy({ where: { ID_media: id } });
+
+      return res.send({ ok: true });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({ error: error.message });
+    }
+  },
 };
