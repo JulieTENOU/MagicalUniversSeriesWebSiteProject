@@ -6,6 +6,7 @@ import SideMenu from "../components/SideMenu";
 import Loader from "../components/Loader";
 import { LinearProgress, Typography } from "@mui/material";
 import BtnAdd from "../components/BtnAdd";
+import Btn from "../components/Btn";
 import BtnRm from "../components/BtnRm";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -22,6 +23,7 @@ import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import AirIcon from "@mui/icons-material/Air";
 import GrassIcon from "@mui/icons-material/Grass";
 import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
+import CasinoIcon from '@mui/icons-material/Casino';
 import { useNavigate } from "react-router-dom";
 import ModifierIdDialogs from "../components/ModifierIdChara.jsx";
 import Box from "@mui/material/Box";
@@ -39,7 +41,6 @@ import DiceChoice from "../components/DiceChoice.jsx";
 import { useCharacterMedia } from "../hooks/useCharacterMedia";
 import { uploadImage, attachMediaToCharacter } from "../service/mediaApi";
 
-
 function ConnectGame() {
   const { t } = useTranslation();
   const { characterId } = useParams();
@@ -53,7 +54,7 @@ function ConnectGame() {
   console.log(`currentUser : ${currentUser}`);
 
   const { avatar, gallery, refresh } = useCharacterMedia(Number(characterId));
-
+  const [rollDice, setRollDice] = useState(false);
   const boardRef = useRef(null);
 
   let navigate = useNavigate();
@@ -1273,7 +1274,13 @@ function ConnectGame() {
                   </span>
                 </p>
                 <div>
-                  <DiceChoice />
+                  <Btn
+                    msg={<CasinoIcon />}
+                    onClick={() => setRollDice(!rollDice)}
+                  />
+                  {rollDice &&
+                    <DiceChoice />
+                  }
                 </div>
               </div>
             </CharacterProvider>
