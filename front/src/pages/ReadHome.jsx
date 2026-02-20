@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import "../index.css";
 import "../general.css";
+import "../../src/styles/responsive.css";
 import Btn from "../components/Btn";
 import Top from "../components/Header";
 import BG from "../components/Background";

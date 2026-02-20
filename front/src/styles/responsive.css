@@ -1,0 +1,211 @@
+/* ============================================================
+   responsive.css
+   À importer EN DERNIER dans chaque composant, après index.css
+   et general.css. Ces règles overrident l'existant sans le casser.
+   ============================================================ */
+
+/* ─── VARIABLES GLOBALES ─────────────────────────────────── */
+:root {
+  --page-padding: 1rem;
+  --content-max-width: 900px;
+  --nav-btn-size: 44px; /* taille min recommandée pour touch */
+}
+
+/* ─── BASE : retire le fixed/bottom sur mobile ───────────── */
+
+/*
+  Le pattern position:fixed + bottom:25vh est utilisé dans
+  ReadSeries et ReadHome. On le remplace par un flux normal
+  sur mobile, et on le laisse intact sur desktop (≥900px).
+*/
+.readHomeGridWrap {
+  /* Mobile first : flux normal, plus de fixed */
+  position: relative;
+  bottom: unset;
+  left: unset;
+  right: unset;
+  min-height: 100svh; /* svh = tient compte de la barre du navigateur mobile */
+  padding: 80px var(--page-padding) 2rem; /* 80px pour laisser la place au header */
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+  box-sizing: border-box;
+}
+
+/* Sur desktop on remet le comportement d'origine */
+@media (min-width: 900px) {
+  .readHomeGridWrap {
+    position: fixed;
+    bottom: 25vh;
+    left: 0;
+    right: 0;
+    min-height: unset;
+    padding: 0 16px;
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* ─── GRID DES SÉRIES (ReadHome) ─────────────────────────── */
+/* Tu avais déjà bien commencé, on complète juste */
+.readHomeGrid {
+  max-height: unset; /* retire la hauteur fixe sur mobile */
+  overflow-y: visible; /* plus de scroll interne sur mobile */
+}
+
+@media (min-width: 900px) {
+  .readHomeGrid {
+    max-height: 30vh;
+    overflow-y: auto;
+  }
+}
+
+/* ─── CONTENEUR GÉNÉRIQUE DE PAGE ────────────────────────── */
+/*
+  Classe utilitaire à ajouter sur le div principal de contenu
+  dans ReadSeries, ChaptersList, etc. pour remplacer le
+  position:fixed inline.
+  Usage : <div className="page-content-wrapper"> ... </div>
+*/
+.page-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+  min-height: 100svh;
+  padding: 80px var(--page-padding) 6rem; /* 6rem en bas pour le bouton retour */
+  box-sizing: border-box;
+}
+
+@media (min-width: 900px) {
+  .page-content-wrapper {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    min-height: unset;
+    position: fixed;
+    bottom: 25vh;
+    left: 0;
+    right: 0;
+    padding: 0 2rem;
+  }
+}
+
+/* ─── BOUTON RETOUR (BtnRtn) ─────────────────────────────── */
+/*
+  Sur mobile : centré en bas, au-dessus du contenu
+  Sur desktop : coin bas-gauche comme avant
+*/
+.btn-return-wrapper {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+@media (min-width: 900px) {
+  .btn-return-wrapper {
+    left: 3vw;
+    bottom: 5vh;
+    transform: none;
+  }
+}
+
+/* ─── PAGE DE LECTURE (ReadBook) ─────────────────────────── */
+
+/*
+  Les flèches précédent/suivant fixed à gauche/droite mangent
+  de la largeur sur mobile. Sur mobile on les passe en bas.
+*/
+.read-nav-prev,
+.read-nav-next {
+  position: fixed;
+  z-index: 1000;
+}
+
+/* Mobile : les deux en bas côte à côte */
+.read-nav-prev {
+  bottom: 1rem;
+  left: 1rem;
+  top: unset;
+  transform: none;
+}
+
+.read-nav-next {
+  bottom: 1rem;
+  right: 1rem;
+  top: unset;
+  transform: none;
+}
+
+@media (min-width: 900px) {
+  /* Desktop : comportement d'origine, centrés verticalement */
+  .read-nav-prev {
+    top: 50%;
+    left: 20px;
+    bottom: unset;
+    transform: translateY(-50%);
+  }
+
+  .read-nav-next {
+    top: 50%;
+    right: 20px;
+    bottom: unset;
+    transform: translateY(-50%);
+  }
+}
+
+/*
+  Le Box de lecture a p:5 (40px) de padding partout.
+  Sur mobile on réduit drastiquement + on ajoute de la marge
+  en bas pour les boutons de navigation.
+*/
+.read-content-box {
+  padding: 1rem !important;
+  margin-top: 4rem !important; /* espace sous le header */
+  margin-bottom: 6rem !important; /* espace au-dessus des boutons nav */
+}
+
+@media (min-width: 900px) {
+  .read-content-box {
+    padding: 2.5rem !important;
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
+  }
+}
+
+/* ─── CHAPITRES LIST ──────────────────────────────────────── */
+.chapters-container {
+  height: auto !important; /* écrase le height: 80vh inline */
+  min-height: unset !important;
+  overflow-y: visible !important; /* scroll sur la page, pas dans la div */
+  width: min(95vw, 1200px) !important;
+  margin: 5rem auto 2rem !important;
+}
+
+.chapters-part {
+  flex: 1 1 100% !important; /* pleine largeur sur mobile */
+  max-width: 100% !important;
+  min-width: unset !important;
+}
+
+@media (min-width: 600px) {
+  .chapters-part {
+    flex: 1 1 250px !important;
+    max-width: 300px !important;
+    min-width: 200px !important;
+  }
+}
+
+/* ─── INPUT DE L'ÉVEIL (ReadBook gate) ───────────────────── */
+/*
+  L'input a width: min(420px, 80vw) inline, c'est déjà bien.
+  On s'assure juste qu'il ne déborde pas.
+*/
+input {
+  max-width: 100%;
+  box-sizing: border-box;
+}

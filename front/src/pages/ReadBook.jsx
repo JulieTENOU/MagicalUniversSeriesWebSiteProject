@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import "../index.css";
 import "../general.css";
+import "../../src/styles/responsive.css";
 import Btn from "../components/Btn";
 import Top from "../components/Header";
 import BG from "../components/Background";
@@ -212,14 +213,14 @@ function ReadBook() {
       <BG />
       <Top started={isConnected} />
       {/* Flèche gauche (retour) */}
-      <div
-        style={{
-          position: "fixed",
-          top: "50%",
-          left: 20,
-          transform: "translateY(-50%)",
-          zIndex: 1000,
-        }}
+      <div className="read-nav-prev"
+      // style={{
+      //   position: "fixed",
+      //   top: "50%",
+      //   left: 20,
+      //   transform: "translateY(-50%)",
+      //   zIndex: 1000,
+      // }}
       >
         <Btn
           path={
@@ -235,14 +236,14 @@ function ReadBook() {
       </div>
 
       {/* Flèche droite (next) */}
-      <div
-        style={{
-          position: "fixed",
-          top: "50%",
-          right: 20,
-          transform: "translateY(-50%)",
-          zIndex: 1000,
-        }}
+      <div className="read-nav-next"
+      // style={{
+      //   position: "fixed",
+      //   top: "50%",
+      //   right: 20,
+      //   transform: "translateY(-50%)",
+      //   zIndex: 1000,
+      // }}
       >
         <Btn
           path={
@@ -257,7 +258,7 @@ function ReadBook() {
         />
       </div>
 
-      <Box sx={{ p: 5, mt: 5 }}>
+      <Box className="read-content-box" sx={{ p: 5, mt: 5 }}>
         <div
           style={{
             color: theme.custom.mycustomblur.text,

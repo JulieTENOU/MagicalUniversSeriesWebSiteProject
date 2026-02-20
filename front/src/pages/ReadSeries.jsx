@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import "../index.css";
 import "../general.css";
+import "../../src/styles/responsive.css";
 import Btn from "../components/Btn.jsx";
 import Top from "../components/Header.jsx";
 import BG from "../components/Background.jsx";
@@ -60,16 +61,16 @@ function ReadSeries() {
       <div className="main">
         <BG />
         <Top started={isConnected} />
-        <div
-          style={{
-            width: "100vw",
-            display: "flex",
-            flexDirection: "row",
-            position: "fixed",
-            bottom: "25vh",
-            justifyContent: "space-around",
-            alignItems: "center",
-          }}
+        <div className="page-content-wrapper"
+        // style={{
+        //   width: "100vw",
+        //   display: "flex",
+        //   flexDirection: "row",
+        //   position: "fixed",
+        //   bottom: "25vh",
+        //   justifyContent: "space-around",
+        //   alignItems: "center",
+        // }}
         >
           <UnavailableContent />;
         </div>
@@ -81,7 +82,7 @@ function ReadSeries() {
     <div className="main">
       <BG />
       <Top started={isConnected} />
-      <div
+      {/* <div
         style={{
           width: "100vw",
           display: "flex",
@@ -91,7 +92,8 @@ function ReadSeries() {
           justifyContent: "space-around",
           alignItems: "center",
         }}
-      >
+      > */}
+      <div className="page-content-wrapper">
         {/* <Btn
           onClick={() => navigate(-1)}
           msg="Go back"

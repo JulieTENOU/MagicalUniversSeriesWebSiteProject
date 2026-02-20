@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import "../index.css";
 import "../general.css";
+import "../../src/styles/responsive.css";
 import Btn from "../components/Btn";
 import Top from "../components/Header";
 import BG from "../components/Background";
@@ -57,13 +58,13 @@ function ChaptersList() {
     <div className="main">
       <BG />
       <Top started={isConnected} />
-      <div
-        style={{
-          position: "fixed",
-          bottom: "5vh",
-          left: "3vw",
-          zIndex: 1000, // bien au-dessus
-        }}
+      <div className="btn-return-wrapper"
+      // style={{
+      //   position: "fixed",
+      //   bottom: "5vh",
+      //   left: "3vw",
+      //   zIndex: 1000, // bien au-dessus
+      // }}
       >
         {/* <Btn
           onClick={() => navigate(-1)}
@@ -75,7 +76,7 @@ function ChaptersList() {
 
         <BtnRtn msg={"Go back"} />
       </div>
-      <div
+      <div className="chapters-container"
         style={{
           display: "flex",
           flexWrap: "wrap",
@@ -97,7 +98,7 @@ function ChaptersList() {
           </Typography>
         ) : (
           Object.keys(parts).map((partName, index) => (
-            <div
+            <div className="chapters-part"
               key={index}
               style={{
                 flex: "1 1 250px",
