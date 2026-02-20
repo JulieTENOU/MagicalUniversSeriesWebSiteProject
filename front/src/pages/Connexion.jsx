@@ -11,11 +11,11 @@ import { useNavigate } from 'react-router-dom';
 function ConnexionPage() {
     const navigate = useNavigate();
 
-    const {state: currentUser,setState: setCurrentUser, loading} = useContext(ConnexionContext);
+    const { state: currentUser, setState: setCurrentUser, loading } = useContext(ConnexionContext);
     const isConnected = !!currentUser;
     console.log(isConnected);
-    useEffect(()=> {
-        if(!loading && currentUser){
+    useEffect(() => {
+        if (!loading && currentUser) {
             navigate("/")
         }
     })
@@ -23,9 +23,19 @@ function ConnexionPage() {
         <div className='main'>
             <BG />
             <Top started={isConnected} />
-            <div style={{ width: '100vw', display: 'flex', flexDirection: 'row', position: 'fixed', bottom: '25vh', justifyContent: 'space-around', alignItems: 'center' }}>
+            <div className="landscape-scrollable"
+                style={{
+                    width: '100vw',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    position: 'fixed',
+                    bottom: '25vh',
+                    justifyContent: 'space-around',
+                    alignItems: 'center'
+                }}
+            >
                 <div style={{ color: 'white', textAlign: 'center' }}>
-                    <Connexion/>
+                    <Connexion />
                 </div>
             </div>
         </div>

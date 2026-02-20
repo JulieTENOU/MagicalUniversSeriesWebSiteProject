@@ -18,7 +18,7 @@ function ForgottenPassWord() {
     <div className="main">
       <BG />
       <Top started={isConnected} />
-      <div
+      <div className="landscape-scrollable"
         style={{
           width: "100vw",
           display: "flex",
@@ -29,7 +29,7 @@ function ForgottenPassWord() {
           alignItems: "center",
         }}
       >
-        <div style={{ color: "white", textAlign: "center" }}>
+        <div className="modal-wrapper" style={{ color: "white", textAlign: "center" }}>
           <ResetPassWord />
         </div>
       </div>

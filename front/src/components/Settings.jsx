@@ -14,6 +14,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useThemeMode } from "../context/ThemeContext";
 import { useTheme } from "@mui/material/styles";
+import "../../src/styles/responsive.css"
 import { ConnexionContext } from "./provider";
 
 import i18n from "i18next";

@@ -30,9 +30,18 @@ function SettingsPage() {
     <div className="main">
       <BG />
       <Top started={isConnected} />
-      <div style={{ width: '100vw', display: 'flex', flexDirection: 'row', position: 'fixed', bottom: '25vh', justifyContent: 'space-around', alignItems: 'center' }}>
+      <div className="landscape-scrollable"
+        style={{
+          width: '100vw',
+          display: 'flex',
+          flexDirection: 'row',
+          position: 'fixed',
+          bottom: '25vh',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+        }}>
 
-        <div style={{ color: "white", textAlign: "center" }}>
+        <div style={{ color: "white", textAlign: "center" }} className="settings-page" >
           <Settings />
         </div>
       </div>

@@ -8,14 +8,14 @@ import Inscription from "../components/Inscription.jsx";
 
 
 function InscriptionPage() {
-    const {state: isConnected, setState: setIsConnected, loading} = useContext(ConnexionContext);
+    const { state: isConnected, setState: setIsConnected, loading } = useContext(ConnexionContext);
     return (
         <div className='main'>
             <BG />
             <Top started={isConnected} />
-            <div style={{ width: '100vw', display: 'flex', flexDirection: 'row', position: 'fixed', bottom: '25vh', justifyContent: 'space-around', alignItems: 'center' }}>
+            <div className="landscape-scrollable" style={{ width: '100vw', display: 'flex', flexDirection: 'row', position: 'fixed', bottom: '25vh', justifyContent: 'space-around', alignItems: 'center' }}>
                 <div style={{ color: 'white', textAlign: 'center' }}>
-                    <Inscription/>
+                    <Inscription />
                 </div>
             </div>
         </div>

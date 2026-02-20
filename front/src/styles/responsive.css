@@ -209,3 +209,122 @@ input {
   max-width: 100%;
   box-sizing: border-box;
 }
+
+/* ─── HOME ───────────────────────────────────────────────── */
+.home-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3rem;
+  min-height: 100svh;
+  padding-top: 25vh;
+  padding-bottom: 2rem;
+  padding-inline: 1rem;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+.home-logged {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+}
+
+.home-welcome {
+  color: whitesmoke;
+  text-align: center;
+  font-size: 2em;
+  z-index: 1;
+}
+
+.home-btns {
+  display: flex;
+  flex-direction: column; /* empilé sur mobile */
+  align-items: center;
+  gap: 5rem;
+}
+
+.home-guest {
+  color: white;
+  text-align: center;
+  font-size: 2.2em;
+}
+
+@media (min-width: 600px) {
+  .home-btns {
+    flex-direction: row; /* côte à côte sur desktop */
+    gap: 20vw;
+    margin-top: 2rem;
+  }
+
+  .home-content {
+    position: fixed;
+    bottom: 40vh;
+    left: 0;
+    right: 0;
+    min-height: unset;
+    padding: 0;
+  }
+
+  .home-welcome {
+    position: absolute;
+    bottom: 30vh;
+    font-size: 2em;
+    width: 100%;
+    text-align: center;
+    left: 0;
+  }
+}
+
+/* ─── CONNEXION ───────────────────────────────────────────── */
+.connexion-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100svh;
+  padding: 80px 1rem 2rem;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── SETTINGS ───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .settings-page {
+    padding: 0 1rem;
+    box-sizing: border-box;
+  }
+}
+
+/* ─── PAYSAGE MOBILE ─────────────────────────────────────── */
+@media (max-height: 500px) and (orientation: landscape) {
+  /* Le wrapper fixed bottom:25vh sort de l'écran en paysage mobile
+     → on le remet dans le flux normal avec scroll */
+  .landscape-scrollable {
+    position: relative !important;
+    bottom: unset !important;
+    top: unset !important;
+    left: unset !important;
+    width: 100% !important;
+    min-height: 100svh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 1rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+    z-index: 1;
+  }
+}
+
+/* ─── MOT DE PASSE OUBLIÉ / RESET ────────────────────────── */
+@media (max-width: 600px) {
+  .modal-wrapper {
+    padding: 0 1rem;
+    box-sizing: border-box;
+    width: 100%;
+  }
+}
