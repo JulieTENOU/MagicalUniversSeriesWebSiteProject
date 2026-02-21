@@ -61,7 +61,7 @@ export default function Top() {
             path="/"
             msg={<HomeIcon sx={{ color: theme.custom.myheader.text }} />}
           />
-          <h2
+          <h2 className="header-title"
             style={{
               color: theme.custom.myheader.text,
               backgroundColor: "none",
