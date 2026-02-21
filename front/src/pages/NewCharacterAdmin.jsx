@@ -1,9 +1,10 @@
-import { useNavigate } from "react-router-dom";
-import BG from "../components/Background";
-import Top from "../components/Header";
 import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { ConnexionContext } from "../components/provider";
 import CreateCharacterAdmin from "../components/CreateCharacterAdmin";
+import BG from "../components/Background";
+import Top from "../components/Header";
+import "../../src/styles/responsive.css"
 
 function NewCharacterAdmin() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ function NewCharacterAdmin() {
     <div className="main">
       <BG />
       <Top started={isConnected} />
-      <div
+      <div className="landscape-scrollable"
         style={{
           width: "100vw",
           display: "flex",

@@ -1,9 +1,11 @@
+
+import { useContext, useEffect } from "react";
+import { ConnexionContext } from "../components/provider";
 import { useNavigate } from "react-router-dom";
 import BG from "../components/Background";
 import Settings from "../components/Settings";
 import Top from "../components/Header";
-import { useContext, useEffect } from "react";
-import { ConnexionContext } from "../components/provider";
+import "../../src/styles/responsive.css"
 
 function SettingsPage() {
   const navigate = useNavigate();

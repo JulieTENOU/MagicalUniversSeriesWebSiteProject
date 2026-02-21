@@ -328,3 +328,39 @@ input {
     width: 100%;
   }
 }
+
+/*───────────── HEADER ───────────── */
+@media (max-width: 600px) {
+  .header-title {
+    max-width: 30vw;
+    font-size: 1em;
+    text-align: center;
+    word-break: keep-all;
+  }
+}
+
+/* MANA BARS IN CONNECT GAME PLAYERS */
+@media (max-width: 1920px) and (min-width: 1200px) {
+  .manaBars {
+    left: 50vw !important;
+  }
+}
+/* ─── CRÉATION PERSONNAGE ────────────────────────────────── */
+@media (max-width: 600px) {
+  /* Onglets scrollables horizontalement */
+  .create-character-tabs {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+  }
+
+  /* Texte des onglets plus petit */
+  .create-character-tabs .MuiTypography-root {
+    font-size: 0.75rem !important;
+    padding: 4px 2px !important;
+  }
+
+  /* Boutons lancer dé sur une ligne */
+  .create-character-content .MuiBox-root {
+    flex-wrap: wrap;
+  }
+}

@@ -17,11 +17,14 @@ import {
   Checkbox,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useMediaQuery } from "@mui/material";
 
 export default function CreationPersonnage() {
   const [activeTab, setActiveTab] = useState("identite");
   const [openEquipDialog, setOpenEquipDialog] = useState(false);
   const theme = useTheme();
+  const isMobile = useMediaQuery("(max-width: 600px)");
+  const [currentStep, setCurrentStep] = useState(0);
 
   const [initialChoices, setInitialChoices] = useState({
     virtual_game: false,
@@ -310,56 +313,81 @@ export default function CreationPersonnage() {
       }}
     >
       {/* Onglets */}
-      <Box sx={{ display: "flex", flexDirection: "row" }}>
-        {tabs.map(({ key, label, disabled }) => (
-          <Btn
-            key={key}
-            onClick={() => !disabled && setActiveTab(key)}
-            msg={
-              <Typography
-                sx={{
-                  width: "100%",
-                  textAlign: "center",
-                  padding: "8px 0",
-                  backgroundColor:
-                    activeTab === key
-                      ? theme?.custom?.mymodal?.header || "#2e3867"
-                      : theme?.custom?.mymodal?.button || "#1b2140",
-                  fontWeight: "bold",
-                  color: disabled
-                    ? "#777"
-                    : activeTab === key
-                      ? "#fff"
-                      : "#99aacc",
-                  fontSize: "1.05rem",
-                  cursor: disabled ? "not-allowed" : "pointer",
-                  opacity: disabled ? 0.6 : 1,
-                }}
-              >
-                {label}
-              </Typography>
-            }
-            sx={{
-              overflow: "hidden",
-              textDecoration: "none",
-              flex: 1,
-              width: "100%",
-              padding: 0,
-              backgroundColor: theme?.custom?.mymodal?.button,
-              borderRadius:
-                key === "identite"
-                  ? "5px 0 0 0"
-                  : key === "ressources"
-                    ? "0 5px 0 0"
-                    : "0",
-            }}
-            disabled={disabled}
-          />
-        ))}
-      </Box>
+      {!isMobile && (
+        <Box sx={{ display: "flex", flexDirection: "row" }}>
+          {tabs.map(({ key, label, disabled }) => (
+            <Btn
+              key={key}
+              onClick={() => !disabled && setActiveTab(key)}
+              msg={
+                <Typography
+                  sx={{
+                    width: "100%",
+                    textAlign: "center",
+                    padding: "8px 0",
+                    backgroundColor:
+                      activeTab === key
+                        ? theme?.custom?.mymodal?.header || "#2e3867"
+                        : theme?.custom?.mymodal?.button || "#1b2140",
+                    fontWeight: "bold",
+                    color: disabled
+                      ? "#777"
+                      : activeTab === key
+                        ? "#fff"
+                        : "#99aacc",
+                    fontSize: "1.05rem",
+                    cursor: disabled ? "not-allowed" : "pointer",
+                    opacity: disabled ? 0.6 : 1,
+                  }}
+                >
+                  {label}
+                </Typography>
+              }
+              sx={{
+                overflow: "hidden",
+                textDecoration: "none",
+                flex: 1,
+                width: "100%",
+                padding: 0,
+                backgroundColor: theme?.custom?.mymodal?.button,
+                borderRadius:
+                  key === "identite"
+                    ? "5px 0 0 0"
+                    : key === "ressources"
+                      ? "0 5px 0 0"
+                      : "0",
+              }}
+              disabled={disabled}
+            />
+          ))}
+        </Box>
+      )}
+
+      {/* INDICATEUR D'ÉTAPE — mobile uniquement */}
+      {isMobile && (
+        <Box sx={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 1,
+          padding: "12px",
+          backgroundColor: theme?.custom?.mymodal?.button,
+          borderRadius: "8px 8px 0 0",
+        }}>
+          {tabs.map(({ label }, i) => (
+            <Box key={i} sx={{
+              width: 10, height: 10,
+              borderRadius: "50%",
+              backgroundColor: i === currentStep ? "white" : "rgba(255,255,255,0.3)",
+            }} />
+          ))}
+          <Typography sx={{ color: "white", fontSize: "0.9rem", ml: 1 }}>
+            {tabs[currentStep].label}
+          </Typography>
+        </Box>
+      )}
 
       {/* Contenu */}
-      <Box
+      <Box className="create-character-content"
         sx={{
           display: "flex",
           flexDirection: "row",
@@ -372,7 +400,8 @@ export default function CreationPersonnage() {
         {/* Centre: Colonne principale */}
         <Box sx={{ flex: 3 }}>
           {/* Onglet IDENTITE */}
-          {activeTab === "identite" && (
+          {(isMobile ? currentStep === 0 : activeTab === "identite") && (
+            // {activeTab === "identite" && (
             <Box
               sx={{
                 display: "flex",
@@ -567,7 +596,9 @@ export default function CreationPersonnage() {
           )}
 
           {/* Onglet ATTRIBUTS */}
-          {activeTab === "attributs" && (
+
+          {(isMobile ? currentStep === 1 : activeTab === "attributs") && (
+            // {activeTab === "attributs" && (
             <Box>
               <Typography variant="h6" gutterBottom>
                 Attributs (jet de dé 20)
@@ -600,7 +631,8 @@ export default function CreationPersonnage() {
           )}
 
           {/* Onglet RESSOURCES */}
-          {activeTab === "ressources" && (
+          {(isMobile ? currentStep === 2 : activeTab === "ressources") && (
+            // {activeTab === "ressources" && (
             <Box>
               <Typography variant="h6" gutterBottom>
                 Ressources (jet de dé 100)
@@ -632,23 +664,41 @@ export default function CreationPersonnage() {
             </Box>
           )}
 
+          {/* BOUTON NAVIGATION MOBILE */}
+          {isMobile && currentStep < 2 && (
+            <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+              <Button
+                variant="contained"
+                onClick={() => setCurrentStep(prev => prev + 1)}
+                sx={{
+                  color: theme?.custom?.mymodal?.text,
+                  backgroundColor: theme?.custom?.mymodal?.button,
+                }}
+              >
+                Étape suivante →
+              </Button>
+            </Box>
+          )}
+
           {/* Bouton final */}
-          <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              sx={{
-                color: theme?.custom?.mymodal?.text || "#fff",
-                backgroundColor: theme?.custom?.mymodal?.button || "#5fa7f5",
-                boxShadow: 4,
-              }}
-              onClick={handleSubmit}
-              disabled={!isAllValid}
-            >
-              Créer le personnage
-            </Button>
-          </Box>
+          {(!isMobile || currentStep === 2) && (
+            <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                sx={{
+                  color: theme?.custom?.mymodal?.text || "#fff",
+                  backgroundColor: theme?.custom?.mymodal?.button || "#5fa7f5",
+                  boxShadow: 4,
+                }}
+                onClick={handleSubmit}
+                disabled={!isAllValid}
+              >
+                Créer le personnage
+              </Button>
+            </Box>
+          )}
         </Box>
 
         {/* EN-CART DÉ UNIQUE À DROITE */}
@@ -657,40 +707,42 @@ export default function CreationPersonnage() {
           Tu peux laisser ce block, ou le virer temporairement. 
           Si tu veux garder la mise en page : 
         */}
-        <Box
-          sx={{
-            flex: 1,
-            minWidth: 220,
-            maxWidth: 220,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            // justifyContent: "flex-start",
-            pt: 2,
-            visibility:
-              activeTab === "attributs" || activeTab === "ressources"
-                ? "visible"
-                : "hidden",
-            height:
-              activeTab === "attributs" || activeTab === "ressources" ? 280 : 0,
-            border: "2px dashed #3a3a4a",
-            borderRadius: 2,
-            position: "relative",
-          }}
-        >
-          <Typography variant="subtitle1" sx={{ mb: 1 }}>
-            Dé en cours de test
-          </Typography>
-          <Dice3D
-            key={activeTab}
-            ref={dieRef}
-            sides={activeTab === "ressources" ? 100 : 20}
-            size={200}
-            color="#eeeeee"
-            background="#0b102a"
-            onRollEnd={(v) => console.log(v)}
-          />
-        </Box>
+        {!isMobile && (
+          <Box className="create-character-dice"
+            sx={{
+              flex: 1,
+              minWidth: 220,
+              maxWidth: 220,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              // justifyContent: "flex-start",
+              pt: 2,
+              visibility:
+                activeTab === "attributs" || activeTab === "ressources"
+                  ? "visible"
+                  : "hidden",
+              height:
+                activeTab === "attributs" || activeTab === "ressources" ? 280 : 0,
+              border: "2px dashed #3a3a4a",
+              borderRadius: 2,
+              position: "relative",
+            }}
+          >
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              Dé en cours de test
+            </Typography>
+            <Dice3D
+              key={activeTab}
+              ref={dieRef}
+              sides={activeTab === "ressources" ? 100 : 20}
+              size={200}
+              color="#eeeeee"
+              background="#0b102a"
+              onRollEnd={(v) => console.log(v)}
+            />
+          </Box>
+        )}
       </Box>
 
       <Dialog

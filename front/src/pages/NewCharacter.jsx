@@ -1,9 +1,10 @@
+import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { ConnexionContext } from "../components/provider";
 import BG from "../components/Background";
 import CreateCharacter from "../components/CreateCharacter";
 import Top from "../components/Header";
-import { useContext, useEffect } from "react";
-import { ConnexionContext } from "../components/provider";
+import "../../src/styles/responsive.css"
 
 function NewCharacter() {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ function NewCharacter() {
         <div className='main'>
             <BG />
             <Top started={isConnected} />
-            <div style={{ width: '100vw', display: 'flex', flexDirection: 'row', position: 'fixed', bottom: '5vh', justifyContent: 'space-around', alignItems: 'center' }}>
+            <div className="landscape-scrollable" style={{ width: '100vw', display: 'flex', flexDirection: 'row', position: 'fixed', bottom: '5vh', justifyContent: 'space-around', alignItems: 'center' }}>
                 <div style={{ color: 'white', textAlign: 'center' }}>
                     <CreateCharacter />
                 </div>
