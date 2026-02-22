@@ -436,9 +436,10 @@ export default function CustomizedDialogs(data) {
                       key={`${it.file.name}-${idx}`}
                       sx={{
                         display: "flex",
-                        // gap: 2,
+                        flexDirection: isSm ? "column" : "row",
+                        alignItems: isSm ? "stretch" : "center",
+                        gap: 1,
                         mb: 1,
-                        alignItems: "center",
                       }}
                     >
                       <Typography sx={{ minWidth: 220, fontSize: 12 }}>
@@ -450,6 +451,7 @@ export default function CustomizedDialogs(data) {
                         label="Label"
                         value={it.label}
                         inputProps={{ style: { color: "black" } }}
+                        InputLabelProps={{ style: { color: "black" } }}
                         onChange={(ev) => {
                           const v = ev.target.value;
                           setPendingUploads((prev) =>
@@ -458,7 +460,7 @@ export default function CustomizedDialogs(data) {
                             ),
                           );
                         }}
-                        sx={{ flex: 1 }}
+                        sx={{ width: "100%" }}
                       />
                     </Box>
                   ))}
@@ -559,55 +561,9 @@ export default function CustomizedDialogs(data) {
                         // évite que les flèches cachent la 1ère/dernière carte
                         scrollPaddingLeft: 48,
                         scrollPaddingRight: 48,
-
-                        // optionnel: cache la scrollbar sur mobile (sinon garde)
-                        // "&::-webkit-scrollbar": { display: "none" },
-                        // scrollbarWidth: "none",
                       }}
                     >
-                      {/* {gallery.map((img) => (
-                        <Box
-                          key={img.ID_character_media || img.ID_media}
-                          sx={{
-                            // ✅ largeur exacte en tenant compte du gap (8px = gap:1)
-                            flex: `0 0 calc((100% - ${(itemsPerView - 1) * 8}px) / ${itemsPerView})`,
-                            scrollSnapAlign: "start",
-                            textAlign: "center",
-                          }}
-                        >
-                          <Box
-                            component="img"
-                            src={img.url}
-                            alt={img.label || "image"}
-                            onLoad={() => {
-                              // met à jour canPrev/canNext quand une image charge
-                              const el = railRef.current;
-                              if (!el) return;
-                              const max = el.scrollWidth - el.clientWidth - 2;
-                              setCanPrev(el.scrollLeft > 2);
-                              setCanNext(el.scrollLeft < max);
-                            }}
-                            sx={{
-                              width: "100%",
-                              height: isXs ? 150 : 180,
-                              objectFit: "cover",
-                              borderRadius: 1,
-                              border: "1px solid #444",
-                              display: "block",
-                            }}
-                          />
-                          <Typography
-                            sx={{
-                              fontSize: 12,
-                              fontStyle: "italic",
-                              color: "black",
-                              mt: 0.5,
-                            }}
-                          >
-                            {img.label || "No name"}
-                          </Typography>
-                        </Box>
-                      ))} */}
+
                       {gallery.map((img) => (
                         <Box
                           key={img.ID_character_media || img.ID_media}

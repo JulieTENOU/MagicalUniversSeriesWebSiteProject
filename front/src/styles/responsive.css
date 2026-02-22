@@ -364,3 +364,145 @@ input {
     flex-wrap: wrap;
   }
 }
+
+@media (max-width: 2560px) and (min-width: 1200px) {
+  .mana-air {
+    left: 38vw !important;
+  }
+  .mana-eau {
+    left: 43vw !important;
+  }
+  .mana-terre {
+    left: 48vw !important;
+  }
+  .mana-feu {
+    left: 53vw !important;
+  }
+  .mana-volonte {
+    left: 57vw !important;
+  }
+}
+
+@media (max-width: 1920px) and (min-width: 1200px) {
+  .mana-btns-air {
+    left: 30vw !important;
+  }
+  .mana-btns-eau {
+    left: 35vw !important;
+  }
+  .mana-btns-terre {
+    left: 40vw !important;
+  }
+  .mana-btns-feu {
+    left: 45vw !important;
+  }
+  .mana-btns-volonte {
+    left: 50vw !important;
+  }
+}
+
+@media (max-width: 1920px) and (min-width: 1200px) {
+  .mana-icon-air {
+    left: 33.5vw !important;
+    top: 40vh !important;
+  }
+  .mana-icon-eau {
+    left: 38.5vw !important;
+    top: 40vh !important;
+  }
+  .mana-icon-terre {
+    left: 44vw !important;
+    top: 40vh !important;
+  }
+  .mana-icon-feu {
+    left: 48.5vw !important;
+    top: 40vh !important;
+  }
+  .mana-icon-volonte {
+    left: 53.5vw !important;
+    top: 40vh !important;
+  }
+}
+
+@media (max-width: 1920px) and (min-width: 1200px) {
+  .circular-label-vital {
+    left: 35vw !important;
+    top: 65vh !important;
+  }
+  .circular-label-stamina {
+    left: 55vw !important;
+    top: 65vh !important;
+  }
+  .circular-btns-vital {
+    left: 32.5vw !important;
+  }
+  .circular-btns-stamina {
+    left: 52.5vw !important;
+  }
+}
+
+/* ─── IDCARD PLEIN ÉCRAN ─────────────────────────────────── */
+@media (max-width: 768px) {
+  #idCard.idcard-open {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 1500 !important;
+    overflow-y: auto !important;
+    justify-content: center !important;
+  }
+  #idCard.idcard-open #idLeft,
+  #idCard.idcard-open #idRight {
+    flex-direction: column !important;
+    width: 100% !important;
+    padding: 0 !important;
+    justify-content: center;
+  }
+
+  #idCard.idcard-open > div:first-child {
+    flex-direction: column !important;
+    align-self: center;
+    padding: 0 !important;
+  }
+  #idCard.idcard-open #idBottom {
+    align-self: center;
+  }
+  #idCard.idcard-open #idAvatar {
+    order: 999;
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+}
+
+/* ─── DICE OVERLAY MOBILE ────────────────────────────────── */
+@media (max-width: 768px) {
+  .dice-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(10, 16, 42, 0.98) !important;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    color: white;
+  }
+
+  .dice-overlay .DiceChoice,
+  .dice-overlay > div:last-child {
+    flex: 1;
+    max-height: unset !important;
+    height: 100% !important;
+  }
+
+  /* Jets et Total lisibles */
+  .dice-overlay b {
+    color: white !important;
+  }
+
+  .dice-overlay div[style*="fontSize: 13"] {
+    color: white !important;
+  }
+}

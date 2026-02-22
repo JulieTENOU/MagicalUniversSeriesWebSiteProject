@@ -10,6 +10,7 @@ import Btn from "../components/Btn";
 import BtnRm from "../components/BtnRm";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import "../../src/styles/responsive.css"
 import CustomizedDialogs from "../components/Grimoire";
 import Inventory from "../components/Inventory";
 import Combat from "../components/Combat";
@@ -40,6 +41,7 @@ import { useRef } from "react";
 import DiceChoice from "../components/DiceChoice.jsx";
 import { useCharacterMedia } from "../hooks/useCharacterMedia";
 import { uploadImage, attachMediaToCharacter } from "../service/mediaApi";
+import { useMediaQuery } from "@mui/material";
 
 function ConnectGame() {
   const { t } = useTranslation();
@@ -55,6 +57,8 @@ function ConnectGame() {
 
   const { avatar, gallery, refresh } = useCharacterMedia(Number(characterId));
   const [rollDice, setRollDice] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [showIdCard, setShowIdCard] = useState(false);
   const boardRef = useRef(null);
 
   let navigate = useNavigate();
@@ -455,6 +459,7 @@ function ConnectGame() {
 
   return (
     <div className="main">
+
       <BG />
       <Top started={currentUser} />
       {Snack}
@@ -467,7 +472,7 @@ function ConnectGame() {
           textAlign: "center",
           justifyContent: "space-around",
         }}
-      >
+      >{!isMobile &&
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
             style={{
@@ -482,7 +487,7 @@ function ConnectGame() {
             }}
           >
             <div
-              class="manaBars"
+              className="manaBars"
               style={{
                 position: "fixed",
                 display: "flex",
@@ -493,7 +498,7 @@ function ConnectGame() {
                 textAlign: "center",
               }}
             >
-              <div
+              <div className="mana-group mana-air"
                 style={{
                   position: "fixed",
                   display: "flex",
@@ -518,11 +523,11 @@ function ConnectGame() {
                     textAlign: "center",
                   }}
                 >
-                  <Typography
+                  <Typography className="mana-icon-air"
                     variant="h6"
                     position={"fixed"}
-                    top={"45vh"}
-                    left={"35vw"}
+                    top={"38vh"}
+                    left={"34vw"}
                     sx={{ color: "lightblue" }}
                     textSize="1rem"
                   >
@@ -549,7 +554,7 @@ function ConnectGame() {
                         rotate: "-90deg",
                       }}
                     />
-                    <div
+                    <div className="mana-btns-air"
                       style={{
                         display: "flex",
                         flexDirection: "column",
@@ -578,7 +583,7 @@ function ConnectGame() {
                 </div>
               </div>
               <br />
-              <div
+              <div className="mana-group mana-eau"
                 style={{
                   position: "fixed",
                   display: "flex",
@@ -603,11 +608,11 @@ function ConnectGame() {
                     textAlign: "center",
                   }}
                 >
-                  <Typography
+                  <Typography className="mana-icon-eau"
                     variant="h6"
                     position={"fixed"}
-                    top={"45vh"}
-                    left={"40vw"}
+                    top={"38vh"}
+                    left={"39vw"}
                     sx={{ color: "lightblue" }}
                     textSize="1rem"
                   >
@@ -635,7 +640,7 @@ function ConnectGame() {
                         rotate: "-90deg",
                       }}
                     />
-                    <div
+                    <div className="mana-btns-eau"
                       style={{
                         display: "flex",
                         flexDirection: "column",
@@ -664,7 +669,7 @@ function ConnectGame() {
                 </div>
               </div>
               <br />
-              <div
+              <div className="mana-group mana-terre"
                 style={{
                   position: "fixed",
                   display: "flex",
@@ -689,11 +694,11 @@ function ConnectGame() {
                     textAlign: "center",
                   }}
                 >
-                  <Typography
+                  <Typography className="mana-icon-terre"
                     variant="h6"
                     position={"fixed"}
-                    left={"45vw"}
-                    top={"45vh"}
+                    left={"44vw"}
+                    top={"38vh"}
                     sx={{ color: "lightblue" }}
                     textSize="1rem"
                   >
@@ -720,7 +725,7 @@ function ConnectGame() {
                         rotate: "-90deg",
                       }}
                     />
-                    <div
+                    <div className="mana-btns-terre"
                       style={{
                         display: "flex",
                         flexDirection: "column",
@@ -748,7 +753,7 @@ function ConnectGame() {
                 </div>
               </div>
               <br />
-              <div
+              <div className="mana-group mana-feu"
                 style={{
                   position: "fixed",
                   display: "flex",
@@ -773,11 +778,11 @@ function ConnectGame() {
                     textAlign: "center",
                   }}
                 >
-                  <Typography
+                  <Typography className="mana-icon-feu"
                     variant="h6"
                     position={"fixed"}
-                    left={"50vw"}
-                    top={"45vh"}
+                    left={"49vw"}
+                    top={"38vh"}
                     sx={{ color: "lightblue" }}
                     textSize="1rem"
                   >
@@ -803,7 +808,7 @@ function ConnectGame() {
                       rotate: "-90deg",
                     }}
                   />
-                  <div
+                  <div className="mana-btns-feu"
                     style={{
                       display: "flex",
                       flexDirection: "column",
@@ -830,7 +835,7 @@ function ConnectGame() {
                 </div>
               </div>
               <br />
-              <div
+              <div className="mana-group mana-volonte"
                 style={{
                   position: "fixed",
                   display: "flex",
@@ -855,11 +860,11 @@ function ConnectGame() {
                     textAlign: "center",
                   }}
                 >
-                  <Typography
+                  <Typography className="mana-icon-volonte"
                     variant="h6"
                     position={"fixed"}
-                    left={"55vw"}
-                    top={"45vh"}
+                    left={"54vw"}
+                    top={"38vh"}
                     sx={{ color: "lightblue" }}
                     textSize="1rem"
                   >
@@ -884,12 +889,12 @@ function ConnectGame() {
                         rotate: "-90deg",
                       }}
                     />
-                    <div
+                    <div className="mana-btns-volonte"
                       style={{
                         display: "flex",
                         flexDirection: "column",
                         position: "fixed",
-                        left: "52vw",
+                        left: "54vw",
                         top: "22vh",
                       }}
                     >
@@ -924,7 +929,7 @@ function ConnectGame() {
                 }}
               >
                 <Typography
-                  className="label"
+                  className="circular-label-vital label"
                   variant="h5"
                   position={"fixed"}
                   left={"36vw"}
@@ -953,12 +958,12 @@ function ConnectGame() {
                     backgroundColor: "#3e98c7",
                   })}
                 />
-                <div
+                <div className="circular-btns-vital"
                   style={{
                     display: "flex",
                     flexDirection: "row",
                     position: "fixed",
-                    left: "32vw",
+                    left: "34.5vw",
                     bottom: "20vh",
                   }}
                 >
@@ -990,7 +995,7 @@ function ConnectGame() {
                 }}
               >
                 <Typography
-                  className="label"
+                  className="label circular-label-stamina"
                   variant="h5"
                   position={"fixed"}
                   left={" 56vw"}
@@ -1019,12 +1024,12 @@ function ConnectGame() {
                     backgroundColor: "#3e98c7",
                   })}
                 />
-                <div
+                <div className="circular-btns-stamina"
                   style={{
                     display: "flex",
                     flexDirection: "row",
                     position: "fixed",
-                    left: "52.5vw",
+                    left: "54.5vw",
                     bottom: "20vh",
                   }}
                 >
@@ -1061,231 +1066,352 @@ function ConnectGame() {
 
           </div>
           {/* </div> */}
-
-          <div
-            id="idCard"
-            style={{
-              position: "fixed",
-              top: "17vh",
-              borderRadius: "5px",
-              padding: "10px",
-              width: "25vw",
-              fontWeight: "normal",
-              backgroundColor: theme.custom.mycustomblur.main,
-              backdropFilter: theme.custom.mycustomblur.blur,
-              color: "lightblue",
-              display: "flex",
-              flexDirection: "column",
-              textAlign: "start",
-              justifyContent: "start",
-              border: "solid gray 3px",
-            }}
-          >
-            <div
+          {(!isMobile || showIdCard) && (
+            <div className={showIdCard && isMobile ? "idcard-open" : ""}
+              id="idCard"
               style={{
+                position: "fixed",
+                top: "17vh",
+                borderRadius: "5px",
+                padding: "10px",
+                width: "25vw",
+                fontWeight: "normal",
+                backgroundColor: theme.custom.mycustomblur.main,
+                backdropFilter: theme.custom.mycustomblur.blur,
+                color: "lightblue",
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: "column",
+                textAlign: "start",
                 justifyContent: "start",
+                border: "solid gray 3px",
               }}
             >
-              <div id="idLeft" style={{ padding: "10px" }}>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.name")}{" "}
-                  <span id="name">{character.Name_character}</span>
-                </p>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.job")}{" "}
-                  <span id="job">{character.Metier_character}</span>{" "}
-                </p>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.race")}{" "}
-                  <span id="race">{character.Race_character}</span>{" "}
-                </p>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.planet")}{" "}
-                  <span id="planet">{character.Planete_character}</span>{" "}
-                </p>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.lvl")}{" "}
-                  <span id="lvl">{character.Niveau_character}</span>{" "}
-                </p>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.agency")}{" "}
-                  <span id="agence">{character.Agence_character}</span>{" "}
-                </p>
-              </div>
-              <div id="idRight" style={{ paddingRight: "10px" }}>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.age")} <span id="age">{character.Age_character}</span>{" "}
-                  ans
-                </p>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.height")}{" "}
-                  <span id="height">{character.Taille_character}</span> cm
-                </p>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.weight")}{" "}
-                  <span id="pounds">{character.Poids_character}</span> kg
-                </p>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.gender")}{" "}
-                  <span id="sex">{character.Sexe_character}</span>{" "}
-                </p>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.rEye")}{" "}
-                  <span id="rightEye">{character.OeilD_character}</span>
-                </p>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.lEye")}{" "}
-                  <span id="leftEye">{character.OeilG_character}</span>
-                </p>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.hair")}
-                  <span id="hair">{character.Cheveux_character}</span>
-                </p>
-              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "start",
+                  alignItems: "flex-start",
+                  flexWrap: "wrap",
+                  gap: "8px",
+                }}
+              >
+                <div id="idLeft" style={{ padding: "10px" }}>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.name")}{" "}
+                    <span id="name">{character.Name_character}</span>
+                  </p>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.job")}{" "}
+                    <span id="job">{character.Metier_character}</span>{" "}
+                  </p>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.race")}{" "}
+                    <span id="race">{character.Race_character}</span>{" "}
+                  </p>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.planet")}{" "}
+                    <span id="planet">{character.Planete_character}</span>{" "}
+                  </p>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.lvl")}{" "}
+                    <span id="lvl">{character.Niveau_character}</span>{" "}
+                  </p>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.agency")}{" "}
+                    <span id="agence">{character.Agence_character}</span>{" "}
+                  </p>
+                </div>
+                <div id="idRight" style={{ paddingRight: "10px" }}>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.age")} <span id="age">{character.Age_character}</span>{" "}
+                    ans
+                  </p>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.height")}{" "}
+                    <span id="height">{character.Taille_character}</span> cm
+                  </p>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.weight")}{" "}
+                    <span id="pounds">{character.Poids_character}</span> kg
+                  </p>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.gender")}{" "}
+                    <span id="sex">{character.Sexe_character}</span>{" "}
+                  </p>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.rEye")}{" "}
+                    <span id="rightEye">{character.OeilD_character}</span>
+                  </p>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.lEye")}{" "}
+                    <span id="leftEye">{character.OeilG_character}</span>
+                  </p>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.hair")}
+                    <span id="hair">{character.Cheveux_character}</span>
+                  </p>
+                </div>
 
-              <div id="idAvatar">
-                <Box
-                  sx={{
-                    position: "relative",
-                    width: 80,   // adapte (ou mets width: 80 / height: 80 pour un carré)
-                    height: 80,
-                    borderRadius: "50%",
-                    overflow: "hidden",
-                    border: "1px solid",
-                    borderColor: "divider",
-                    display: "inline-block",
-                  }}
-                >
-                  {/* Image */}
-                  {avatar?.url ? (
-                    <Box
-                      component="img"
-                      src={avatar.url}
-                      alt="avatar"
-                      sx={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        display: "block",
-                      }}
-                    />
-                  ) : (
-                    // fallback si pas d'avatar
-                    <Box
-                      sx={{
-                        width: "100%",
-                        height: "100%",
-                        bgcolor: "action.hover",
-                        display: "grid",
-                        placeItems: "center",
-                      }}
-                    >
-                      <PersonIcon
+                <div id="idAvatar">
+                  <Box
+                    sx={{
+                      position: "relative",
+                      width: 80,   // adapte (ou mets width: 80 / height: 80 pour un carré)
+                      height: 80,
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                      border: "1px solid",
+                      borderColor: "divider",
+                      display: "inline-block",
+                    }}
+                  >
+                    {/* Image */}
+                    {avatar?.url ? (
+                      <Box
+                        component="img"
+                        src={avatar.url}
+                        alt="avatar"
                         sx={{
-                          fontSize: 40,
-                          color: "text.secondary",
-                          opacity: 0.6,
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          display: "block",
                         }}
                       />
-                    </Box>
-
-                  )}
-
-                  {/* Bouton "éditer" overlay */}
-                  <Tooltip title="Modifier l’avatar">
-                    <IconButton
-                      component="label"
-                      size="small"
-                      sx={{
-                        position: "absolute",
-                        right: 6,
-                        bottom: 6,
-                        bgcolor: (theme) => alpha(theme.palette.background.paper, 0.6),
-                        backdropFilter: "blur(6px)",
-                        border: "1px solid",
-                        borderColor: "divider",
-                        "&:hover": {
-                          bgcolor: (theme) => alpha(theme.palette.background.paper, 0.85),
-                        },
-                      }}
-                    >
-                      <EditIcon fontSize="small" />
-
-                      <input
-                        hidden
-                        type="file"
-                        accept="image/*"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0];
-                          if (!file || !character?.ID_character) return;
-
-                          try {
-                            const ID_media = await uploadImage(file, "avatar");
-                            const r = await attachMediaToCharacter(
-                              character.ID_character,
-                              ID_media,
-                              "avatar"
-                            );
-                            await refresh();
-                          } catch (err) {
-                            console.error("AVATAR ERROR:", err);
-                            alert(String(err?.message || err));
-                          } finally {
-                            e.target.value = "";
-                          }
+                    ) : (
+                      // fallback si pas d'avatar
+                      <Box
+                        sx={{
+                          width: "100%",
+                          height: "100%",
+                          bgcolor: "action.hover",
+                          display: "grid",
+                          placeItems: "center",
                         }}
-                      />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
-              </div>
-            </div>
+                      >
+                        <PersonIcon
+                          sx={{
+                            fontSize: 40,
+                            color: "text.secondary",
+                            opacity: 0.6,
+                          }}
+                        />
+                      </Box>
 
-            <CharacterProvider
-              character={character}
-              setCharacter={setCharacter}
-            >
-              <div id="idBottom" style={{ padding: "10px" }}>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.trait")}{" "}
-                  <span id="particularity">{character.Signes_character}</span>
-                  <span>
-                    <ModifierIdDialogs
-                      character={character}
-                      name={"signes"}
-                      left={"90%"}
-                      dataToUpdate={"signe"}
-                    />
-                  </span>
-                </p>
-                <br />
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.background")}{" "}
-                  <span id="caracter">{character.Traits_character}</span>
-                  <span>
-                    <ModifierIdDialogs
-                      character={character}
-                      name={"bg"}
-                      left={"90%"}
-                      dataToUpdate={"bg"}
-                    />
-                  </span>
-                </p>
-                <div>
-                  <Btn
-                    msg={<CasinoIcon />}
-                    onClick={() => setRollDice(!rollDice)}
-                  />
-                  {rollDice &&
-                    <DiceChoice />
-                  }
+                    )}
+
+                    {/* Bouton "éditer" overlay */}
+                    <Tooltip title="Modifier l’avatar">
+                      <IconButton
+                        component="label"
+                        size="small"
+                        sx={{
+                          position: "absolute",
+                          right: 6,
+                          bottom: 6,
+                          bgcolor: (theme) => alpha(theme.palette.background.paper, 0.6),
+                          backdropFilter: "blur(6px)",
+                          border: "1px solid",
+                          borderColor: "divider",
+                          "&:hover": {
+                            bgcolor: (theme) => alpha(theme.palette.background.paper, 0.85),
+                          },
+                        }}
+                      >
+                        <EditIcon fontSize="small" />
+
+                        <input
+                          hidden
+                          type="file"
+                          accept="image/*"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file || !character?.ID_character) return;
+
+                            try {
+                              const ID_media = await uploadImage(file, "avatar");
+                              const r = await attachMediaToCharacter(
+                                character.ID_character,
+                                ID_media,
+                                "avatar"
+                              );
+                              await refresh();
+                            } catch (err) {
+                              console.error("AVATAR ERROR:", err);
+                              alert(String(err?.message || err));
+                            } finally {
+                              e.target.value = "";
+                            }
+                          }}
+                        />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
                 </div>
               </div>
-            </CharacterProvider>
-          </div>
+
+              <CharacterProvider
+                character={character}
+                setCharacter={setCharacter}
+              >
+                <div id="idBottom" style={{ padding: "10px", overflow: "hidden" }}>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.trait")}{" "}
+                    <span id="particularity">{character.Signes_character}</span>
+                    <span>
+                      <ModifierIdDialogs
+                        character={character}
+                        name={"signes"}
+                        left={"90%"}
+                        dataToUpdate={"signe"}
+                      />
+                    </span>
+                  </p>
+                  <br />
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.background")}{" "}
+                    <span id="caracter">{character.Traits_character}</span>
+                    <span>
+                      <ModifierIdDialogs
+                        character={character}
+                        name={"bg"}
+                        left={"90%"}
+                        dataToUpdate={"bg"}
+                      />
+                    </span>
+                  </p>
+                  {!isMobile && (<div>
+                    <Btn
+                      msg={<CasinoIcon />}
+                      onClick={() => setRollDice(!rollDice)}
+                    />
+                    {rollDice &&
+                      <DiceChoice />
+                    }
+                  </div>)}
+                </div>
+              </CharacterProvider>
+            </div>
+          )}
         </div>
+        }
+        {isMobile && (<div style={{
+          position: "fixed",
+          top: "20vh",
+          left: "1vw",
+          zIndex: 1500,
+          display: "flex",
+          flexDirection: "column",
+          gap: "3rem",
+          width: "50px",
+        }}>
+          <Btn width="50px"
+            msg={<PersonIcon />}
+            onClick={() => { if (isMobile) setShowIdCard(!showIdCard); }}
+          />
+          <Btn width="50px" msg={<CasinoIcon />} onClick={() => setRollDice(!rollDice)} />
+        </div>)}
+
+        {isMobile && (
+          <div style={{
+            position: "fixed",
+            top: "12vh",
+            left: "18vw",
+            height: "70vh",
+            overflowY: "auto",
+            padding: "0.5rem",
+            display: "flex",
+            paddingBottom: "5rem",
+            flexDirection: "column",
+            gap: "4rem",
+          }}>
+            {/* Ligne 1 : Air, Eau, Terre */}
+            <div style={{ display: "flex", justifyContent: "space-around" }}>
+              {[
+                { label: "Air", icon: <AirIcon />, value: currentGauges.currentManaAir, clamped: clampedManaAir, color: "success", name: "currentManaAir" },
+                { label: "Eau", icon: <WaterDropIcon />, value: currentGauges.currentManaEau, clamped: clampedManaEau, color: "info", name: "currentManaEau" },
+                { label: "Terre", icon: <GrassIcon />, value: currentGauges.currentManaTerre, clamped: clampedManaTerre, color: "warning", name: "currentManaTerre" },
+              ].map(({ label, icon, value, clamped, color, name }) => (
+                <div key={label}
+                  style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "30%" }}>
+                  <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 6 }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 1, width: "30px" }}>
+                      <BtnAdd name={label} mana={value} manaName={name} character={character} onGaugeUpdate={handleGaugeUpdate} />
+                      <BtnRm name={label} mana={value} manaName={name} character={character} onGaugeUpdate={handleGaugeUpdate} />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 15, width: "50px" }}>
+                      <LinearProgress variant="determinate" value={clamped} color={color}
+                        sx={{ alignSelf: "center", width: "10px", height: "25vh", borderRadius: "25px", rotate: "180deg", "& .MuiLinearProgress-bar": { transformOrigin: "bottom" } }} />
+                      <Typography sx={{ color: "lightblue", fontSize: "0.8rem", textAlign: "center", width: "100%", fontSize: "1.2rem" }}>{icon} <br />{`${value} pts`}</Typography>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Ligne 2 : Feu, Volonté */}
+            <div style={{ display: "flex", justifyContent: "space-around" }}>
+              {[
+                { label: "Feu", icon: <LocalFireDepartmentIcon />, value: currentGauges.currentManaFeu, clamped: clampedManaFeu, color: "error", name: "currentManaFeu" },
+                { label: "Volonté", icon: <SelfImprovementIcon />, value: currentGauges.currentManaVolonte, clamped: clampedManaVolonte, color: "primary", name: "currentManaVolonte" },
+              ].map(({ label, icon, value, clamped, color, name }) => (
+                <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "30%" }}>
+                  <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 6 }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 1, width: "30px" }}>
+                      <BtnAdd name={label} mana={value} manaName={name} character={character} onGaugeUpdate={handleGaugeUpdate} />
+                      <BtnRm name={label} mana={value} manaName={name} character={character} onGaugeUpdate={handleGaugeUpdate} />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 15, width: "50px" }}>
+                      <LinearProgress variant="determinate" value={clamped} color={color}
+                        sx={{ alignSelf: "center", width: "10px", height: "25vh", borderRadius: "25px", rotate: "180deg" }} />
+                      <Typography sx={{ color: "lightblue", fontSize: "0.8rem", textAlign: "center", width: "100%", fontSize: "1.2rem" }}>{icon} <br />{`${value} pts`}</Typography>
+                    </div>
+                  </div>
+
+                </div>
+              ))}
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "16rem" }} >
+              {/* Mana Vital */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+                <Typography sx={{ color: "lightblue", fontSize: "1.8rem" }}>Mana Vital</Typography>
+                <div style={{ width: "60vw" }}>
+                  <CircularProgressbar value={(currentGauges.currentManaVital / maxGauges.ManaVital) * 100}
+                    circleRatio={0.5} text={`${currentGauges.currentManaVital} pts`}
+                    styles={buildStyles({ rotation: 0.75, strokeLinecap: "butt", textSize: "1.3em", pathColor: "red", textColor: "#f88", trailColor: "#af8c8d" })} />
+                </div>
+                <div style={{ marginTop: "-16rem", display: "flex", gap: 8 }}>
+                  <BtnAdd name="mana Vital" mana={currentGauges.currentManaVital} manaName="currentManaVital" character={character} onGaugeUpdate={handleGaugeUpdate} />
+                  <BtnRm name="mana Vital" mana={currentGauges.currentManaVital} manaName="currentManaVital" character={character} onGaugeUpdate={handleGaugeUpdate} />
+                </div>
+              </div>
+
+              {/* Stamina */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+                <Typography sx={{ color: "lightblue", fontSize: "1.8rem" }}>{t("jdr.stamina")}</Typography>
+                <div style={{ width: "60vw" }}>
+                  <CircularProgressbar value={(currentGauges.currentStamina / maxGauges.Stamina) * 100}
+                    circleRatio={0.5} text={`${currentGauges.currentStamina} pts`}
+                    styles={buildStyles({ rotation: 0.75, strokeLinecap: "butt", textSize: "1.3em", pathColor: "#42d750", textColor: "#f88", trailColor: "#cfe9d2" })} />
+                </div>
+                <div style={{ marginTop: "-16rem", display: "flex", gap: 8 }}>
+                  <BtnAdd name="Stamina" mana={currentGauges.currentStamina} manaName="currentStamina" character={character} onGaugeUpdate={handleGaugeUpdate} />
+                  <BtnRm name="Stamina" mana={currentGauges.currentStamina} manaName="currentStamina" character={character} onGaugeUpdate={handleGaugeUpdate} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+        }
+        {
+          rollDice && isMobile && (
+            <div className="dice-overlay" style={{ height: "100vh" }} >
+              <Btn msg="✕" onClick={() => setRollDice(false)} />
+              <DiceChoice />
+            </div>
+          )
+        }
 
         <CharacterProvider character={character} setCharacter={setCharacter}>
           <SideMenu character={character} />
@@ -1297,8 +1423,9 @@ function ConnectGame() {
           <CustomizedDialogs data={character} />
         </CharacterProvider>
       </div>
-      {/* <Btn style={{ position: "fixed", bottom: "-5vh", left: "50vw", display: "flex", flexDirection: "row", textAlign: "center", justifyContent: "center" }} onClick={navigate(-1)} msg="Close Holocom" sx={{ color: 'white', position: "absolute", fontSize: '20px', bottom: "5vh" }} /> */}
-    </div>
+
+
+    </div >
   );
 }
 

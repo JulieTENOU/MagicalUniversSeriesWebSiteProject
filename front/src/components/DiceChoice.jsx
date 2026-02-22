@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import Dice3D from "./Dice3D";
 import Button from "@mui/material/Button";
-import Btn from "./Btn";
+import { useMediaQuery } from "@mui/material";
 
 export default function DiceChoice({
   hidden = false,
@@ -22,6 +22,7 @@ export default function DiceChoice({
   style,
   onResultsChange,
 }) {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   // compteurs par type
   const [counts, setCounts] = useState({ 6: 0, 10: 0, 20: 0, 100: 0 });
 
@@ -32,6 +33,8 @@ export default function DiceChoice({
   const boardRef = useRef(null);
 
   const totalDice = counts[6] + counts[10] + counts[20] + counts[100];
+
+  const mobileDieSize = Math.round(window.innerWidth * 0.9);
 
   const countsText = useMemo(() => {
     const parts = [];
@@ -155,6 +158,75 @@ export default function DiceChoice({
   }, [dieSize]);
   const plateRef = useRef(null);
   if (hidden) return null;
+
+  if (isMobile) {
+    return (
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        width: "100%",
+        gap: 8,
+        color: "white",
+      }}>
+        {/* Plateau — prend tout l'espace disponible */}
+        <div ref={plateRef}
+          style={{
+            flex: 1,
+            minHeight: 0,
+            overflow: "hidden",
+            display: "flex",
+            justifyContent: "center",
+          }}>
+          <Dice3D
+            ref={boardRef}
+            dice={{ d6: counts[6], d10: counts[10], d20: counts[20], d100: counts[100] }}
+            size={mobileDieSize}
+            color={color}
+            textColor={textColor}
+            background={background}
+            durationMs={durationMs}
+            autoRoll={false}
+            onRollEnd={(v) => {
+              if (!Array.isArray(v)) return;
+              const next = { 6: [], 10: [], 20: [], 100: [] };
+              let k = 0;
+              for (let i = 0; i < counts[6]; i++) next[6].push(v[k++]);
+              for (let i = 0; i < counts[10]; i++) next[10].push(v[k++]);
+              for (let i = 0; i < counts[20]; i++) next[20].push(v[k++]);
+              for (let i = 0; i < counts[100]; i++) next[100].push(v[k++]);
+              setValues(next);
+            }}
+          />
+        </div>
+
+        {/* Ligne + */}
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          {[6, 10, 20, 100].map(s => (
+            <Button key={s} size="small" onClick={() => addDie(s)} disabled={totalDice >= maxDice} sx={{ color: "white" }}>+D{s}</Button>
+          ))}
+        </div>
+
+        {/* Ligne - */}
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          {[6, 10, 20, 100].map(s => (
+            <Button key={s} size="small" onClick={() => removeDie(s)} disabled={counts[s] === 0} sx={{ color: "white" }}>-D{s}</Button>
+          ))}
+        </div>
+
+        {/* Relancer / Reset */}
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          <Button size="small" onClick={reroll} disabled={!totalDice} sx={{ color: "white" }}>Relancer</Button>
+          <Button size="small" onClick={reset} disabled={!totalDice} sx={{ color: "white" }}>Reset</Button>
+        </div>
+
+        {/* Résultats */}
+        <div style={{ textAlign: "center", color: "white", fontSize: 13, paddingBottom: 8 }}>
+          <b>Jets</b> : {totalDice ? valuesList.join(" · ") : "—"} &nbsp;|&nbsp; <b>Total</b> : {totalDice ? total : "—"}
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       className={className}
@@ -182,12 +254,9 @@ export default function DiceChoice({
         <div
           ref={plateRef}
           style={{
-            // display: "block",
             width: "100%",
-            // gap: 5,
             maxHeight: "25vh",
             height: "25vh",
-            // maxWidth: "100%",
             overflow: "hidden",
             paddingRight: 6,
           }}
@@ -227,7 +296,7 @@ export default function DiceChoice({
             padding: 10,
             borderRadius: 10,
             border: "1px solid rgba(255,255,255,0.14)",
-            width: "fit-content"
+            width: "fit-content",
           }}
         >
           <div style={{ fontSize: 13, opacity: 0.9 }}>
