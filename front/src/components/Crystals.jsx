@@ -6,6 +6,7 @@ import Crystal from "../assets/svg/icons8-crystal.svg";
 import { useTheme } from "@mui/material/styles";
 
 import { useTranslation } from "react-i18next";
+import { useMediaQuery } from "@mui/material";
 
 function CrystalRow({ label, field, crystals, theme, onCrystalUpdate }) {
   const value = crystals?.[field] ?? "—";
@@ -52,6 +53,8 @@ export default function Crystals(data) {
   function handleCrystalsUpdate(patch) {
     setCrystals((prev) => ({ ...prev, ...patch }));
   }
+
+  const isMobile = useMediaQuery("(max-width: 768px)");
   return (
     <div>
       <IconButton
@@ -82,7 +85,7 @@ export default function Crystals(data) {
             backdropFilter: theme.custom.mycustomblur.blur,
             top: "5vh",
             textAlign: "center",
-            width: "40%",
+            width: isMobile ? "100%" : "40%",
             borderRadius: "25px",
           },
         }}

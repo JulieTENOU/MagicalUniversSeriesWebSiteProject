@@ -6,6 +6,7 @@ import Creature from '../assets/svg/icons8-cat.svg';
 import { useTheme } from "@mui/material/styles";
 
 import { useTranslation } from "react-i18next";
+import { useMediaQuery } from "@mui/material";
 
 function CreatureRow({ index, data, theme, onCreatureUpdate }) {
   const key = `creature${index}`;
@@ -23,6 +24,7 @@ function CreatureRow({ index, data, theme, onCreatureUpdate }) {
 
 export default function Creatures(data) {
 
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const { t } = useTranslation();
   const theme = useTheme();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -54,7 +56,7 @@ export default function Creatures(data) {
         {isDrawerOpen ? <></> :
           <img src={Creature} className="filter-white" style={{ height: '30px' }} alt='Shield' />}
       </IconButton>
-      <Drawer className="drawer" BackdropProps={{ style: { backdropFilter: "none", opacity: 0 } }} PaperProps={{ sx: { backgroundColor: theme.custom.mycustomblur.main, backdropFilter: theme.custom.mycustomblur.blur, top: "5vh", textAlign: 'center', width: "40%", borderRadius: "25px" } }} anchor="right" open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
+      <Drawer className="drawer" BackdropProps={{ style: { backdropFilter: "none", opacity: 0 } }} PaperProps={{ sx: { backgroundColor: theme.custom.mycustomblur.main, backdropFilter: theme.custom.mycustomblur.blur, top: "5vh", textAlign: 'center', width: isMobile ? "100%" : "40%", borderRadius: "25px" } }} anchor="right" open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
 
         <Box p={2} width='250px' sx={{ backdropFilter: "none", top: '15vh', width: '100%' }} textAlign={'center'} role="presentation">
           <Grid container spacing={2} width='100%'>

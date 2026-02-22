@@ -7,6 +7,8 @@ import { useTheme } from "@mui/material/styles";
 
 import { useTranslation } from "react-i18next";
 
+import { useMediaQuery } from "@mui/material";
+
 function IngredientRow({ label, nameKey, quantityKey, data, theme, onIngredientUpdate }) {
   const name = data?.[nameKey] ?? "—";
   // const quantity = ingredients?.[quantityKey] ?? "—";
@@ -72,6 +74,8 @@ export default function Ingredients(data) {
   function handleIngerdientUpdate(patch) {
     setIngredients((prev) => ({ ...prev, ...patch }));
   }
+
+  const isMobile = useMediaQuery("(max-width: 768px)");
   return (
     <div>
       <IconButton
@@ -102,7 +106,7 @@ export default function Ingredients(data) {
             backdropFilter: theme.custom.mycustomblur.blur,
             top: "5vh",
             textAlign: "center",
-            width: "40%",
+            width: isMobile ? "100%" : "40%",
             borderRadius: "25px",
           },
         }}

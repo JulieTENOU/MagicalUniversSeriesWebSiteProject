@@ -15,6 +15,7 @@ import { useTheme } from "@mui/material/styles";
 
 import { useTranslation } from "react-i18next";
 
+import { useMediaQuery } from "@mui/material";
 function InventoryRow({ label, nameKey, quantityKey, data, theme, onInventoryUpdate }) {
   const name = data?.[nameKey] ?? "—";
   const quantity = quantityKey ? (data?.[quantityKey] ?? "—") : null;
@@ -75,6 +76,7 @@ export default function Inventory(data) {
     setInventaires((prev) => ({ ...prev, ...patch }));
   }
 
+  const isMobile = useMediaQuery("(max-width: 768px)");
   return (
     <div>
       <IconButton
@@ -96,7 +98,7 @@ export default function Inventory(data) {
             backdropFilter: theme.custom.mycustomblur.blur,
             top: "5vh",
             textAlign: "center",
-            width: "40%",
+            width: isMobile ? "100%" : "40%",
             borderRadius: "25px",
           },
         }}

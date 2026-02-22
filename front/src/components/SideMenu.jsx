@@ -19,6 +19,7 @@ import ModifierDialogs from "./ModifierComp";
 import { useTheme } from "@mui/material/styles";
 
 import { useTranslation } from "react-i18next";
+import { useMediaQuery } from "@mui/material";
 
 export default function SideMenu(character) {
   const { t } = useTranslation();
@@ -46,6 +47,7 @@ export default function SideMenu(character) {
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
   };
+  const isMobile = useMediaQuery("(max-width: 768px)");
   return (
     <div>
       <IconButton
@@ -71,7 +73,7 @@ export default function SideMenu(character) {
             backdropFilter: theme.custom.mycustomblur.blur,
             top: "5vh",
             textAlign: "center",
-            width: "40%",
+            width: isMobile ? "100%" : "40%",
             borderRadius: "25px",
           },
         }}
