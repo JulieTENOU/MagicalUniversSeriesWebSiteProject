@@ -164,7 +164,7 @@ export default function DiceChoice({
       <div style={{
         display: "flex",
         flexDirection: "column",
-        height: "100%",
+        // height: "100%",
         width: "100%",
         gap: 8,
         color: "white",
@@ -173,6 +173,7 @@ export default function DiceChoice({
         <div ref={plateRef}
           style={{
             flex: 1,
+            top: 0,
             minHeight: 0,
             overflow: "hidden",
             display: "flex",

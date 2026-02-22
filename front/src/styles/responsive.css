@@ -333,9 +333,19 @@ input {
 @media (max-width: 600px) {
   .header-title {
     max-width: 30vw;
-    font-size: 1em;
+    font-size: 0.8em;
     text-align: center;
     word-break: keep-all;
+  }
+
+  .MuiToolbar-root {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    min-height: 48px !important;
+  }
+
+  .MuiToolbar-root .MuiSvgIcon-root {
+    font-size: 1rem !important;
   }
 }
 
@@ -446,8 +456,8 @@ input {
   #idCard.idcard-open {
     top: 0 !important;
     left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
+    width: 100dvw !important;
+    height: 100dvh !important;
     z-index: 1500 !important;
     overflow-y: auto !important;
     justify-content: center !important;
