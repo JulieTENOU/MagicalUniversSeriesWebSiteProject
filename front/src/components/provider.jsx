@@ -36,8 +36,6 @@ const MyProvider = ({ children }) => {
     setState(null);
   }, []);
 
-  if (loading) return <div>Chargement...</div>;
-
   return (
     <AppProvider>
       <Provider value={{ state, setState, loading, refreshUser, logout }}>
