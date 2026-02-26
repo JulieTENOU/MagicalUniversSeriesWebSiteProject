@@ -1,14 +1,18 @@
 import { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
 import "../index.css";
 import "../general.css";
 import "../../src/styles/responsive.css";
-import Btn from "../components/Btn.jsx";
+
+import { ConnexionContext } from "../components/provider.jsx";
+
 import Top from "../components/Header.jsx";
 import BG from "../components/Background.jsx";
-import { useNavigate, useParams } from "react-router-dom";
-import { ConnexionContext } from "../components/provider.jsx";
-import UnavailableContent from "../components/UnavailableContent.jsx";
+import Btn from "../components/Btn.jsx";
 import BtnRtn from "../components/BtnRtn.jsx";
+import UnavailableContent from "../components/UnavailableContent.jsx";
+import PageLoader from "../components/PageLoader.jsx";
 
 function ReadSeries() {
   const navigate = useNavigate();
@@ -78,6 +82,8 @@ function ReadSeries() {
     );
   }
 
+  if (loading) return <PageLoader />;
+
   return (
     <div className="main">
       <BG />
@@ -102,7 +108,9 @@ function ReadSeries() {
           sx={{ color: 'whitesmoke' }}
         /> */}
 
-        <BtnRtn msg={"Go back"} />
+        <BtnRtn msg={"Go back"}
+          path={`/read/`}
+        />
 
         {books.map((book) => (
           <Btn

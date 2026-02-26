@@ -11,6 +11,10 @@ export default function BtnRtn(props) {
 
 
   const handleBack = () => {
+    if (props.path) {
+      navigate(props.path);
+      return;
+    }
     // Si on a un "from" explicite, on retourne dessus
     if (location.state?.from) {
       navigate(location.state.from, { replace: true });
@@ -29,27 +33,27 @@ export default function BtnRtn(props) {
 
   return (
     <div style={props.style}>
-      {/* <Link to={props.path}> */}
-      <Button sx={props.sx} onClick={handleBack}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <img
-            src={LogoReturn}
-            alt="Retour"
-            style={{ height: "5vh", width: "7vw" }}
-          />
-          <Typography sx={{ color: theme.custom.mycustomblur.text }}>
-            {props.msg}
-          </Typography>
-        </div>
-      </Button>
-      {/* </Link> */}
+      <Link to={props.path}>
+        <Button sx={props.sx} onClick={handleBack}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src={LogoReturn}
+              alt="Retour"
+              style={{ height: "5vh", width: "7vw" }}
+            />
+            <Typography sx={{ color: theme.custom.mycustomblur.text }}>
+              {props.msg}
+            </Typography>
+          </div>
+        </Button>
+      </Link>
     </div>
   );
 }

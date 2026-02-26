@@ -1,8 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import { useContext } from "react";
+import { ConnexionContext } from "./components/provider.jsx";
+
+import PageLoader from "./components/PageLoader.jsx";
+
 import Home from "./pages/Home";
 import ReadHome from "./pages/ReadHome";
 import ConnectGame from "./pages/ConnectGame";
-import ConnectGameCopy from "./pages/ConnectGameCopy";
 import ConnectGameMJ from "./pages/ConnectGameMJ";
 import JDR from "./pages/JDR.jsx";
 import ReadSeries from "./pages/ReadSeries";
@@ -17,8 +22,18 @@ import ForgottenPassWord from "./pages/ForgottenPassWord.jsx";
 import ResetPassWord from "./pages/ResetPassWord.jsx";
 import NewCharacterAdmin from "./pages/NewCharacterAdmin.jsx";
 import DiceChoice from "./components/DiceChoice.jsx";
+import { useParams } from "react-router-dom";
+
+// function ReadBookWrapper() {
+//   const { serie, book, chapter } = useParams();
+//   return <ReadBook key={`${serie}-${book}-${chapter}`} />;
+// }
 
 function App() {
+  const { loading } = useContext(ConnexionContext);
+
+  if (loading) return <PageLoader />;
+
   return (
     <MyProvider>
       <Router>
@@ -31,10 +46,6 @@ function App() {
           <Route path="/read/:serie/:book" element={<ChaptersList />} />
           <Route path="/read/:serie/:book/:chapter" element={<ReadBook />} />
           <Route path="/jdr" element={<JDR />} />
-          <Route
-            path="/jdr2/connectGame/:characterId"
-            element={<ConnectGameCopy />}
-          />{" "}
           <Route
             path="/jdr/connectGame/:characterId"
             element={<ConnectGame />}
@@ -58,4 +69,5 @@ function App() {
     </MyProvider>
   );
 }
+
 export default App;

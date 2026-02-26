@@ -1,12 +1,15 @@
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import "../index.css";
 import "../general.css";
 import "../../src/styles/responsive.css";
-import Btn from "../components/Btn";
+
+import { ConnexionContext } from "../components/provider.jsx";
+
 import Top from "../components/Header";
 import BG from "../components/Background";
-import { useNavigate } from "react-router-dom";
-import { ConnexionContext } from "../components/provider.jsx";
+import Btn from "../components/Btn";
 import BtnRtn from "../components/BtnRtn.jsx";
 
 function ReadHome() {
@@ -41,7 +44,7 @@ function ReadHome() {
       <Top started={isConnected} />
 
       <div className="readHomeGridWrap">
-        <BtnRtn msg={"Go back"} />
+        <BtnRtn msg={"Go back"} path={`/`} />
 
         <div className="readHomeGrid">
           {seriesList.map((serie) => {

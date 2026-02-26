@@ -1,15 +1,21 @@
 import { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+
+import { Typography } from "@mui/material";
+
+
 import "../index.css";
 import "../general.css";
 import "../../src/styles/responsive.css";
+
+import { ConnexionContext } from "../components/provider.jsx";
+
 import Btn from "../components/Btn";
 import Top from "../components/Header";
 import BG from "../components/Background";
-import { useNavigate, useParams } from "react-router-dom";
-import { Typography, Grid } from "@mui/material";
-import { ConnexionContext } from "../components/provider.jsx";
-import axios from "axios";
 import BtnRtn from "../components/BtnRtn.jsx";
+import PageLoader from "../components/PageLoader.jsx";
 
 function ChaptersList() {
   const { state: isConnected } = useContext(ConnexionContext);
@@ -54,27 +60,16 @@ function ChaptersList() {
     return null;
   }
 
+  if (loading) return <PageLoader />;
+
   return (
     <div className="main">
       <BG />
       <Top started={isConnected} />
       <div className="btn-return-wrapper"
-      // style={{
-      //   position: "fixed",
-      //   bottom: "5vh",
-      //   left: "3vw",
-      //   zIndex: 1000, // bien au-dessus
-      // }}
       >
-        {/* <Btn
-          onClick={() => navigate(-1)}
-          msg="Go back"
-          src={logoReturn}
-          height="100px"
-          sx={{ color: "whitesmoke" }}
-        /> */}
 
-        <BtnRtn msg={"Go back"} />
+        <BtnRtn msg={"Go back"} path={`/read/${serie}`} />
       </div>
       <div className="chapters-container"
         style={{
@@ -93,9 +88,7 @@ function ChaptersList() {
         }}
       >
         {loading ? (
-          <Typography variant="h5" sx={{ color: "whitesmoke" }}>
-            Chargement...
-          </Typography>
+          <PageLoader />
         ) : (
           Object.keys(parts).map((partName, index) => (
             <div className="chapters-part"

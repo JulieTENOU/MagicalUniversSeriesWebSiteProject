@@ -204,8 +204,8 @@ module.exports = {
         title: foundChapter.title_chapter,
         content: foundChapter.content_chapter,
         path: foundChapter.path,
-        prev: foundChapter.path_prev,
-        next: foundChapter.path_next,
+        prev: foundChapter.path_prev || null,
+        next: foundChapter.path_next || null,
         book: {
           name: foundChapter.book?.book_Name,
           image: foundChapter.book?.image,
