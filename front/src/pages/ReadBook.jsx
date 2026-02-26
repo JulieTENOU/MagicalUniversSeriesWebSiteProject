@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import axios from "axios";
@@ -52,7 +52,9 @@ function ReadBook() {
   const [chaptersListLoading, setChaptersListLoading] = useState(false);
   const [bookInfos, setBookInfos] = useState(null);
 
-  const isLastChapter = false;
+  const [navigationInfo, setNavigationInfo] = useState({ prev: null, next: null });
+
+  const scrollRef = useRef(null);
 
   const theme = useTheme();
 
@@ -72,6 +74,7 @@ function ReadBook() {
         setGate(null);
         setAwakeningError(null);
         setCurrentChapter(res.data);
+        setNavigationInfo({ prev: res.data.prev, next: res.data.next });
       } catch (error) {
         const status = error?.response?.status;
         const data = error?.response?.data;
@@ -87,12 +90,14 @@ function ReadBook() {
             setAttempts(0);
             setShowHint(false);
             setAwakeningAnswer("");
+            setNavigationInfo({ prev: data.prev, next: data.next });
           } catch (e) {
             setGate(data); // fallback si la route puzzle plante
             setNearHint(null);
             setAttempts(0);
             setShowHint(false);
             setAwakeningAnswer("");
+            setNavigationInfo({ prev: data.prev, next: data.next });
           }
           setCurrentChapter(null);
           return;
@@ -260,6 +265,13 @@ function ReadBook() {
   }, [serie, book]);
 
   useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+    setLocalReadingMode(mode);
+  }, [serie, book, chapter]);
+
+  useEffect(() => {
     setLocalReadingMode(mode); // reset au mode courant à chaque changement de chapitre
   }, [serie, book, chapter]);
 
@@ -357,218 +369,6 @@ function ReadBook() {
           />
         </div>
       </Drawer>
-      {/*==============================
-            SAVE DE SECURITE
-       ==============================     
-
-      //  Flèche gauche (retour) 
-      <div className="read-nav-prev">
-        <Btn
-          path={
-            currentChapter?.prev
-              ? `/read/${serie}/${book}/${currentChapter.prev}`
-              : `/read/${serie}/${book}`
-          }
-          msg="Chapitre précédent"
-          src={LogoReturn}
-          height={"50px"}
-          sx={{ textDecoration: "none", color: "whitesmoke" }}
-        />
-      </div>
-
-      //  Flèche droite (next) 
-      <div className="read-nav-next">
-        <Btn
-          path={
-            currentChapter?.next
-              ? `/read/${serie}/${book}/${currentChapter.next}`
-              : `/read/${serie}/${book}`
-          }
-          msg={currentChapter?.next ? "Chapitre suivant" : "Retour au sommaire"}
-          src={LogoNext}
-          height={"50px"}
-          sx={{ textDecoration: "none", color: "whitesmoke" }}
-        />
-      </div>
-
-      <Box
-        className="read-content-box"
-        sx={{ p: 5, mt: 5 }}
-        height={"auto"}
-        width={"100 %"}
-      >
-        <div className="read-glass-shell">
-          <div
-            className="read-scroll"
-            style={{
-              color: theme.custom.mycustomblur.text,
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-              backgroundColor: theme.custom.mycustomblur.main,
-              boxShadow: theme.custom.mycustomblur.boxShadow,
-              border: theme.custom.mycustomblur.border,
-              // backdropFilter: theme.custom.mycustomblur.blur,
-              // WebkitBackdropFilter: theme.custom.mycustomblur.blur,
-              padding: "20px",
-              borderRadius: "10px",
-              maxWidth: "900px",
-              position: "relative",
-              margin: "auto",
-              // overflow: "visible",
-            }}
-          >
-            <div
-              style={{
-                position: "sticky",
-                top: "10px",
-                width: "100%",
-                zIndex: 10,
-                background: "transparent",
-                display: "flex",
-                // alignItems: "center",
-                justifyContent: "flex-end",
-                minHeight: 60,
-                padding: "0 24px", // pour respirer sur les côtés
-                pointerEvents: "none",
-              }}
-            >
-              //  Zone gauche vide 
-              <div
-                style={{
-                  flex: 1,
-                  position: "absolute",
-                  top: 0,
-                  right: "12px",
-                  pointerEvents: "auto",
-                }}
-              />
-              //  Bouton à droite 
-              <Btn
-                onClick={() => {
-                  setLocalReadingMode(mode === "dark" ? "light" : "dark");
-                }}
-                msg={
-                  localReadingMode === "dark" ? (
-                    <DarkModeIcon sx={{ fontSize: 20, lineHeight: 1 }} />
-                  ) : (
-                    <LightModeIcon sx={{ fontSize: 20, lineHeight: 1 }} />
-                  )
-                }
-                sx={{
-                  backgroundColor: theme.custom.modeSwitchBtn.background,
-                  color: theme.custom.modeSwitchBtn.color,
-                  border: theme.custom.modeSwitchBtn.border,
-                  borderRadius: "50%",
-                  width: 36,
-                  height: 36,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              />
-            </div>
-            // Titre centré
-            <Typography
-              variant="h4"
-              color={theme.custom.mycustomblur.text}
-              style={{
-                flex: 1,
-                textAlign: "center",
-                pointerEvents: "none",
-                userSelect: "none",
-              }}
-            >
-              {gate
-                ? "Accès verrouillé"
-                : currentChapter?.title || "Chargement..."}
-            </Typography>
-
-            {gate ? (
-              <div style={{ textAlign: "center", padding: 24 }}>
-                <Typography
-                  variant="h5"
-                  color={theme.custom.mycustomblur.text}
-                  sx={{ mb: 2 }}
-                >
-                  {gate.question ||
-                    "Pour accéder à cette information tu devras d'abord Eveiller tes pouvoirs."}
-                </Typography>
-
-                {attempts >= (gate?.hint_after_attemps ?? 3) && gate?.hint && (
-                  <div style={{ marginTop: 20 }}>
-                    <Btn
-                      onClick={() => setShowHint((prev) => !prev)}
-                      msg={showHint ? "Masquer l’indice" : "Révéler un indice"}
-                      sx={{ color: "whitesmoke" }}
-                    />
-                    {showHint && (
-                      <Typography
-                        sx={{ mb: 2, opacity: 0.8 }}
-                        color={theme.custom.mycustomblur.text}
-                      >
-                        {gate.hint}
-                      </Typography>
-                    )}
-                  </div>
-                )}
-
-                {nearHint && (
-                  <Typography
-                    sx={{ mt: 2, opacity: 0.9 }}
-                    color={theme.custom.mycustomblur.text}
-                  >
-                    {nearHint}
-                  </Typography>
-                )}
-
-                <Typography
-                  color={theme.custom.mycustomblur.text}
-                  sx={{ mb: 2 }}
-                >
-                  Niveau requis : {gate.required_level} — Ton niveau :{" "}
-                  {gate.current_level}
-                </Typography>
-
-                <input
-                  value={awakeningAnswer}
-                  onChange={(e) => setAwakeningAnswer(e.target.value)}
-                  placeholder="Entre la réponse…"
-                  style={{
-                    padding: "10px 12px",
-                    borderRadius: 8,
-                    border: "1px solid rgba(255,255,255,0.2)",
-                    width: "min(420px, 80vw)",
-                    background: "transparent",
-                    color: theme.custom.mycustomblur.text,
-                  }}
-                />
-
-                <div style={{ marginTop: 12 }}>
-                  <Btn
-                    onClick={submitAwakening}
-                    msg={awakeningLoading ? "Validation..." : "Déverrouiller"}
-                    sx={{ color: "whitesmoke" }}
-                  />
-                </div>
-
-                {awakeningError && (
-                  <Typography sx={{ mt: 2 }} color="error">
-                    {awakeningError}
-                  </Typography>
-                )}
-              </div>
-            ) : (
-              currentChapter?.content &&
-              parseChapterContent(currentChapter.content, localReadingMode)
-            )}
-          </div>
-        </div>
-      </Box> */}
-
-      {/* =====================================
-              NOUVELLE VERSION POUR ERGO
-          =====================================
-      */}
 
       <div
         style={{
@@ -579,42 +379,6 @@ function ReadBook() {
           boxSizing: "border-box",
         }}
       >
-        {/* //── Bouton thème ──
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            width: "100%",
-            padding: "6px 4px",
-            flexShrink: 0,
-          }}
-        >
-          <div style={{ width: "fit-content" }}>
-            <Btn
-              onClick={() =>
-                setLocalReadingMode(mode === "dark" ? "light" : "dark")
-              }
-              style={{ felx: "0 0 auto" }}
-              msg={
-                localReadingMode === "dark" ? (
-                  <LightModeIcon sx={{ fontSize: 20, lineHeight: 1 }} />
-                ) : (<DarkModeIcon sx={{ fontSize: 20, lineHeight: 1 }} />
-                )
-              }
-              sx={{
-                backgroundColor: theme.custom.modeSwitchBtn.background,
-                color: theme.custom.modeSwitchBtn.color,
-                border: theme.custom.modeSwitchBtn.border,
-                borderRadius: "50%",
-                width: 36,
-                height: 36,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            />
-          </div>
-        </div> */}
-
         <div
           style={{
             display: "flex",
@@ -668,6 +432,7 @@ function ReadBook() {
         <div className="read-glass-shell" style={{ flex: 1, minHeight: 0 }}>
           <div
             className="read-scroll"
+            ref={scrollRef}
             style={{
               color: theme.custom.mycustomblur.text,
               display: "flex",
@@ -788,8 +553,8 @@ function ReadBook() {
         >
           <Btn
             path={
-              currentChapter?.prev
-                ? `/read/${serie}/${book}/${currentChapter.prev}`
+              navigationInfo?.prev
+                ? `/read/${serie}/${book}/${navigationInfo.prev}`
                 : `/read/${serie}/${book}`
             }
             msg="Chapitre précédent"
@@ -799,12 +564,12 @@ function ReadBook() {
           />
           <Btn
             path={
-              currentChapter?.next
-                ? `/read/${serie}/${book}/${currentChapter.next}`
+              navigationInfo?.next
+                ? `/read/${serie}/${book}/${navigationInfo.next}`
                 : `/read/${serie}/${book}`
             }
             msg={
-              currentChapter?.next ? "Chapitre suivant" : "Retour au sommaire"
+              navigationInfo?.next ? "Chapitre suivant" : "Retour au sommaire"
             }
             src={LogoNext}
             height="50px"

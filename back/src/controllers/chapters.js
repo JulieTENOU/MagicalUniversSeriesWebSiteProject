@@ -195,6 +195,8 @@ module.exports = {
           required_level: requiredLevel,
           current_level: userLevel,
           puzzle_key: `level_${requiredLevel}`,
+          prev: foundChapter.path_prev || null,
+          next: foundChapter.path_next || null,
         });
       }
       // ✅ --- fin GATE ---
