@@ -1,34 +1,21 @@
 import { useState, useContext, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { socket } from "../service/socket";
+
+import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+
+import { ConnexionContext } from "../components/provider";
+import { useTheme } from "@mui/material/styles";
+import MenuItem from "@mui/material/MenuItem";
+import { LinearProgress, Typography, TableRow, TableCell, Table, TableBody, TableHead, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
+
 import BG from "../components/Background";
 import Top from "../components/Header";
-import { ConnexionContext } from "../components/provider";
-import "react-circular-progressbar/dist/styles.css";
-import { useTheme } from "@mui/material/styles";
-import { useParams } from "react-router-dom";
-import {
-  LinearProgress,
-  Typography,
-  TableRow,
-  TableCell,
-  Table,
-  TableBody,
-  TableHead,
-} from "@mui/material";
-import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
-
 import Btn from "../components/Btn";
 import DynamicSkillSelector from "../components/DynamicSkillSelector";
-import { useNavigate } from "react-router-dom";
-import { socket } from "../service/socket";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  TextField,
-} from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
+import PageLoader from "../components/PageLoader";
 
 
 function ConnectGameMJ() {
@@ -128,60 +115,6 @@ function ConnectGameMJ() {
   };
 
   const [gaugesByCharId, setGaugesByCharId] = useState({});
-  // Exemple: gaugesByCharId[12] = { currentManaAir: 10, ... }
-
-  // useEffect(() => {
-  //   if (!characters.length) return;
-
-  //   let cancelled = false;
-
-  //   async function loadAllGauges() {
-  //     try {
-  //       const results = await Promise.all(
-  //         characters.map(async (char) => {
-  //           const name = encodeURIComponent(char.Name_character);
-  //           const res = await fetch(`/api/gauges/getOneGauges/${name}`);
-  //           const json = await res.json().catch(() => null);
-
-  //           if (!res.ok || !json?.data) {
-  //             // fallback : si pas de gauges, on peut retourner les valeurs du perso
-  //             return [
-  //               char.ID_character,
-  //               {
-  //                 currentManaAir: char.ManaAir_character,
-  //                 currentManaEau: char.ManaEau_character,
-  //                 currentManaTerre: char.ManaTerre_character,
-  //                 currentManaFeu: char.ManaFeu_character,
-  //                 currentManaVolonte: char.ManaVolonte_character,
-  //                 currentManaVital: char.ManaVital_character,
-  //                 currentStamina: char.Stamina_character,
-  //               },
-  //             ];
-  //           }
-
-  //           return [char.ID_character, json.data];
-  //         }),
-  //       );
-
-  //       if (cancelled) return;
-
-  //       // results = [[id, gauges], [id, gauges], ...]
-  //       setGaugesByCharId(Object.fromEntries(results));
-  //     } catch (e) {
-  //       console.error("Erreur loadAllGauges:", e);
-  //     }
-  //   }
-
-  //   loadAllGauges();
-
-
-  //   const interval = setInterval(loadAllGauges, 1500);
-
-  //   return () => {
-  //     cancelled = true;
-  //     clearInterval(interval);
-  //   };
-  // }, [characters]);
 
   useEffect(() => {
     if (!characters.length) return;
@@ -409,6 +342,8 @@ function ConnectGameMJ() {
     navigate("/", { replace: true });
     return null;
   }
+
+  if (loading) return <PageLoader />;
 
   return (
     <div className="main">
