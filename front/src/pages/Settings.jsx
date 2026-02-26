@@ -2,10 +2,13 @@
 import { useContext, useEffect } from "react";
 import { ConnexionContext } from "../components/provider";
 import { useNavigate } from "react-router-dom";
+
+import "../../src/styles/responsive.css"
+
 import BG from "../components/Background";
 import Settings from "../components/Settings";
 import Top from "../components/Header";
-import "../../src/styles/responsive.css"
+import PageLoader from "../components/PageLoader";
 
 function SettingsPage() {
   const navigate = useNavigate();
@@ -27,6 +30,8 @@ function SettingsPage() {
     navigate("/", { replace: true });
     return null;
   }
+
+  if (loading) return <PageLoader />;
 
   return (
     <div className="main">

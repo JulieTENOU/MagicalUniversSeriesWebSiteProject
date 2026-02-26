@@ -1,47 +1,51 @@
-import { useState, useContext, useEffect } from "react";
-import BG from "../components/Background";
-import Top from "../components/Header";
-import { ConnexionContext } from "../components/provider";
-import SideMenu from "../components/SideMenu";
-import Loader from "../components/Loader";
-import { LinearProgress, Typography } from "@mui/material";
-import BtnAdd from "../components/BtnAdd";
-import Btn from "../components/Btn";
-import BtnRm from "../components/BtnRm";
+import { useState, useContext, useEffect, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import "../../src/styles/responsive.css"
-import CustomizedDialogs from "../components/Grimoire";
-import Inventory from "../components/Inventory";
-import Combat from "../components/Combat";
-import Ingredients from "../components/Ingredients";
-import Crystals from "../components/Crystals";
-import Creatures from "../components/Creatures";
 import { useTheme } from "@mui/material/styles";
-import { useParams } from "react-router-dom";
+import { alpha } from "@mui/material/styles";
+import "../../src/styles/responsive.css"
+
+import { LinearProgress, Typography, useMediaQuery } from "@mui/material";
+
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import AirIcon from "@mui/icons-material/Air";
 import GrassIcon from "@mui/icons-material/Grass";
 import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import CasinoIcon from '@mui/icons-material/Casino';
-import { useNavigate } from "react-router-dom";
-import ModifierIdDialogs from "../components/ModifierIdChara.jsx";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import EditIcon from "@mui/icons-material/Edit";
 import PersonIcon from "@mui/icons-material/Person";
-import { alpha } from "@mui/material/styles";
-import { useTranslation } from "react-i18next";
+
 import { CharacterProvider } from "../context/CharacterContext";
 import { socket } from "../service/socket";
-import { useSnack } from "../hooks/useSnack";
-import { useRef } from "react";
-import DiceChoice from "../components/DiceChoice.jsx";
-import { useCharacterMedia } from "../hooks/useCharacterMedia";
 import { uploadImage, attachMediaToCharacter } from "../service/mediaApi";
-import { useMediaQuery } from "@mui/material";
+import { useSnack } from "../hooks/useSnack";
+import { useCharacterMedia } from "../hooks/useCharacterMedia";
+import { ConnexionContext } from "../components/provider";
+
+import BG from "../components/Background";
+import Top from "../components/Header";
+import Btn from "../components/Btn";
+import BtnAdd from "../components/BtnAdd";
+import BtnRm from "../components/BtnRm";
+import PageLoader from "../components/PageLoader.jsx";
+
+import SideMenu from "../components/SideMenu";
+import CustomizedDialogs from "../components/Grimoire";
+import Inventory from "../components/Inventory";
+import Combat from "../components/Combat";
+import Ingredients from "../components/Ingredients";
+import Crystals from "../components/Crystals";
+import Creatures from "../components/Creatures";
+import ModifierIdDialogs from "../components/ModifierIdChara.jsx";
+import DiceChoice from "../components/DiceChoice.jsx";
+
 
 function ConnectGame() {
   const { t } = useTranslation();
@@ -455,7 +459,7 @@ function ConnectGame() {
   }, [loading, isInvalidUser, navigate]);
 
   if (loading) {
-    return <Loader />;
+    return <PageLoader />;
   }
 
 
@@ -1085,12 +1089,16 @@ function ConnectGame() {
               fontWeight: "normal",
               backgroundColor: theme.custom.mycustomblur.main,
               backdropFilter: theme.custom.mycustomblur.blur,
+              WebkitBackdropFilter: theme.custom.mycustomblur.blur,
               color: "lightblue",
               display: "flex",
               flexDirection: "column",
               textAlign: "start",
               justifyContent: "start",
               border: "solid gray 3px",
+              maxHeight: isMobile ? "99dvh" : "75dvh",
+              overflowY: "auto",
+              textAlign: "justify",
             }}
           >
             <div
@@ -1262,32 +1270,42 @@ function ConnectGame() {
               character={character}
               setCharacter={setCharacter}
             >
-              <div id="idBottom" style={{ padding: "10px", overflow: "hidden" }}>
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.trait")}{" "}
-                  <span id="particularity">{character.Signes_character}</span>
-                  <span>
-                    <ModifierIdDialogs
-                      character={character}
-                      name={"signes"}
-                      left={"90%"}
-                      dataToUpdate={"signe"}
-                    />
-                  </span>
-                </p>
-                <br />
-                <p style={{ color: theme.custom.mycustomblur.text }}>
-                  {t("jdr.background")}{" "}
-                  <span id="caracter">{character.Traits_character}</span>
-                  <span>
-                    <ModifierIdDialogs
-                      character={character}
-                      name={"bg"}
-                      left={"90%"}
-                      dataToUpdate={"bg"}
-                    />
-                  </span>
-                </p>
+              <div id="idBottom" style={{ padding: "10px", }}>
+                <div id="bottomText"
+                  style={{
+                    overflowY: "auto",
+                    overflowX: "hidden",
+                    maxHeight: isMobile ? "55dvh" : "40dvh",
+                    paddingRight: "4px",
+                    width: "100%",
+                    boxSizing: "border-box",
+                  }}>
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.trait")}{" "}
+                    <span id="particularity">{character.Signes_character}</span>
+                    <span>
+                      <ModifierIdDialogs
+                        character={character}
+                        name={"signes"}
+                        left={"90%"}
+                        dataToUpdate={"signe"}
+                      />
+                    </span>
+                  </p>
+                  <br />
+                  <p style={{ color: theme.custom.mycustomblur.text }}>
+                    {t("jdr.background")}{" "}
+                    <span id="caracter">{character.Traits_character}</span>
+                    <span>
+                      <ModifierIdDialogs
+                        character={character}
+                        name={"bg"}
+                        left={"90%"}
+                        dataToUpdate={"bg"}
+                      />
+                    </span>
+                  </p>
+                </div>
                 {!isMobile && (<div>
                   <Btn
                     msg={<CasinoIcon />}
@@ -1301,7 +1319,21 @@ function ConnectGame() {
             </CharacterProvider>
           </div>
         )}
-        {isMobile && (<div style={{
+        {showIdCard && isMobile && (
+          <Btn
+            msg="✕"
+            onClick={() => setShowIdCard(false)}
+            style={{
+              position: "fixed",
+              top: "1dvh",
+              right: "2dvw",
+              zIndex: 1600,
+              width: "40px",
+              flex: "none",
+            }}
+          />
+        )}
+        {isMobile && !isAnyDrawerOpen && !showIdCard && (<div style={{
           position: "fixed",
           top: "20dvh",
           left: "1dvw",
@@ -1415,8 +1447,15 @@ function ConnectGame() {
         }
         {
           rollDice && isMobile && (
-            <div className="dice-overlay" style={{ height: "100dvh" }} >
-              <Btn msg="✕" onClick={() => setRollDice(false)} sx={{ height: "fit-content" }} />
+            <div className="dice-overlay" style={{ height: "95dvh", paddingBottom: "3rem" }} >
+              <Btn msg="✕" onClick={() => setRollDice(false)} sx={{
+                position: "fixed",
+                top: "1dvh",
+                right: "2dvw",
+                zIndex: 2100,
+                width: "40px",
+                height: "fit-content",
+              }} />
               <DiceChoice />
             </div>
           )

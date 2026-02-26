@@ -9,18 +9,19 @@ import { useTranslation } from "react-i18next";
 import { useMediaQuery } from "@mui/material";
 
 
-export default function Combat(data) {
+export default function Combat(props) {
 
     const { t } = useTranslation();
     const theme = useTheme();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const character = data.data;
+    const character = props.data;
     console.log(character);
     const [inventaires, setInventaires] = useState({});
     const [isArmes, setIsArmes] = useState(false);
     const [isArmure, setIsArmure] = useState(false);
     const handleDrawerClose = () => {
         setIsDrawerOpen(false);
+        props.onDrawerChange?.(false);
     };
     useEffect(() => {
         fetch(`/api/inventories/getOneInventories/${character.Name_character}`)
@@ -42,13 +43,31 @@ export default function Combat(data) {
     const isMobile = useMediaQuery("(max-width: 768px)");
     return (
         <div>
-            <IconButton size='large' edge='start' color='inherit' aria-label='logo' onClick={() => setIsDrawerOpen(true)} sx={{ width: '50px', position: 'fixed', right: "0vw", top: '27vh' }} >
+            <IconButton size='large' edge='start' color='inherit' aria-label='logo' onClick={() => { setIsDrawerOpen(true); props.onDrawerChange?.(true); }} sx={{ width: '50px', position: 'fixed', right: "0vw", top: '27vh' }} >
                 {isDrawerOpen ? <></> :
                     <img src={Shield} className="filter-white" style={{ height: '30px' }} alt='Shield' />}
             </IconButton>
-            <Drawer className="drawer" BackdropProps={{ style: { backdropFilter: "none", opacity: 0 } }} PaperProps={{ sx: { backgroundColor: theme.custom.mycustomblur.main, backdropFilter: theme.custom.mycustomblur.blur, top: "5vh", textAlign: 'center', width: isMobile ? "100%" : "40%", borderRadius: "25px" } }} anchor="right" open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
+            <Drawer className="drawer"
+                BackdropProps={{
+                    style: {
+                        backdropFilter: "none",
+                        opacity: 0
+                    }
+                }}
+                PaperProps={{
+                    sx: {
+                        backgroundColor: theme.custom.mycustomblur.main,
+                        backdropFilter: theme.custom.mycustomblur.blur,
+                        WebkitBackdropFilter: theme.custom.mycustomblur.blur,
+                        top: "5vh",
+                        textAlign: 'center',
+                        width: isMobile ? "100%" : "40%",
+                        borderRadius: "25px",
+                        height: "90dvh"
+                    }
+                }} anchor="right" open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
                 <Box p={2} width='250px' sx={{ backdropFilter: "none", top: '15vh', width: '100%' }} textAlign={'center'} role="presentation">
-                    <Grid container spacing={2} width='100%'>
+                    <Grid container spacing={2} width='100%' direction={isMobile ? "column" : "row"}>
                         <List>
                             <Button variant="h4" onClick={() => setIsArmes(!isArmes)} sx={{ color: theme.custom.mycustomblur.text }}>
                                 {t("fight.weapons")}
@@ -242,7 +261,7 @@ export default function Combat(data) {
                         </List>
                     </Grid>
                 </Box>
-                <IconButton onClick={handleDrawerClose} sx={{ position: 'fixed', right: '0vw', top: '27vh' }}>
+                <IconButton onClick={handleDrawerClose} sx={{ position: 'fixed', right: isMobile ? "2dvw" : '0vw', top: isMobile ? "1dvh" : '27vh' }}>
                     <CloseIcon sx={{ color: theme.custom.mycustomblur.text }} />
                 </IconButton>
             </Drawer>

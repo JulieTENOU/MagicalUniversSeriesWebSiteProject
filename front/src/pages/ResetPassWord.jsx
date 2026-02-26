@@ -1,10 +1,13 @@
 import React, { useContext } from "react";
 import "../index.css";
 import "../general.css";
+
+import { ConnexionContext } from "../components/provider";
+
 import Top from "../components/Header";
 import BG from "../components/Background";
-import { ConnexionContext } from "../components/provider";
 import ResetPassWord from "../components/ResetPassWord";
+import PageLoader from "../components/PageLoader";
 
 function ForgottenPassWord() {
   const {
@@ -14,6 +17,9 @@ function ForgottenPassWord() {
   } = useContext(ConnexionContext);
 
   console.log(isConnected);
+
+  if (loading) return <PageLoader />;
+
   return (
     <div className="main">
       <BG />

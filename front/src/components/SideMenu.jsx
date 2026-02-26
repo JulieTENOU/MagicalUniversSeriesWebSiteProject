@@ -21,12 +21,12 @@ import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import { useMediaQuery } from "@mui/material";
 
-export default function SideMenu(character) {
+export default function SideMenu(props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  console.log(character);
-  console.log(character.character);
-  const perso = character.character;
+  console.log(props);
+  console.log(props.character);
+  const perso = props.character;
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isWeapons, setIsWeapons] = useState(false);
   const [isDivers, setIsDivers] = useState(false);
@@ -46,6 +46,7 @@ export default function SideMenu(character) {
   const [raciale, setRaciale] = useState(false);
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
+    props.onDrawerChange?.(false);
   };
   const isMobile = useMediaQuery("(max-width: 768px)");
   return (
@@ -55,7 +56,7 @@ export default function SideMenu(character) {
         edge="start"
         color="inherit"
         aria-label="logo"
-        onClick={() => setIsDrawerOpen(true)}
+        onClick={() => { setIsDrawerOpen(true); props.onDrawerChange?.(true); }}
         sx={{ width: "50px", position: "fixed", right: "0vw", top: "9vh" }}
       >
         {isDrawerOpen ? (
@@ -71,10 +72,12 @@ export default function SideMenu(character) {
           sx: {
             backgroundColor: theme.custom.mycustomblur.main,
             backdropFilter: theme.custom.mycustomblur.blur,
+            WebkitBackdropFilter: theme.custom.mycustomblur.blur,
             top: "5vh",
             textAlign: "center",
             width: isMobile ? "100%" : "40%",
             borderRadius: "25px",
+            height: "90dvh"
           },
         }}
         anchor="right"
@@ -88,7 +91,7 @@ export default function SideMenu(character) {
           textAlign={"center"}
           role="presentation"
         >
-          <Grid container spacing={2} width="100%">
+          <Grid container spacing={2} width="100%" direction={isMobile ? "column" : "row"}>
             <List>
               <Button
                 variant="h4"
@@ -130,7 +133,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Force_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"force"}
                             left={"40%"}
                             dataToUpdate={"Force"}
@@ -158,7 +161,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Dexte_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"dexte"}
                             left={"40%"}
                             dataToUpdate={"Dextérité"}
@@ -186,7 +189,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Resistance_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"resistance"}
                             left={"40%"}
                             dataToUpdate={"Résistance"}
@@ -214,7 +217,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Resilience_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"resilience"}
                             left={"40%"}
                             dataToUpdate={"Résilience"}
@@ -242,7 +245,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Intell_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"intell"}
                             left={"40%"}
                             dataToUpdate={"Intelligence"}
@@ -270,7 +273,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Charisme_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"charisme"}
                             left={"40%"}
                             dataToUpdate={"Charisme"}
@@ -303,7 +306,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Bien_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"bien"}
                             left={"40%"}
                             dataToUpdate={"Bien"}
@@ -331,7 +334,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Mal_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"mal"}
                             left={"40%"}
                             dataToUpdate={"Mal"}
@@ -359,7 +362,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Instinct_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"instinct"}
                             left={"40%"}
                             dataToUpdate={"Instinct"}
@@ -387,7 +390,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Survie_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"survie"}
                             left={"40%"}
                             dataToUpdate={"Survie"}
@@ -460,7 +463,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Demonique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"démonique"}
                                 left={"40%"}
                                 dataToUpdate={"Langue Démonique"}
@@ -490,7 +493,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Draconique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"draconique"}
                                 left={"40%"}
                                 dataToUpdate={"Langue Draconique"}
@@ -520,7 +523,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Xalytien_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"xalytien"}
                                 left={"40%"}
                                 dataToUpdate={"Xalytien"}
@@ -550,7 +553,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Xento_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"xento"}
                                 left={"40%"}
                                 dataToUpdate={"Xentokolien"}
@@ -580,7 +583,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Zenolm_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"zenolm"}
                                 left={"40%"}
                                 dataToUpdate={"Zenolm"}
@@ -610,7 +613,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Justiccel_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"justiccel"}
                                 left={"40%"}
                                 dataToUpdate={"Justiccel"}
@@ -640,7 +643,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Cerebrov_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"cerebrov"}
                                 left={"40%"}
                                 dataToUpdate={"Cérébrov"}
@@ -694,7 +697,7 @@ export default function SideMenu(character) {
                             >
                               {perso.XalytienArchaique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"xaArch"}
                                 left={"40%"}
                                 dataToUpdate={"Xalytien Archaïque"}
@@ -724,7 +727,7 @@ export default function SideMenu(character) {
                             >
                               {perso.XentoArchaique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"xenArch"}
                                 left={"40%"}
                                 dataToUpdate={"Xentokolien Archaïque"}
@@ -754,7 +757,7 @@ export default function SideMenu(character) {
                             >
                               {perso.ZenolmArchaique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"zenArch"}
                                 left={"40%"}
                                 dataToUpdate={"Zenolm Archaïque"}
@@ -784,7 +787,7 @@ export default function SideMenu(character) {
                             >
                               {perso.JusticcelArchaique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"justiArch"}
                                 left={"40%"}
                                 dataToUpdate={"Justiccel Archaïque"}
@@ -838,7 +841,7 @@ export default function SideMenu(character) {
                             >
                               {perso.XalytienAntique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"xaAnt"}
                                 left={"40%"}
                                 dataToUpdate={"Xalytien Antique"}
@@ -869,7 +872,7 @@ export default function SideMenu(character) {
                             >
                               {perso.XentoAntique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"xenAnt"}
                                 left={"40%"}
                                 dataToUpdate={"Xentokolien Antique"}
@@ -899,7 +902,7 @@ export default function SideMenu(character) {
                             >
                               {perso.ZenolmAntique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"zenAnt"}
                                 left={"40%"}
                                 dataToUpdate={"Zenolm Antique"}
@@ -929,7 +932,7 @@ export default function SideMenu(character) {
                             >
                               {perso.JusticcelAntique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"justiAnt"}
                                 left={"40%"}
                                 dataToUpdate={"Justiccel Antique"}
@@ -983,7 +986,7 @@ export default function SideMenu(character) {
                             >
                               {perso.XalytienDemonique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"xaDem"}
                                 left={"40%"}
                                 dataToUpdate={"Xalytien Démonique"}
@@ -1013,7 +1016,7 @@ export default function SideMenu(character) {
                             >
                               {perso.XentoDemonique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"xenDem"}
                                 left={"40%"}
                                 dataToUpdate={"Xentokolien Démonique"}
@@ -1043,7 +1046,7 @@ export default function SideMenu(character) {
                             >
                               {perso.ZenolmDemonique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"ZenDem"}
                                 left={"40%"}
                                 dataToUpdate={"Zenolm Démonique"}
@@ -1073,7 +1076,7 @@ export default function SideMenu(character) {
                             >
                               {perso.JusticcelDemonique_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"JustiDem"}
                                 left={"40%"}
                                 dataToUpdate={"Justiccel Démonique"}
@@ -1127,7 +1130,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Zombik_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"zombik"}
                                 left={"40%"}
                                 dataToUpdate={"Zombik"}
@@ -1157,7 +1160,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Faerik_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"faerik"}
                                 left={"40%"}
                                 dataToUpdate={"Faerik"}
@@ -1187,7 +1190,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Elfik_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"elfik"}
                                 left={"40%"}
                                 dataToUpdate={"Elfik"}
@@ -1217,7 +1220,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Nanien_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"nanien"}
                                 left={"40%"}
                                 dataToUpdate={"Nanien"}
@@ -1247,7 +1250,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Gnomik_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"gnomik"}
                                 left={"40%"}
                                 dataToUpdate={"Gnomik"}
@@ -1301,7 +1304,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Spectrale_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"spectrale"}
                                 left={"40%"}
                                 dataToUpdate={"Langue Spectrale"}
@@ -1331,7 +1334,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Astrale_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"astrale"}
                                 left={"40%"}
                                 dataToUpdate={"Langue Astrale"}
@@ -1366,7 +1369,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Tenebriale_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"tenebriale"}
                                 left={"40%"}
                                 dataToUpdate={"Ténébriale"}
@@ -1396,7 +1399,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Noyale_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"noyale"}
                                 left={"40%"}
                                 dataToUpdate={"Noyale"}
@@ -1426,7 +1429,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Elementale_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"elementale"}
                                 left={"40%"}
                                 dataToUpdate={"Elementale"}
@@ -1456,7 +1459,7 @@ export default function SideMenu(character) {
                             >
                               {perso.Celeste_character}
                               <ModifierDialogs
-                                character={character}
+                                character={perso}
                                 name={"celeste"}
                                 left={"40%"}
                                 dataToUpdate={"Celeste"}
@@ -1512,7 +1515,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Arcs_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"arcs"}
                             left={"40%"}
                             dataToUpdate={"Arcs"}
@@ -1540,7 +1543,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Tir_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"tir"}
                             left={"40%"}
                             dataToUpdate={"Tir"}
@@ -1568,7 +1571,7 @@ export default function SideMenu(character) {
                         >
                           {perso.MainsNues_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"mainsNues"}
                             left={"40%"}
                             dataToUpdate={"Mains Nues"}
@@ -1596,7 +1599,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Jets_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"jets"}
                             left={"40%"}
                             dataToUpdate={"Jets"}
@@ -1624,7 +1627,7 @@ export default function SideMenu(character) {
                         >
                           {perso.ArmesHast_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"hast"}
                             left={"40%"}
                             dataToUpdate={"Armes d'Hast"}
@@ -1652,7 +1655,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Tranchantes_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"tranchantes"}
                             left={"40%"}
                             dataToUpdate={"Tranchantes"}
@@ -1680,7 +1683,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Contondantes_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"contondantes"}
                             left={"40%"}
                             dataToUpdate={"Contondantes"}
@@ -1708,7 +1711,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Esquive_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"esquive"}
                             left={"40%"}
                             dataToUpdate={"Esquive"}
@@ -1736,7 +1739,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Parade_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"parade"}
                             left={"40%"}
                             dataToUpdate={"Parade"}
@@ -1790,7 +1793,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Chant_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"chant"}
                             left={"40%"}
                             dataToUpdate={"Chant"}
@@ -1818,7 +1821,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Chasse_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"chasse"}
                             left={"40%"}
                             dataToUpdate={"Chasse"}
@@ -1846,7 +1849,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Course_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"course"}
                             left={"40%"}
                             dataToUpdate={"Course"}
@@ -1874,7 +1877,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Crochetage_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"crochetage"}
                             left={"40%"}
                             dataToUpdate={"Crochetage"}
@@ -1902,7 +1905,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Deguisement_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"deguisement"}
                             left={"40%"}
                             dataToUpdate={"Déguisement"}
@@ -1930,7 +1933,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Discretion_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"discretion"}
                             left={"40%"}
                             dataToUpdate={"Discrétion"}
@@ -1958,7 +1961,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Eloquance_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"eloquance"}
                             left={"40%"}
                             dataToUpdate={"Eloquance"}
@@ -1986,7 +1989,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Equitation_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"equitation"}
                             left={"40%"}
                             dataToUpdate={"Equitation"}
@@ -2014,7 +2017,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Escalade_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"escalade"}
                             left={"40%"}
                             dataToUpdate={"Escalade"}
@@ -2042,7 +2045,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Hypnose_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"hypnose"}
                             left={"40%"}
                             dataToUpdate={"Hypnose"}
@@ -2070,7 +2073,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Nage_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"nage"}
                             left={"40%"}
                             dataToUpdate={"Nage"}
@@ -2098,7 +2101,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Observation_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"observation"}
                             left={"40%"}
                             dataToUpdate={"Observation"}
@@ -2126,7 +2129,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Pieges_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"pieges"}
                             left={"40%"}
                             dataToUpdate={"Pieges"}
@@ -2154,7 +2157,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Professorat_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"professorat"}
                             left={"40%"}
                             dataToUpdate={"Professorat"}
@@ -2182,7 +2185,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Saut_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"saut"}
                             left={"40%"}
                             dataToUpdate={"Saut"}
@@ -2210,7 +2213,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Soin_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"soin"}
                             left={"40%"}
                             dataToUpdate={"Soin"}
@@ -2238,7 +2241,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Telekinesie_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"telekine"}
                             left={"40%"}
                             dataToUpdate={"Télékinésie"}
@@ -2266,7 +2269,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Vigilence_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"vigi"}
                             left={"40%"}
                             dataToUpdate={"Vigilance"}
@@ -2321,7 +2324,7 @@ export default function SideMenu(character) {
                         >
                           {perso.MagicoTech_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"magicotech"}
                             left={"40%"}
                             dataToUpdate={"Magico-tech"}
@@ -2349,7 +2352,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Cartographie_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"carto"}
                             left={"40%"}
                             dataToUpdate={"Cartographie"}
@@ -2377,7 +2380,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Herboristerie_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"herbo"}
                             left={"40%"}
                             dataToUpdate={"Herboristerie"}
@@ -2405,7 +2408,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Medecine_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"medecine"}
                             left={"40%"}
                             dataToUpdate={"Médecine"}
@@ -2433,7 +2436,7 @@ export default function SideMenu(character) {
                         >
                           {perso.Potions_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"popo"}
                             left={"40%"}
                             dataToUpdate={"Potions"}
@@ -2461,7 +2464,7 @@ export default function SideMenu(character) {
                         >
                           {perso.TheorieMagique_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"theoMag"}
                             left={"40%"}
                             dataToUpdate={"Théorie Magique"}
@@ -2489,7 +2492,7 @@ export default function SideMenu(character) {
                         >
                           {perso.HistoireMagique_character}
                           <ModifierDialogs
-                            character={character}
+                            character={perso}
                             name={"histoMag"}
                             left={"40%"}
                             dataToUpdate={"Histoire Magique"}
@@ -2521,6 +2524,7 @@ export default function SideMenu(character) {
                     color: theme.custom.mycustomblur.text,
                     marginLeft: "5px",
                   }}
+                  direction={isMobile ? "column" : "row"}
                 >
                   <List>
                     <Button
@@ -2566,7 +2570,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.MagieAir_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"air"}
                                   left={"40%"}
                                   dataToUpdate={"Magie d'air"}
@@ -2596,7 +2600,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.MagieEau_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"eau"}
                                   left={"40%"}
                                   dataToUpdate={"Magie d'eau"}
@@ -2626,7 +2630,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.MagieFeu_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"feu"}
                                   left={"40%"}
                                   dataToUpdate={"Magie de Feu"}
@@ -2656,7 +2660,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.MagieTerre_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"terre"}
                                   left={"40%"}
                                   dataToUpdate={"Magie de Terre"}
@@ -2686,7 +2690,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.MagieElec_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"elec"}
                                   left={"40%"}
                                   dataToUpdate={"Magie d'Elec"}
@@ -2743,7 +2747,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.Crea_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"crea"}
                                   left={"40%"}
                                   dataToUpdate={"Magie de Création"}
@@ -2773,7 +2777,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.Animaturgie_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"animaturgie"}
                                   left={"40%"}
                                   dataToUpdate={"Animaturgie"}
@@ -2830,7 +2834,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.MagieVie_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"vie"}
                                   left={"40%"}
                                   dataToUpdate={"Magie de Vie"}
@@ -2860,7 +2864,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.Mort_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"mort"}
                                   left={"40%"}
                                   dataToUpdate={"Magie de mort"}
@@ -2890,7 +2894,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.Temps_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"temps"}
                                   left={"40%"}
                                   dataToUpdate={"Magie de Temps"}
@@ -2920,7 +2924,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.Lumiere_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"lumiere"}
                                   left={"40%"}
                                   dataToUpdate={"Magie de Lumière"}
@@ -2950,7 +2954,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.Tenebres_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"tenebre"}
                                   left={"40%"}
                                   dataToUpdate={"Magie des Ténèbres"}
@@ -2980,7 +2984,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.Cosmos_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"cosmos"}
                                   left={"40%"}
                                   dataToUpdate={"Magie de Cosmos"}
@@ -3037,7 +3041,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.Invoc_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"invoc"}
                                   left={"40%"}
                                   dataToUpdate={"Magie d'invocation"}
@@ -3067,7 +3071,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.Aura_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"aura"}
                                   left={"40%"}
                                   dataToUpdate={"armure"}
@@ -3097,7 +3101,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.MagieAstrale_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"magieAstrale"}
                                   left={"40%"}
                                   dataToUpdate={"Magie Astrale"}
@@ -3127,7 +3131,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.MagieSpectrale_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"magieSpectrale"}
                                   left={"40%"}
                                   dataToUpdate={"Magie Spectrale"}
@@ -3157,7 +3161,7 @@ export default function SideMenu(character) {
                               >
                                 {perso.MagieDraconique_character}
                                 <ModifierDialogs
-                                  character={character}
+                                  character={perso}
                                   name={"magieDraconique"}
                                   left={"40%"}
                                   dataToUpdate={"Magie Draconique"}
@@ -3176,7 +3180,7 @@ export default function SideMenu(character) {
         </Box>
         <IconButton
           onClick={handleDrawerClose}
-          sx={{ position: "fixed", right: "0vw", top: "9vh" }}
+          sx={{ position: "fixed", right: isMobile ? "2dvw" : "0vw", top: isMobile ? "1dvh" : "9vh" }}
         >
           <CloseIcon sx={{ color: theme.custom.mycustomblur.text }} />
         </IconButton>

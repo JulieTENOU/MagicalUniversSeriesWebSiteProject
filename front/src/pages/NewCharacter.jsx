@@ -1,10 +1,14 @@
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+import "../../src/styles/responsive.css"
+
 import { ConnexionContext } from "../components/provider";
+
 import BG from "../components/Background";
 import CreateCharacter from "../components/CreateCharacter";
 import Top from "../components/Header";
-import "../../src/styles/responsive.css"
+import PageLoader from "../components/PageLoader";
 
 function NewCharacter() {
     const navigate = useNavigate();
@@ -18,7 +22,7 @@ function NewCharacter() {
             navigate("/")
         }
     })
-
+    if (loading) return <PageLoader />;
     return (
         <div className='main'>
             <BG />

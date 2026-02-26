@@ -1,14 +1,18 @@
 import { useContext } from 'react';
+
 import '../index.css';
 import '../general.css';
+
+import { ConnexionContext } from '../components/provider.jsx';
+
 import Top from '../components/Header.jsx';
 import BG from '../components/Background.jsx';
-import { ConnexionContext } from '../components/provider.jsx';
 import Inscription from "../components/Inscription.jsx";
-
+import PageLoader from '../components/PageLoader.jsx';
 
 function InscriptionPage() {
     const { state: isConnected, setState: setIsConnected, loading } = useContext(ConnexionContext);
+    if (loading) return <PageLoader />;
     return (
         <div className='main'>
             <BG />

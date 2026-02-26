@@ -48,12 +48,12 @@ function InventoryRow({ label, nameKey, quantityKey, data, theme, onInventoryUpd
   );
 }
 
-export default function Inventory(data) {
+export default function Inventory(props) {
 
   const { t } = useTranslation();
   const theme = useTheme();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const character = data.data;
+  const character = props.data;
   console.log(character);
   const [inventaires, setInventaires] = useState({});
   const [isImportant, setIsImportant] = useState(false);
@@ -62,6 +62,7 @@ export default function Inventory(data) {
   const [argent, setArgent] = useState(false);
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
+    props.onDrawerChange?.(false);
   };
   useEffect(() => {
     fetch(`/api/inventories/getOneInventories/${character.Name_character}`)
@@ -84,7 +85,7 @@ export default function Inventory(data) {
         edge="start"
         color="inherit"
         aria-label="logo"
-        onClick={() => setIsDrawerOpen(true)}
+        onClick={() => { setIsDrawerOpen(true); props.onDrawerChange?.(true); }}
         sx={{ width: "50px", position: "fixed", right: "0vw", top: "18vh" }}
       >
         {isDrawerOpen ? <></> : <CardTravelIcon sx={{ color: "white" }} />}
@@ -96,10 +97,12 @@ export default function Inventory(data) {
           sx: {
             backgroundColor: theme.custom.mycustomblur.main,
             backdropFilter: theme.custom.mycustomblur.blur,
+            WebkitBackdropFilter: theme.custom.mycustomblur.blur,
             top: "5vh",
             textAlign: "center",
             width: isMobile ? "100%" : "40%",
             borderRadius: "25px",
+            height: "90dvh"
           },
         }}
         anchor="right"
@@ -113,7 +116,7 @@ export default function Inventory(data) {
           textAlign={"center"}
           role="presentation"
         >
-          <Grid container spacing={2} width="100%">
+          <Grid container spacing={2} width="100%" direction={isMobile ? "column" : "row"}>
             <List>
               <Button
                 variant="h6"
@@ -201,6 +204,7 @@ export default function Inventory(data) {
                     color: theme.custom.mycustomblur.text,
                     marginLeft: "5px",
                   }}
+                  direction={isMobile ? "column" : "row"}
                 >
                   <Table>
                     <TableBody>
@@ -522,7 +526,7 @@ export default function Inventory(data) {
         </Box>
         <IconButton
           onClick={handleDrawerClose}
-          sx={{ position: "fixed", right: "0vw", top: "18vh" }}
+          sx={{ position: "fixed", right: isMobile ? "2dvw" : "0vw", top: isMobile ? "1dvh" : "18vh" }}
         >
           <CloseIcon sx={{ color: theme.custom.mycustomblur.text, }} />
         </IconButton>

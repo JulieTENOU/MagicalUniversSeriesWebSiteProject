@@ -462,7 +462,7 @@ export default function ModifierDialogs(data) {
     newDatas = { [key]: value };
 
     fetch(
-      `/api/characters/updateCharacter/${character.character.ID_character}`,
+      `/api/characters/updateCharacter/${character.ID_character}`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

@@ -1,10 +1,14 @@
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+import "../../src/styles/responsive.css"
+
 import { ConnexionContext } from "../components/provider";
-import CreateCharacterAdmin from "../components/CreateCharacterAdmin";
+
 import BG from "../components/Background";
 import Top from "../components/Header";
-import "../../src/styles/responsive.css"
+import PageLoader from "../components/PageLoader";
+import CreateCharacterAdmin from "../components/CreateCharacterAdmin";
 
 function NewCharacterAdmin() {
   const navigate = useNavigate();
@@ -22,6 +26,8 @@ function NewCharacterAdmin() {
       navigate("/");
     }
   });
+
+  if (loading) return <PageLoader />;
 
   return (
     <div className="main">

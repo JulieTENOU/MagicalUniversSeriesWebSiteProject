@@ -27,16 +27,17 @@ function CrystalRow({ label, field, crystals, theme, onCrystalUpdate }) {
   );
 }
 
-export default function Crystals(data) {
+export default function Crystals(props) {
 
   const { t } = useTranslation();
   const theme = useTheme();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const character = data.data;
+  const character = props.data;
   console.log(character);
   const [crystals, setCrystals] = useState({});
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
+    props.onDrawerChange?.(false);
   };
   useEffect(() => {
     fetch(`/api/crystals/getOneCrystals/${character.Name_character}`)
@@ -62,7 +63,7 @@ export default function Crystals(data) {
         edge="start"
         color="inherit"
         aria-label="logo"
-        onClick={() => setIsDrawerOpen(true)}
+        onClick={() => { setIsDrawerOpen(true); props.onDrawerChange?.(true); }}
         sx={{ width: "50px", position: "fixed", right: "0vw", top: "36vh" }}
       >
         {isDrawerOpen ? (
@@ -83,10 +84,12 @@ export default function Crystals(data) {
           sx: {
             backgroundColor: theme.custom.mycustomblur.main,
             backdropFilter: theme.custom.mycustomblur.blur,
+            WebkitBackdropFilter: theme.custom.mycustomblur.blur,
             top: "5vh",
             textAlign: "center",
             width: isMobile ? "100%" : "40%",
             borderRadius: "25px",
+            height: "90dvh"
           },
         }}
         anchor="right"
@@ -100,7 +103,7 @@ export default function Crystals(data) {
           textAlign={"center"}
           role="presentation"
         >
-          <Grid container spacing={2} width="100%">
+          <Grid container spacing={2} width="100%" direction={isMobile ? "column" : "row"}>
             <div
               style={{
                 textAlign: "left",
@@ -243,7 +246,7 @@ export default function Crystals(data) {
         </Box>
         <IconButton
           onClick={handleDrawerClose}
-          sx={{ position: "fixed", right: "0vw", top: "36vh" }}
+          sx={{ position: "fixed", right: isMobile ? "2dvw" : "0vw", top: isMobile ? "1dvh" : "36vh" }}
         >
           <CloseIcon sx={{ color: theme.custom.mycustomblur.text }} />
         </IconButton>

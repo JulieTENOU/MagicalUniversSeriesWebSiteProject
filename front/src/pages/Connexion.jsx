@@ -1,11 +1,15 @@
 import React, { useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import '../index.css';
 import '../general.css';
+
+import { ConnexionContext } from '../components/provider';
+
 import Top from '../components/Header';
 import BG from '../components/Background';
-import { ConnexionContext } from '../components/provider';
 import Connexion from "../components/Connexion.jsx";
-import { useNavigate } from 'react-router-dom';
+import PageLoader from '../components/PageLoader.jsx';
 
 
 function ConnexionPage() {
@@ -19,6 +23,9 @@ function ConnexionPage() {
             navigate("/")
         }
     })
+
+    if (loading) return <PageLoader />;
+
     return (
         <div className='main'>
             <BG />

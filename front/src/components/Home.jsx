@@ -19,57 +19,27 @@ export default function HomeCompo() {
 
   const { t } = useTranslation();
 
+  if (loading) {
+    return <div className="home-content" />; // ou un spinner
+  }
   return (
-    // <div className="main">
     <div className="home-content"
-    // style={{
-    //   fontSize: "2em",
-    //   width: "100vw",
-    //   display: "flex",
-    //   flexDirection: "row",
-    //   position: "fixed",
-    //   left: 0,
-    //   bottom: "40vh",
-    //   justifyContent: "space-around",
-    //   alignItems: "center",
-    //   alignContent: "space-around",
-    // }}
     >
       {currentUser ? (
         <div className="home-logged"
-        // style={{
-        //   display: "flex",
-        //   flexDirection: "column",
-        //   alignItems: "center",
-        //   justifyContent: "space-evenly",
-        // }}
         >
           <h2 className="home-welcome"
-          // style={{
-          //   color: "whitesmoke",
-          //   position: "absolute",
-          //   bottom: "25vh",
-          // }}
           >
             {t("home.welcomeUser", { pseudo: currentUser.users_pseudo })}
           </h2>
           <div className="home-btns"
-          // style={{
-          //   display: "flex",
-          //   flexDirection: "row",
-          //   justifyContent: "center",
-          //   alignItems: "center",
-          //   gap: "20vw",
-          //   position: "relative",
-          //   marginInline: "15vw",
-          // }}
           >
             <Btn
               path="/read"
               msg={t("home.goToBooks")}
               src={Pile}
               height={"100px"}
-              sx={{ color: "white" /*marginInline:'15vw'*/ }}
+              sx={{ color: "white" }}
             />
             <Btn
               path="/jdr"
@@ -77,13 +47,12 @@ export default function HomeCompo() {
               src={logoMA}
               height={"100px"}
               width={"100px"}
-              sx={{ color: "white" /* marginInline:'15vw'*/ }}
+              sx={{ color: "white" }}
             />
           </div>
         </div>
       ) : (
         <div className="home-guest"
-        // style={{ color: "white", textAlign: "center" }}
         >
           <p>
             {t("home.welcomeGuest")
@@ -98,6 +67,5 @@ export default function HomeCompo() {
         </div>
       )}
     </div>
-    // </div>
   );
 }

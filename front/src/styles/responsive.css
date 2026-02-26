@@ -53,12 +53,12 @@
   overflow-y: visible; /* plus de scroll interne sur mobile */
 }
 
-@media (min-width: 900px) {
+/* @media (min-width: 900px) {
   .readHomeGrid {
     max-height: 30vh;
     overflow-y: auto;
   }
-}
+} */
 
 /* ─── CONTENEUR GÉNÉRIQUE DE PAGE ────────────────────────── */
 /*
@@ -158,6 +158,49 @@
   }
 }
 
+/* 1) Le “verre” : blur sur une zone de taille écran (pas sur 10 pages) */
+.read-glass-shell {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden; /* OK: ça ne casse PAS le scroll */
+  max-width: 900px;
+  margin: auto;
+
+  /* Lisibilité même si blur saute */
+  background: rgba(0, 0, 0, 0.2);
+
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+
+  transform: translateZ(0);
+
+  display: flex;
+  flex-direction: column;
+
+  /* ajuste si besoin */
+  height: calc(100dvh - 140px);
+}
+
+/* 2) Le scroll de lecture : il est ICI */
+.read-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  /* max-height: calc(100svh - 140px); ou 100dvh */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.read-inner {
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 900px;
+}
 /*
   Le Box de lecture a p:5 (40px) de padding partout.
   Sur mobile on réduit drastiquement + on ajoute de la marge
@@ -457,10 +500,14 @@ input {
     top: 0 !important;
     left: 0 !important;
     width: 100dvw !important;
-    height: 100dvh !important;
+    max-height: 100dvh !important;
+    min-height: 100dvh !important;
     z-index: 1500 !important;
     overflow-y: auto !important;
     justify-content: center !important;
+    box-sizing: border-box !important;
+    padding: 10px !important;
+    word-break: break-word !important;
   }
   #idCard.idcard-open #idLeft,
   #idCard.idcard-open #idRight {
@@ -485,6 +532,24 @@ input {
     justify-content: center;
     margin-top: 2rem;
   }
+}
+
+#bottomText {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+#bottomText::-webkit-scrollbar {
+  width: 4px;
+}
+
+#bottomText::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#bottomText::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
 }
 
 /* ─── DICE OVERLAY MOBILE ────────────────────────────────── */

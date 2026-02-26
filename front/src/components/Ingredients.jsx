@@ -43,16 +43,17 @@ function IngredientRow({ label, nameKey, quantityKey, data, theme, onIngredientU
   );
 }
 
-export default function Ingredients(data) {
+export default function Ingredients(props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  console.log("data:", data);
-  const character = data.data;
+  console.log("props:", props);
+  const character = props.data;
   console.log("character:", character);
   const [ingredients, setIngredients] = useState({});
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
+    props.onDrawerChange?.(false);
   };
   useEffect(() => {
     fetch(`/api/ingredients/getOneIngredients/${character.Name_character}`)
@@ -83,7 +84,7 @@ export default function Ingredients(data) {
         edge="start"
         color="inherit"
         aria-label="logo"
-        onClick={() => setIsDrawerOpen(true)}
+        onClick={() => { setIsDrawerOpen(true); props.onDrawerChange?.(true); }}
         sx={{ width: "50px", position: "fixed", right: "0vw", top: "45vh" }}
       >
         {isDrawerOpen ? (
@@ -104,10 +105,12 @@ export default function Ingredients(data) {
           sx: {
             backgroundColor: theme.custom.mycustomblur.main,
             backdropFilter: theme.custom.mycustomblur.blur,
+            WebkitBackdropFilter: theme.custom.mycustomblur.blur,
             top: "5vh",
             textAlign: "center",
             width: isMobile ? "100%" : "40%",
             borderRadius: "25px",
+            height: "90dvh"
           },
         }}
         anchor="right"
@@ -121,7 +124,7 @@ export default function Ingredients(data) {
           textAlign={"center"}
           role="presentation"
         >
-          <Grid container spacing={2} width="100%">
+          <Grid container spacing={2} width="100%" direction={isMobile ? "column" : "row"}>
             <div
               style={{
                 textAlign: "left",
@@ -168,11 +171,11 @@ export default function Ingredients(data) {
         </Box>
         <IconButton
           onClick={handleDrawerClose}
-          sx={{ position: "fixed", right: "0vw", top: "45vh" }}
+          sx={{ position: "fixed", right: isMobile ? "2dvw" : "0vw", top: isMobile ? "1dvh" : "45vh" }}
         >
           <CloseIcon sx={{ color: theme.custom.mycustomblur.text }} />
         </IconButton>
       </Drawer>
-    </div>
+    </div >
   );
 }

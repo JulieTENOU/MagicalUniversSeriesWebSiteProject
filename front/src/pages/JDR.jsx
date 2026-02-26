@@ -1,18 +1,23 @@
 import { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
+
+import { Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+
 import "../index.css";
 import "../general.css";
+
+import { useAppContext } from "../context";
+
+import { ConnexionContext } from "../components/provider.jsx";
+
 import Btn from "../components/Btn";
 import Top from "../components/Header";
 import BG from "../components/Background";
-import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../context";
-import { Typography } from "@mui/material";
-import { ConnexionContext } from "../components/provider.jsx";
-import { useTheme } from "@mui/material/styles";
 import BtnRtn from "../components/BtnRtn.jsx";
-import i18n from "i18next";
-import { useTranslation } from "react-i18next";
-import Loader from "../components/Loader.jsx";
+import PageLoader from "../components/PageLoader.jsx";
 
 function JDR() {
   const { t } = useTranslation();
@@ -52,7 +57,7 @@ function JDR() {
   );
 
   if (loading || !Array.isArray(stats)) {
-    return <Loader />;
+    return <PageLoader />;
   }
 
   return (
