@@ -1,16 +1,13 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import TextField from '@mui/material/TextField';
 import { useState } from 'react';
-import Pencil from '../assets/svg/pencil-outline.svg';
+import PropTypes from 'prop-types';
+
 import { useTheme } from "@mui/material/styles";
+
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, TextField } from '@mui/material';
+
+import CloseIcon from '@mui/icons-material/Close';
+import Pencil from '../assets/svg/pencil-outline.svg';
 
 function ModifierTitle(props) {
   const { children, onClose, ...other } = props;

@@ -1,21 +1,15 @@
-import {
-  Button,
-  Box,
-  Typography,
-  TextField,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Link,
-  backdropClasses,
-} from "@mui/material";
+
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { ConnexionContext } from "./provider";
+
+import { Button, Box, Typography, TextField, DialogContent, DialogContentText, DialogActions, Link, backdropClasses, } from "@mui/material";
+
+import { useTheme } from "@mui/material/styles";
+
 import HomeCompo from "./Home";
 import Btn from "./Btn";
-import { useTheme } from "@mui/material/styles";
-import { useTranslation } from "react-i18next";
 
 export default function Connexion() {
   const theme = useTheme();

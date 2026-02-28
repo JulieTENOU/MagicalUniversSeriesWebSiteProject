@@ -1,7 +1,8 @@
 import { useContext } from "react";
-import Btn from "../components/Btn";
 import { ConnexionContext } from "../components/provider";
 import { useTranslation } from "react-i18next";
+
+import Btn from "../components/Btn";
 
 export default function HomeCompo() {
 

@@ -1,3 +1,8 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { useTheme } from "@mui/material/styles";
+
 import {
   Button,
   Box,
@@ -6,13 +11,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  Link,
   Alert,
 } from "@mui/material";
-import Btn from "./Btn";
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useTheme } from "@mui/material/styles";
+
+
 
 export default function ForgotPassword({ onBack }) {
   const theme = useTheme();
@@ -47,7 +49,7 @@ export default function ForgotPassword({ onBack }) {
       setSent(true);
       setMessage(
         data.message ||
-          "Si ce mail existe, tu recevras un lien de réinitialisation."
+        "Si ce mail existe, tu recevras un lien de réinitialisation."
       );
     } catch (err) {
       setError("Erreur lors de l'envoi. Réessaie plus tard.");
@@ -77,21 +79,21 @@ export default function ForgotPassword({ onBack }) {
             overflow: "hidden",
           }}
         >
-              <Typography
-                sx={{
-                  width: "100%",
-                  textAlign: "center",
-                  padding: "6px",
-                  color: theme.custom.mymodal.text,
-                  backgroundColor: theme.custom.mymodal.button,
-                  fontWeight: "bold",
-                  textDecoration: "none",
-                  textTransform:"uppercase"
-                  
-                }}
-              >
-                Mot de passe oublié
-              </Typography>
+          <Typography
+            sx={{
+              width: "100%",
+              textAlign: "center",
+              padding: "6px",
+              color: theme.custom.mymodal.text,
+              backgroundColor: theme.custom.mymodal.button,
+              fontWeight: "bold",
+              textDecoration: "none",
+              textTransform: "uppercase"
+
+            }}
+          >
+            Mot de passe oublié
+          </Typography>
         </Box>
         <DialogContent>
           {sent ? (

@@ -1,15 +1,8 @@
 import * as React from "react";
-import {
-  Button,
-  TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useState } from "react";
+
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, } from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 export default function BtnAdd(props) {
   const [open, setOpen] = React.useState(false);
@@ -66,23 +59,23 @@ export default function BtnAdd(props) {
       };
     }
     console.log(data);
- fetch(`/api/gauges/updateGauges/${encodeURIComponent(props.character.Name_character)}`, {
-  method: "PUT",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(data),
-})
-  .then(async (res) => {
-    const body = await res.json().catch(() => null);
-    if (!res.ok) throw new Error(`HTTP ${res.status}: ${JSON.stringify(body)}`);
-    return body;
-  })
-  .then((data) => {
-    console.log("Success:", data);
-    props.onGaugeUpdate?.(props.manaName, diff);
-  })
-  .catch((error) => {
-    console.error("Error:", error);
-  });
+    fetch(`/api/gauges/updateGauges/${encodeURIComponent(props.character.Name_character)}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then(async (res) => {
+        const body = await res.json().catch(() => null);
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${JSON.stringify(body)}`);
+        return body;
+      })
+      .then((data) => {
+        console.log("Success:", data);
+        props.onGaugeUpdate?.(props.manaName, diff);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
 
     setOpen(false);
   };

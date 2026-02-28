@@ -15,7 +15,7 @@ import ReadBook from "./pages/ReadBook";
 import ChaptersList from "./pages/ReadChapters";
 import Connexion from "./pages/Connexion";
 import Inscription from "./pages/Inscription";
-import MyProvider from "./components/provider.jsx";
+// import MyProvider from "./components/provider.jsx"; // déjà importé dans index.js
 import SettingsPage from "./pages/Settings.jsx";
 import NewCharacter from "./pages/NewCharacter.jsx";
 import ForgottenPassWord from "./pages/ForgottenPassWord.jsx";
@@ -34,8 +34,11 @@ function App() {
 
   if (loading) return <PageLoader />;
 
+  // <MyProvider> retiré ici : il est déjà présent dans index.js.
+  // Avoir deux MyProvider imbriqués crée un second ConnexionContext indépendant (loading=true, state=undefined)
+  // que les pages comme JDR lisent, provoquant une race condition et une page blanche.
   return (
-    <MyProvider>
+    // <MyProvider>
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -66,7 +69,7 @@ function App() {
           <Route path="/diceRoll" element={<DiceChoice />} />
         </Routes>
       </Router>
-    </MyProvider>
+    // </MyProvider>
   );
 }
 

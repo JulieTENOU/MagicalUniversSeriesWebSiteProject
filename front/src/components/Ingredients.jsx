@@ -1,13 +1,15 @@
-import { Drawer, Box, IconButton, Grid, Typography, TableRow, TableCell, Table, TableBody, TableHead } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
-import ModifierDialogs from "./ModifierIngredients";
-import Ingredient from "../assets/svg/icons8-potion.svg";
-import { useTheme } from "@mui/material/styles";
-
 import { useTranslation } from "react-i18next";
 
-import { useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+
+import { Drawer, Box, IconButton, Grid, Typography, TableRow, TableCell, Table, TableBody, useMediaQuery } from "@mui/material";
+
+import CloseIcon from "@mui/icons-material/Close";
+import Ingredient from "../assets/svg/icons8-potion.svg";
+
+import ModifierDialogs from "./ModifierIngredients";
+
 
 function IngredientRow({ label, nameKey, quantityKey, data, theme, onIngredientUpdate }) {
   const name = data?.[nameKey] ?? "—";

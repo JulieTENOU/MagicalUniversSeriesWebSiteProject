@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { Typography, Drawer, IconButton, Divider, List, ListSubheader, ListItemButton, ListItemText, } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import { useTheme } from "@mui/material/styles";
 
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -27,6 +28,9 @@ function ReadBook() {
   const API_BASE = process.env.REACT_APP_API_BASE || window.location.origin;
   const LogoReturn = `${API_BASE}/api/media/getOneMedia/8`;
   const LogoNext = `${API_BASE}/api/media/getOneMedia/6`;
+  const SepGrey = `${API_BASE}/api/media/getOneMedia/48`;
+  const SepBlack = `${API_BASE}/api/media/getOneMedia/47`;
+
   const { serie, book, chapter } = useParams();
   const [currentChapter, setCurrentChapter] = useState(null);
 
@@ -151,16 +155,51 @@ function ReadBook() {
   const parseChapterContent = (text, mode) => {
     if (!text) return null;
 
-    const lines = text.split("\n");
+    // ── Pre-processing : collapse les balises multi-lignes en une seule ──
+    let normalized = text
+      .replace(/<i>([\s\S]*?)<\/i>/g, (_, c) => `<i>${c.replace(/\n/g, " ")}</i>`)
+      .replace(/<b>([\s\S]*?)<\/b>/g, (_, c) => `<b>${c.replace(/\n/g, " ")}</b>`)
+      .replace(/<bi>([\s\S]*?)<\/bi>/g, (_, c) => `<bi>${c.replace(/\n/g, " ")}</bi>`)
+      .replace(/<note([^>]*)>([\s\S]*?)<\/note>/g, (_, attrs, c) => `<note${attrs}>${c.replace(/\n/g, " ")}</note>`);
+
+    const lines = normalized.split("\n").map(l => l.trim());
+
+    // ── Fonction qui parse les balises inline sur une ligne ──
+    const parseInline = (line, key) => {
+      const parts = line.split(/(<bi>[\s\S]*?<\/bi>|<i>[\s\S]*?<\/i>|<b>[\s\S]*?<\/b>|<note[^>]*>[\s\S]*?<\/note>)/g);
+
+      const rendered = parts.map((part, i) => {
+        if (part.startsWith("<bi>") && part.endsWith("</bi>"))
+          return <span key={i} style={{ fontStyle: "italic", fontWeight: "bold" }}>{part.slice(4, -5)}</span>;
+        if (part.startsWith("<i>") && part.endsWith("</i>"))
+          return <span key={i} style={{ fontStyle: "italic" }}>{part.slice(3, -4)}</span>;
+        if (part.startsWith("<b>") && part.endsWith("</b>"))
+          return <span key={i} style={{ fontWeight: "bold" }}>{part.slice(3, -4)}</span>;
+        const noteMatch = part.match(/^<note id="(\d+)">(.*?)<\/note>$/);
+        if (noteMatch) {
+          const [, id, noteText] = noteMatch;
+          return (
+            <Tooltip key={i} title={noteText} arrow placement="top">
+              <sup style={{ cursor: "help", borderBottom: "1px dotted currentColor" }}>
+                {id}
+              </sup>
+            </Tooltip>
+          );
+        }
+        return part;
+      });
+
+      return (
+        <Typography key={key} sx={{ whiteSpace: "pre-line", textAlign: "justify" }} color={theme.custom.mycustomblur.text}>
+          {rendered}
+        </Typography>
+      );
+    };
 
     return lines.map((line, index) => {
-      // Image de séparation
-      if (line.includes("<sep />")) {
-        const imgSrc =
-          mode === "dark"
-            ? "/assets/img/separator-light.png"
-            : "/assets/img/separator-dark.png";
-
+      // Séparateur
+      if (line.includes("<sep/>")) {
+        const imgSrc = mode === "dark" ? SepGrey : SepBlack;
         return (
           <div key={index} style={{ textAlign: "center", margin: "1rem 0" }}>
             <img src={imgSrc} alt="Séparateur" style={{ maxHeight: "40px" }} />
@@ -168,56 +207,24 @@ function ReadBook() {
         );
       }
 
-      // Texte en italique complet
-      const italicMatch = line.match(/^<i>(.*?)<\/i>$/);
-      if (italicMatch) {
+      // Ligne entièrement italique (optimisation visuelle : pas de texte normal autour)
+      const italicFullMatch = line.match(/^<i>(.*)<\/i>$/);
+      if (italicFullMatch) {
         return (
-          <Typography
-            key={index}
-            sx={{
-              fontStyle: "italic",
-              whiteSpace: "pre-line",
-              textAlign: "justify",
-            }}
-            color={theme.custom.mycustomblur.text}
-          >
-            {italicMatch[1]}
+          <Typography key={index} sx={{ fontStyle: "italic", whiteSpace: "pre-line", textAlign: "justify" }} color={theme.custom.mycustomblur.text}>
+            {italicFullMatch[1]}
           </Typography>
         );
       }
 
-      // Texte avec balises <i> à l'intérieur
-      if (line.includes("<i>")) {
-        const parts = line.split(/(<i>.*?<\/i>)/g);
-
-        return (
-          <Typography
-            key={index}
-            sx={{ whiteSpace: "pre-line", textAlign: "justify" }}
-            color={theme.custom.mycustomblur.text}
-          >
-            {parts.map((part, i) => {
-              if (part.startsWith("<i>") && part.endsWith("</i>")) {
-                return (
-                  <span key={i} style={{ fontStyle: "italic" }}>
-                    {part.slice(3, -4)}
-                  </span>
-                );
-              } else {
-                return part;
-              }
-            })}
-          </Typography>
-        );
+      // Ligne avec balises inline
+      if (line.includes("<i>") || line.includes("<b>") || line.includes("<bi>") || line.includes("<note ")) {
+        return parseInline(line, index);
       }
 
       // Paragraphe normal
       return (
-        <Typography
-          key={index}
-          sx={{ whiteSpace: "pre-line", textAlign: "justify" }}
-          color={theme.custom.mycustomblur.text}
-        >
+        <Typography key={index} sx={{ whiteSpace: "pre-line", textAlign: "justify" }} color={theme.custom.mycustomblur.text}>
           {line}
         </Typography>
       );
@@ -456,7 +463,17 @@ function ReadBook() {
             >
               {gate
                 ? "Accès verrouillé"
-                : currentChapter?.title || "Chargement..."}
+                :
+                <>
+                  <span style={{ fontFamily: "'Lettrine', serif", fontSize: "1.4em" }}>
+                    {currentChapter?.title?.[0]}
+                  </span>
+                  <span style={{ fontFamily: "'Titre', serif", fontSize: "1.4em" }}>
+                    {currentChapter?.title?.slice(1)}
+                  </span>
+                </>
+
+                || "Chargement..."}
             </Typography>
 
             {/* Gate Éveil */}
@@ -535,8 +552,11 @@ function ReadBook() {
                 )}
               </div>
             ) : (
-              currentChapter?.content &&
-              parseChapterContent(currentChapter.content, localReadingMode)
+              currentChapter?.content && (
+                <div style={{ fontFamily: "'Corps', serif" }}>
+                  {parseChapterContent(currentChapter.content, localReadingMode)}
+                </div>
+              )
             )}
           </div>
         </div>

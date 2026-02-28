@@ -1,5 +1,6 @@
-import { Button, Typography } from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+
+import { Button, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 export default function BtnRtn(props) {
@@ -34,7 +35,16 @@ export default function BtnRtn(props) {
   return (
     <div style={props.style}>
       <Link to={props.path}>
-        <Button sx={props.sx} onClick={handleBack}>
+        {/* <Button sx={props.sx} onClick={handleBack}> */}
+        <Button
+          disableRipple
+          sx={{
+            ...props.sx,
+            backgroundColor: "transparent",
+            "&:hover": { backgroundColor: "transparent" },
+          }}
+          onClick={handleBack}
+        >
           <div
             style={{
               display: "flex",

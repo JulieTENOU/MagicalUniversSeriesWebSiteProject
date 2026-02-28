@@ -1,13 +1,16 @@
-import { Drawer, Box, IconButton, Divider, Button, Grid, List, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from "react";
-import Shield from '../assets/svg/icons8-shield.svg';
-import ModifierDialogs from "./ModifierInventory";
-import { useTheme } from "@mui/material/styles";
-
 import { useTranslation } from "react-i18next";
-import { useMediaQuery } from "@mui/material";
 
+
+import { Drawer, Box, IconButton, Divider, Button, Grid, List, Table, TableBody, TableCell, TableHead, TableRow, useMediaQuery } from "@mui/material";
+
+import { useTheme } from "@mui/material/styles";
+import CloseIcon from '@mui/icons-material/Close';
+
+
+import Shield from '../assets/svg/icons8-shield.svg';
+
+import ModifierDialogs from "./ModifierInventory";
 
 export default function Combat(props) {
 

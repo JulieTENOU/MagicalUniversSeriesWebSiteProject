@@ -27,9 +27,9 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.STRING(500),
         allowNull: false,
       },
-      image: {
-        type: DataTypes.STRING(500),
-        allowNull: false,
+      ID_media: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
       },
     },
     {

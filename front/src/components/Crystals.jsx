@@ -1,12 +1,15 @@
-import { Drawer, Box, IconButton, Grid, Typography, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
-import ModifierDialogs from "./ModifierCrystals";
-import Crystal from "../assets/svg/icons8-crystal.svg";
+import { useTranslation } from "react-i18next";
+
 import { useTheme } from "@mui/material/styles";
 
-import { useTranslation } from "react-i18next";
+import { Drawer, Box, IconButton, Grid, Typography, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { useMediaQuery } from "@mui/material";
+
+import CloseIcon from "@mui/icons-material/Close";
+import Crystal from "../assets/svg/icons8-crystal.svg";
+
+import ModifierDialogs from "./ModifierCrystals";
 
 function CrystalRow({ label, field, crystals, theme, onCrystalUpdate }) {
   const value = crystals?.[field] ?? "—";

@@ -1,15 +1,20 @@
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { ConnexionContext } from "./provider";
+
+import { useTheme } from "@mui/material/styles";
+
 import { AppBar, Toolbar } from "@mui/material";
+
 import HomeIcon from "@mui/icons-material/Home";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { useContext } from "react";
-import Btn from "./Btn";
-import { ConnexionContext } from "./provider";
-import { useTheme } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import SmartWatchIcon from "./icons/SmartWatchIcon";
+
 import BooksIcon from "./icons/BooksIcon";
+
+import Btn from "./Btn";
 
 export default function Top() {
   const {

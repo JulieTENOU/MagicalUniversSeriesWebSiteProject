@@ -13,7 +13,7 @@ module.exports = {
           ID_series,
           book_Name,
           path,
-          image,
+          ID_media,
         });
         return res.status(201).send({ newBook });
       } catch (error) {
@@ -156,7 +156,7 @@ module.exports = {
           book_series,
           book_Name,
           path,
-          image,
+          ID_media,
         };
         response.update(bookUpdate);
         res.send(response);

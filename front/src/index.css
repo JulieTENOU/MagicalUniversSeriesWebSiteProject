@@ -1,56 +1,84 @@
-*{
-  margin:0;
-  padding:0;
-  font-family: 'Times New Roman', Times, serif;
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Times New Roman", Times, serif;
 }
 
-.main{
+.main {
   width: 100%;
   height: auto;
   background-attachment: fixed;
   background-size: cover;
 }
- 
-.header{
+
+.header {
   position: absolute;
-  top:0px;
+  top: 0px;
 }
 
-table{
+table {
   border-collapse: collapse;
 }
 
-th, td{
+th,
+td {
   border: 1px solid black;
   padding: 10px;
 }
-.comp{ 
+.comp {
   border: none !important;
   margin: 0px !important;
 }
 
-tr{
+tr {
   height: 50px;
 }
 
-.diversName, .armureE{
+.diversName,
+.armureE {
   width: 300px;
 }
-.important{
+.important {
   width: 350px;
-  height:10px !important;
+  height: 10px !important;
 }
-.diversQ, .armeM{
+.diversQ,
+.armeM {
   width: 100px;
 }
-.armesName, .armureName{
+.armesName,
+.armureName {
   width: 230px;
 }
 
-.armeP, .armeD, .armureCac, .armureD{
+.armeP,
+.armeD,
+.armureCac,
+.armureD {
   width: 150px;
 }
 
-tr{
+tr {
   height: 0vh;
+}
+
+@font-face {
+  font-family: "Lettrine";
+  src: url("./assets/fonts/TrajanusBricks.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Titre";
+  src: url("./assets/fonts/Felixti.TTF") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Corps";
+  src: url("./assets/fonts/Felixti.TTF") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }

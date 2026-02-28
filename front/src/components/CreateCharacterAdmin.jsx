@@ -1,8 +1,14 @@
-import { Box, Typography, Button, MenuItem, TextField } from "@mui/material";
 import { useState, useEffect, useContext } from "react";
-import Btn from "./Btn";
 import { ConnexionContext } from "./provider";
+
+import { useTheme } from "@mui/material/styles";
+
 import {
+  Box,
+  Typography,
+  Button,
+  MenuItem,
+  TextField,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -14,7 +20,8 @@ import {
   Radio,
   Checkbox,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+
+import Btn from "./Btn";
 
 export default function CreateCharacterAdmin() {
   const { state: currentUser } = useContext(ConnexionContext);

@@ -1,20 +1,13 @@
 import * as React from "react";
-import PropTypes from "prop-types";
+import { useState, useEffect, useCallback } from "react";
 
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { uploadImage, attachMediaToCharacter, deleteMedia, } from "../service/mediaApi";
+import { useCharacterMedia } from "../hooks/useCharacterMedia";
+
 import { styled } from "@mui/material/styles";
 
-import Btn from "./Btn";
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Typography, Box, TextField, useMediaQuery } from "@mui/material";
 
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -24,9 +17,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 
-import { useState, useEffect, useCallback } from "react";
-import { uploadImage, attachMediaToCharacter, deleteMedia, } from "../service/mediaApi";
-import { useCharacterMedia } from "../hooks/useCharacterMedia";
+import Btn from "./Btn";
 
 
 const tornSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"><path d="
@@ -159,7 +150,7 @@ function Lightbox({ images, startIndex, onClose }) {
 
 export default function CustomizedDialogs(data) {
   const API_BASE = process.env.REACT_APP_API_BASE || window.location.origin;
-  const Grimoire = `${API_BASE}/api/media/getOneMedia/35`;
+  const Grimoire = `${API_BASE}/api/media/getOneMedia/57`;
   const character = data.data;
   console.log(character);
   const [inventaires, setInventaires] = useState({});
@@ -316,7 +307,7 @@ export default function CustomizedDialogs(data) {
         variant="outlined"
         onClick={handleClickOpen}
       >
-        <img src={Grimoire} height={"75px"} alt="grimoire" />
+        <img src={Grimoire} height={"125px"} alt="grimoire" />
       </Button>
       <Dialog
         onClose={handleClose}

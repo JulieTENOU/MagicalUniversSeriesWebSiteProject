@@ -1,3 +1,9 @@
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useSnack } from "../hooks/useSnack";
+
+import { useTheme } from "@mui/material/styles";
+
 import {
   Button,
   Box,
@@ -8,11 +14,8 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
+
 import Btn from "./Btn";
-import { useState } from "react";
-import { useTheme } from "@mui/material/styles";
-import { useTranslation } from "react-i18next";
-import { useSnack } from "../hooks/useSnack";
 
 export default function Inscription() {
   const theme = useTheme();
@@ -56,8 +59,8 @@ export default function Inscription() {
         if (!response.ok) {
           showSnack(
             payload?.message ||
-              payload?.error ||
-              "Erreur lors de l'inscription.",
+            payload?.error ||
+            "Erreur lors de l'inscription.",
             "error",
           );
           throw new Error("Register failed");

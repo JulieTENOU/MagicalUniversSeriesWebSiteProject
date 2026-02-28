@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 
@@ -39,25 +39,23 @@ function JDR() {
         : [...prev, character],
     );
   };
-  useEffect(() => {
-    if (!loading && !isConnected) {
-      navigate("/", { replace: true });
-      return null;
-    }
-  }, [loading, isConnected, navigate]);
-  console.log("loading:", loading);
-  console.log("isConnected:", isConnected);
-  console.log(
-    "stats:",
-    stats,
-    "type:",
-    typeof stats,
-    "isArray:",
-    Array.isArray(stats),
-  );
+  // Ancien pattern useEffect + navigate (peut causer une page blanche car le rendu complet
+  // se produit avant la redirection)
+  // useEffect(() => {
+  //   if (!loading && !isConnected) {
+  //     navigate("/", { replace: true });
+  //     return null;
+  //   }
+  // }, [loading, isConnected, navigate]);
 
-  if (loading || !Array.isArray(stats)) {
+  // isConnected === undefined = état initial du provider (state pas encore résolu)
+  if (loading || isConnected === undefined) {
     return <PageLoader />;
+  }
+
+  // Pattern React Router v6 idiomatique : retour anticipé avec <Navigate>
+  if (!isConnected) {
+    return <Navigate to="/" replace />;
   }
 
   return (

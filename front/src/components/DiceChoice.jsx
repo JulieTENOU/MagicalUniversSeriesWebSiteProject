@@ -5,9 +5,12 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import Dice3D from "./Dice3D";
-import Button from "@mui/material/Button";
+
 import { useMediaQuery } from "@mui/material";
+
+import Button from "@mui/material/Button";
+
+import Dice3D from "./Dice3D";
 
 export default function DiceChoice({
   hidden = false,

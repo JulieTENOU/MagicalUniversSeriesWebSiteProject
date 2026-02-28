@@ -58,8 +58,8 @@ function ReadHome() {
                 path={`/read/${serie.path}`}
                 msg={serie.series_title} // évite "Go to ..." si tu veux plus clean
                 src={imgUrl}
-                height="80"
-                width="60"
+                height="140"
+                width="100"
                 sx={{ color: "whitesmoke" }}
               />
             );

@@ -1,3 +1,7 @@
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "@mui/material/styles";
+
 import {
   Drawer,
   Box,
@@ -5,17 +9,23 @@ import {
   Divider,
   Button,
   Grid,
-  List, Table, TableBody, TableCell, TableHead, TableRow
+  List,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  useMediaQuery
 } from "@mui/material";
+
 import CardTravelIcon from "@mui/icons-material/CardTravel";
 import CloseIcon from "@mui/icons-material/Close";
-import { useState, useEffect } from "react";
+
 import ModifierDialogs from "./ModifierInventory";
-import { useTheme } from "@mui/material/styles";
 
-import { useTranslation } from "react-i18next";
 
-import { useMediaQuery } from "@mui/material";
+import { } from "@mui/material";
+
 function InventoryRow({ label, nameKey, quantityKey, data, theme, onInventoryUpdate }) {
   const name = data?.[nameKey] ?? "—";
   const quantity = quantityKey ? (data?.[quantityKey] ?? "—") : null;

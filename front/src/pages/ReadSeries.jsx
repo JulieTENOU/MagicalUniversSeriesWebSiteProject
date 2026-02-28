@@ -51,6 +51,7 @@ function ReadSeries() {
     fetchBooks();
   }, [serie]);
 
+  console.log(books);
   if (!loading && !isConnected) {
     navigate("/", { replace: true });
     return null;
@@ -82,45 +83,36 @@ function ReadSeries() {
     );
   }
 
+  const API_BASE = process.env.REACT_APP_API_BASE || window.location.origin;
+
   if (loading) return <PageLoader />;
 
   return (
     <div className="main">
       <BG />
       <Top started={isConnected} />
-      {/* <div
-        style={{
-          width: "100vw",
-          display: "flex",
-          flexDirection: "row",
-          position: "fixed",
-          bottom: "25vh",
-          justifyContent: "space-around",
-          alignItems: "center",
-        }}
-      > */}
+
       <div className="page-content-wrapper">
-        {/* <Btn
-          onClick={() => navigate(-1)}
-          msg="Go back"
-          src={logoReturn}
-          height={'100px'}
-          sx={{ color: 'whitesmoke' }}
-        /> */}
 
         <BtnRtn msg={"Go back"}
           path={`/read/`}
         />
 
-        {books.map((book) => (
-          <Btn
-            key={book.ID_book}
-            path={`/read/${serie}/${book.path}`}
-            msg={book.book_Name}
-            src={book.image}
-            sx={{ color: "whitesmoke" }}
-          />
-        ))}
+        {books.map((book) => {
+          const imgUrl = book.ID_media
+            ? `${API_BASE}/api/media/getOneMedia/${book.ID_media}`
+            : null;
+          return (
+            <Btn
+              key={book.ID_book}
+              path={`/read/${serie}/${book.path}`}
+              msg={book.book_Name}
+              src={imgUrl}
+              height="140"
+              width="100"
+              sx={{ color: "whitesmoke" }}
+            />);
+        })}
       </div>
     </div>
   );

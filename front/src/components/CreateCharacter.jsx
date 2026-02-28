@@ -1,10 +1,14 @@
-import { Box, Typography, Button, MenuItem, TextField } from "@mui/material";
-import { useState, useEffect, useRef } from "react";
-import Btn from "./Btn";
-import Dice3D from "./Dice3D";
-import { useContext } from "react";
-import { ConnexionContext } from "./provider"; // adapte le chemin exact
+import { useState, useEffect, useRef, useContext } from "react";
+import { ConnexionContext } from "./provider";
+
+import { useTheme } from "@mui/material/styles";
+
 import {
+  Box,
+  Typography,
+  Button,
+  MenuItem,
+  TextField,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -15,9 +19,11 @@ import {
   FormControlLabel,
   Radio,
   Checkbox,
+  useMediaQuery
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useMediaQuery } from "@mui/material";
+
+import Btn from "./Btn";
+import Dice3D from "./Dice3D";
 
 export default function CreationPersonnage() {
   const [activeTab, setActiveTab] = useState("identite");

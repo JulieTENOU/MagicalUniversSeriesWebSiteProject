@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
@@ -45,6 +45,7 @@ import Crystals from "../components/Crystals";
 import Creatures from "../components/Creatures";
 import ModifierIdDialogs from "../components/ModifierIdChara.jsx";
 import DiceChoice from "../components/DiceChoice.jsx";
+import DiceD20Icon from "../components/icons/Dice20Icon.jsx";
 
 
 function ConnectGame() {
@@ -440,10 +441,21 @@ function ConnectGame() {
 
   useEffect(() => {
     async function load() {
-      const media = await loadCharacterMedia(characterId);
-      const avatar = media.find(m => m.slot === "avatar");
-      if (avatar) {
-        setAvatarUrl(avatar.url);
+      // Ancien code sans gestion d'erreur : si l'API renvoie une erreur (ex: 401),
+      // media n'est pas un tableau et media.find() lève une TypeError non gérée
+      // const media = await loadCharacterMedia(characterId);
+      // const avatar = media.find(m => m.slot === "avatar");
+      // if (avatar) {
+      //   setAvatarUrl(avatar.url);
+      // }
+      try {
+        const media = await loadCharacterMedia(characterId);
+        const avatar = Array.isArray(media) ? media.find(m => m.slot === "avatar") : null;
+        if (avatar) {
+          setAvatarUrl(avatar.url);
+        }
+      } catch (err) {
+        console.warn("Impossible de charger le média du personnage :", err);
       }
     }
 
@@ -451,15 +463,23 @@ function ConnectGame() {
   }, [characterId]);
 
 
-  useEffect(() => {
-    if (!loading && isInvalidUser) {
-      navigate("/", { replace: true });
-      return null;
-    }
-  }, [loading, isInvalidUser, navigate]);
+  // Ancien pattern useEffect + navigate (peut causer une page blanche car le rendu complet
+  // se produit avant la redirection, et des effets avec des erreurs non gérées s'exécutent)
+  // useEffect(() => {
+  //   if (!loading && isInvalidUser) {
+  //     navigate("/", { replace: true });
+  //     return null;
+  //   }
+  // }, [loading, isInvalidUser, navigate]);
 
   if (loading) {
     return <PageLoader />;
+  }
+
+  // Pattern React Router v6 idiomatique : retour anticipé avec <Navigate>
+  // Évite le rendu du JSX complet (et tous ses effets) quand l'utilisateur n'est pas connecté
+  if (isInvalidUser) {
+    return <Navigate to="/" replace />;
   }
 
 
@@ -1308,7 +1328,7 @@ function ConnectGame() {
                 </div>
                 {!isMobile && (<div>
                   <Btn
-                    msg={<CasinoIcon />}
+                    msg={<DiceD20Icon />}
                     onClick={() => setRollDice(!rollDice)}
                   />
                   {rollDice &&
@@ -1347,7 +1367,7 @@ function ConnectGame() {
             msg={<PersonIcon />}
             onClick={() => { if (isMobile) setShowIdCard(!showIdCard); }}
           />
-          <Btn width="50px" msg={<CasinoIcon />} onClick={() => setRollDice(!rollDice)} />
+          <Btn width="50px" msg={<DiceD20Icon />} onClick={() => setRollDice(!rollDice)} />
         </div>)}
 
         {isMobile && (
