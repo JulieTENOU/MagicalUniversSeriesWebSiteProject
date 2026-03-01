@@ -27,7 +27,13 @@ function JDR() {
     setState: setIsConnected,
     loading,
   } = useContext(ConnexionContext);
-  const { stats, setCurrentCharacter } = useAppContext();
+  const { stats, setCurrentCharacter, fetchStat } = useAppContext();
+
+  // Refetch les personnages à chaque visite de la page (évite la page vide si le premier
+  // chargement au boot de l'app a échoué ou n'était pas encore terminé)
+  useEffect(() => {
+    fetchStat();
+  }, [fetchStat]);
 
   const theme = useTheme();
 

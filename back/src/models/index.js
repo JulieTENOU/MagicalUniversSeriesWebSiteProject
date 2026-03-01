@@ -3,9 +3,24 @@ const path = require("path");
 const Sequelize = require("sequelize");
 const dbConfig = require("../config/db-config");
 
+// Ancien : aucun pool ni gestion des connexions perdues (PROTOCOL_CONNECTION_LOST)
+// const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+//   host: dbConfig.HOST,
+//   dialect: dbConfig.DIALECT,
+// });
+
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
   dialect: dbConfig.DIALECT,
+  pool: {
+    max: 5,          // max connexions simultanées
+    min: 0,          // connexions maintenues au minimum
+    acquire: 60000,  // ms max pour obtenir une connexion avant erreur
+    idle: 10000,     // ms avant qu'une connexion idle soit libérée
+  },
+  dialectOptions: {
+    connectTimeout: 60000, // ms max pour établir la connexion TCP
+  },
 });
 
 const db = {};

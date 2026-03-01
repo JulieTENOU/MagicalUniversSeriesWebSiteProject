@@ -3,15 +3,16 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const port = 3333;
-const Sequelize = require("sequelize");
-const dbConfig = require("./src/config/db-config");
+// Instance Sequelize orpheline commentée : elle ne servait qu'au authenticate() de démarrage
+// mais n'était utilisée par aucun modèle ni route. Toutes les requêtes passent par src/models/index.js.
+// const Sequelize = require("sequelize");
+// const dbConfig = require("./src/config/db-config");
+// const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+//   host: dbConfig.HOST,
+//   dialect: dbConfig.DIALECT,
+// });
 const http = require("http");
 const { Server } = require("socket.io");
-
-const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
-  host: dbConfig.HOST,
-  dialect: dbConfig.DIALECT,
-});
 
 app.use(express.static(__dirname + "/public"));
 
@@ -52,14 +53,16 @@ app.use((req, _res, next) => {
   next();
 });
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("Connection has been established successfully.");
-  })
-  .catch((err) => {
-    console.log("Unable to connect to the database:", err);
-  });
+// authenticate() commenté : utilisait l'instance orpheline ci-dessus.
+// La connexion effective est gérée par src/models/index.js (pool configuré).
+// sequelize
+//   .authenticate()
+//   .then(() => {
+//     console.log("Connection has been established successfully.");
+//   })
+//   .catch((err) => {
+//     console.log("Unable to connect to the database:", err);
+//   });
 
 // This is the app requireing the route that will receive the http request and interact with the controller
 const user = require("./src/routes/user");

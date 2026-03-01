@@ -10,7 +10,7 @@ module.exports = {
         let { agence_id, agence_name, agence_classement, agence_specialite } =
           req.body;
 
-        const newAgence = await races.create({
+        const newAgence = await agences.create({
           agence_id,
           agence_name,
           agence_classement,

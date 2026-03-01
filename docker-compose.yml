@@ -14,6 +14,13 @@ services:
     volumes:
       - /data/docker/mus-db:/var/lib/mysql
     restart: always
+    # Healthcheck : back ne démarre qu'une fois MySQL réellement prêt (évite PROTOCOL_CONNECTION_LOST au boot)
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     networks:
       - mu-network
 
@@ -36,8 +43,15 @@ services:
       - ./back:/app
       - /app/node_modules
       - /var/www/mus_storage:/var/www/mus_storage
+    # Ancien depends_on (insuffisant : attend le démarrage du conteneur, pas que MySQL soit ready)
+    # depends_on:
+    #   - db
+    # Attend que MySQL soit réellement prêt (healthcheck) avant de démarrer
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    # Redémarre automatiquement si le backend crashe
+    restart: unless-stopped
     networks:
       - mu-network
 
