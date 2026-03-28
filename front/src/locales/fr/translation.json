@@ -65,6 +65,12 @@
 
   "jdr": {
     "selectChara": "Selectionnez le personnage pour cette partie",
+    "defaultVisitor": "Visiteur",
+    "defaultNone": "Aucun",
+    "defaultUnknown": "Inconnue",
+    "defaultUndefined": "Indéfini",
+    "defaultFree": "Libre",
+    "defaultTraits": "Curieux / Observateur",
     "selectCharas": "Selectionnez les personnages pour cette partie",
     "newChara": "Créer un nouveau personnage",
     "return": "retour",
@@ -199,6 +205,7 @@
   },
 
   "inventory": {
+    "quantityOf": "quantité de {{label}}",
     "ingredients": "Ingrédients",
     "important": "Importants",
     "meal": "Repas",
@@ -243,6 +250,55 @@
     "angel": "Crystal Angélique",
     "liquid": "Crystal liquide",
     "gold": "Crystal d'Or"
+  },
+
+  "about": {
+    "pageTitle": "À propos",
+    "whoTitle": "Qui suis-je ?",
+    "whoText": "Melanie D. C. (aka Mels). Vous ne la trouverez pas à l'état civile, en revanche, plonger dans l'univers que j'ai créé autour de moi depuis l'enfance et vous la rencontrerez.\n Née de mon désir d'être plus forte, Melanie est l'alter ego que je me suis un jour créée pour avoir plus de courage. C'est cette fille qui sait ce qu'elle fait et pourquoi, que j'ai toujours rêvé d'être. \nC'est ma meilleure ennemie, celle qui me montre la voie à suivre et me mets au défi d'y aller. \n Mais c'est avant tout, et surtout, celle qui m'a permise de mettre en mots tout ce qui se trame dans ma tête, alors soyez indulgeants car après tout : elle n'existe même pas ✨",
+    "workTitle": "Ce que je fais",
+    "workText": "Rien n'est plus difficile que de vivre dans un monde rempli de règles changeante d'une situation à une autre, d'un contexte à un autre et même d'une personne à l'autre. Enfant je n'avais que peu d'amis, et le désir de me fondre parmis mes pairs, mais c'est difficile alors j'ai inventé mon propre monde, avec mes propres règles, des amis imaginaires et des solutions idéales à tous mes problèmes. Un monde rempli de magie et de rêves, qui me redonnait espoir et me permettait de garder le sourire en tout temps.\n Aujourd'hui, cet univers vous est à portée de main, et je dirais même à portée de clic, car j'ai finalement décidé de le partager avec vous.",
+    "bookTitle": "Mon univers",
+    "bookText": "Plongez dans l'univers merverilleux et fantastique de Xalyt.\n Ceci n'est ni un résumé (que je vous invite à lire sur la quatrième de couverture du roman), ni même une entrée en matière. \n Non, ceci est un avertissement.\n Pourquoi me demanderez-vous ? Eh bien tout simplement parce que vous vous apprétez à rentrer dans un univers des plus complexes. Le premier livre de la saga que j'écris s'appelle \"Xalyt - Nouvelles vies\" car même la votre changera après l'avoir commencé.\n Mais aussi car, si comme les lecteurs de la première heure vous entrez dans l'univers, vous ne saurez plus en ressortir. Mon univers est loin d'être évident à appréhender, mais il est des plus intenses à vivre, car oui, lorsque vous aurez commencé, je doute fortement que vous puissiez vous satisfaire d'un seul tome.\n Mais promis : la suite est déjà en cours d'écriture. \nEt pour nos amis anglophone, oui, la traduction est en cours 😘",
+    "buyButton": "Première édition - FR",
+    "bookLink": "https://www.amazon.fr/dp/B0G5NV4Q1M"
+  },
+
+  "read": {
+    "goBack": "Retour",
+    "otherPart": "Autres",
+    "chaptersTitle": "Chapitres",
+    "backToList": "← Liste des tomes",
+    "lockedTitle": "Accès verrouillé",
+    "lockedFallback": "Pour accéder à cette information tu devras d’abord Eveiller tes pouvoirs.",
+    "hideHint": "Masquer l’indice",
+    "showHint": "Révéler un indice",
+    "requiredLevel": "Niveau requis : {{required}} — Ton niveau : {{current}}",
+    "answerPlaceholder": "Entre la réponse…",
+    "validating": "Validation...",
+    "unlock": "Déverrouiller",
+    "prevChapter": "Chapitre précédent",
+    "nextChapter": "Chapitre suivant",
+    "backToSummary": "Retour au sommaire",
+    "wrongAnswer": "Réponse incorrecte.",
+    "serverError": "Erreur serveur."
+  },
+
+  "grimoire": {
+    "title": "Grimoire",
+    "gallery": "Ma galerie",
+    "notes": "Notes",
+    "saveNote": "Enregistrer la note",
+    "savedNotes": "Notes enregistrées",
+    "noNotes": "Aucune note enregistrée",
+    "deleteNoteConfirm": "Supprimer cette note ?",
+    "emptyNote": "Une note ne peut pas être vide.",
+    "chooseImages": "Choisir des images",
+    "imageCaptions": "Légendes des nouvelles images",
+    "send": "Envoyer",
+    "noImages": "Aucune image.",
+    "deleteImageConfirm": "Supprimer définitivement cette image ?",
+    "noName": "Sans nom"
   },
 
   "errors": {

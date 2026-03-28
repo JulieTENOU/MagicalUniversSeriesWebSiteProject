@@ -64,6 +64,12 @@
   },
   "jdr": {
     "selectChara": "Choose your character for this game",
+    "defaultVisitor": "Visitor",
+    "defaultNone": "None",
+    "defaultUnknown": "Unknown",
+    "defaultUndefined": "Undefined",
+    "defaultFree": "Free",
+    "defaultTraits": "Curious / Observer",
     "selectCharas": "Choose the characters for this game",
     "newChara": "Create new character",
     "return": "Go back",
@@ -198,6 +204,7 @@
     "drac": "Draconic Magic"
   },
   "inventory": {
+    "quantityOf": "quantity of {{label}}",
     "ingredients": "Ingredients",
     "important": "Important",
     "meal": "Meals",
@@ -241,6 +248,55 @@
     "angel": "Angelic Crystals",
     "liquid": "Fluid Crystals",
     "gold": " Gold Crystal"
+  },
+
+  "about": {
+    "pageTitle": "About",
+    "whoTitle": "Who am I?",
+    "whoText": "Melanie D. C. (aka Mels). You won't find her in any civil registry, but dive into the universe I built around myself since childhood and you will meet her.\n Born from my desire to be stronger, Melanie is the alter ego I once created to give myself more courage. She is the girl who knows what she does and why — the one I always dreamed of becoming. \nShe is my best enemy, the one who shows me the way and dares me to take it. \n But above all, she is the one who allowed me to put into words everything brewing in my head, so be kind — after all: she doesn't even exist ✨",
+    "workTitle": "What I do",
+    "workText": "Nothing is harder than living in a world full of rules that shift from one situation to another, one context to another, even one person to another. As a child I had few friends, and a deep desire to fit in with my peers — but it was hard, so I invented my own world, with my own rules, imaginary friends, and perfect solutions to all my problems. A world filled with magic and dreams, one that gave me hope and kept me smiling no matter what.\n Today, that universe is within your reach — just a click away — because I have finally decided to share it with you.",
+    "bookTitle": "My universe",
+    "bookText": "Dive into the wonderful and fantastical world of Xalyt.\n This is neither a summary (which I invite you to read on the back cover of the novel), nor an introduction. \n No, this is a warning.\n Why, you ask? Simply because you are about to enter one of the most complex universes out there. The first book of the saga I am writing is called \"Xalyt - New Lives\" — because even yours will change once you begin.\n Also because, like the first readers who stepped into this world, once you enter, you won't know how to leave. My universe is far from easy to grasp, but it is the most intense to live in — because yes, once you start, I strongly doubt you will be satisfied with just one volume.\n But I promise: the next one is already being written. \nAnd yes, my dear English-readers friends, the translation is on its way 😘",
+    "buyButton": "First edition - FR (EN coming soon)",
+    "bookLink": "https://www.amazon.com/dp/B0G5YS43GG"
+  },
+
+  "read": {
+    "goBack": "Go back",
+    "otherPart": "Other",
+    "chaptersTitle": "Chapters",
+    "backToList": "← Back to volumes",
+    "lockedTitle": "Locked access",
+    "lockedFallback": "To access this content you must first Awaken your powers.",
+    "hideHint": "Hide hint",
+    "showHint": "Reveal a hint",
+    "requiredLevel": "Required level: {{required}} — Your level: {{current}}",
+    "answerPlaceholder": "Enter the answer…",
+    "validating": "Validating...",
+    "unlock": "Unlock",
+    "prevChapter": "Previous chapter",
+    "nextChapter": "Next chapter",
+    "backToSummary": "Back to table of contents",
+    "wrongAnswer": "Wrong answer.",
+    "serverError": "Server error."
+  },
+
+  "grimoire": {
+    "title": "Grimoire",
+    "gallery": "My gallery",
+    "notes": "Notes",
+    "saveNote": "Save note",
+    "savedNotes": "Saved notes",
+    "noNotes": "No notes saved",
+    "deleteNoteConfirm": "Delete this note?",
+    "emptyNote": "A note cannot be empty.",
+    "chooseImages": "Choose images",
+    "imageCaptions": "New image captions",
+    "send": "Send",
+    "noImages": "No images.",
+    "deleteImageConfirm": "Permanently delete this image?",
+    "noName": "No name"
   },
 
   "errors": {
