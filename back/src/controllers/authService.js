@@ -1,10 +1,12 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, Op } = require("sequelize");
 const sequelize = require("../models").sequelize;
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const users = require("../models/users")(sequelize, DataTypes);
 const jwt = require("jsonwebtoken");
 const authConfig = require("../config/authKey");
 const transporter = require("../../utils/mailer");
+const serverError = require("../../utils/serverError.js");
 
 async function sendResetEmail(to, resetLink) {
   await transporter.sendMail({
@@ -20,206 +22,121 @@ async function sendResetEmail(to, resetLink) {
 }
 
 module.exports = {
-  //SIGN UP part
-
-  //Create the newUser
   create: async function (req, res) {
-    console.log(req.body);
-    if (req.body) {
-      try {
-        let { users_pseudo, users_email, users_password, users_status } =
-          req.body;
+    if (!req.body) return res.status(400).json({ message: "No data provided." });
+    try {
+      let { users_pseudo, users_email, users_password, users_status } = req.body;
 
-        // Valeurs autorisées
-        const allowedStatuses = ["a", "p", "r"];
-
-        if (!allowedStatuses.includes(users_status)) {
-          return res.status(400).send({ message: "Invalid user status." });
-        }
-
-        console.log({
-          users_pseudo,
-          users_email,
-          users_password,
-          users_status,
-        });
-        users_password = bcrypt.hashSync(users_password, 8);
-
-        const newUser = await users.create({
-          users_pseudo,
-          users_email,
-          users_password,
-          users_status,
-        });
-        return res.status(201).send({ newUser });
-      } catch (err) {
-        return res.status(400).send({ err: err.message });
+      const allowedStatuses = ["a", "p", "r"];
+      if (!allowedStatuses.includes(users_status)) {
+        return res.status(400).send({ message: "Invalid user status." });
       }
-    } else {
-      res.status(400).json(response);
+
+      users_password = bcrypt.hashSync(users_password, 12);
+
+      const newUser = await users.create({
+        users_pseudo,
+        users_email,
+        users_password,
+        users_status,
+      });
+      return res.status(201).send({ newUser });
+    } catch (err) {
+      if (err.name === "SequelizeUniqueConstraintError") {
+        return res.status(409).json({ message: "Cet email est déjà utilisé." });
+      }
+      return serverError(res, err);
     }
   },
 
-  // SIGN IN PART
   signIn: async function (req, res) {
-    console.log(req.body);
+    const INVALID_MSG = "Identifiant ou mot de passe incorrect.";
     try {
       const login = await users.findOne({
-        where: {
-          users_email: req.body.users_email,
-        },
+        where: { users_email: req.body.users_email },
       });
 
       if (!login) {
-        return res
-          .status(404)
-          .send({ message: "No profile matches this email address!" });
+        return res.status(401).send({ message: INVALID_MSG });
       }
 
-      const rightPassword = await bcrypt
-        .compare(req.body.users_password, login.users_password)
-        .then(function (result) {
-          return result === true;
-        })
-        .catch(function (err) {
-          console.error("Erreur de comparaison bcrypt :", err);
-          return false;
-        });
-
+      const rightPassword = await bcrypt.compare(req.body.users_password, login.users_password);
       if (!rightPassword) {
-        return res.status(401).send({ message: "Invalid Password" });
+        return res.status(401).send({ message: INVALID_MSG });
       }
 
-      // Mot de passe correct → générer un token et envoyer la réponse
-      const token = await jwt.sign(
-        { users_email: req.body.users_email, id: login.users_ID },
+      const token = jwt.sign(
+        { users_email: login.users_email, id: login.users_ID },
         authConfig.secret,
-        { expiresIn: 3600 }
+        { expiresIn: "24h" }
       );
 
       req.session.token = token;
 
-      return res.status(200).send({ login, token });
+      return res.status(200).send({
+        login: {
+          users_ID: login.users_ID,
+          users_pseudo: login.users_pseudo,
+          users_email: login.users_email,
+          users_status: login.users_status,
+        },
+      });
     } catch (err) {
-      return res.status(500).send({ err: err.message });
+      return serverError(res, err);
     }
   },
 
-  // Forgotten Password!
-  verifyEmail: async function (req, res) {
-    if (req.body) {
-      try {
-        const login = await users.findOne({
-          where: {
-            users_email: req.body.users_email,
-          },
-        });
-        if (!login) {
-          return res.status(404).send(false);
-        } else {
-          return res.status(200).send(true);
-        }
-      } catch (err) {
-        return res.status(400).send({ err: err.message });
-      }
-    } else {
-      res.status(400).json({ message: "No data was provided." });
-    }
-  },
-
-  // Update password
   updatePassword: async function (req, res) {
-    try{
-      console.log(req.body);
-      const { users_ID } = req.params;
-      const { old_password, new_password  } = req.body;
-      if(!users_ID || !old_password || !new_password){
-        return res.status(400).send({message: "Données manquantes."});
+    try {
+      const { old_password, new_password } = req.body;
+      if (!old_password || !new_password) {
+        return res.status(400).send({ message: "Données manquantes." });
       }
 
-      const user = await users.findOne({where: {users_ID}});  
-      if(!user){
-        return res.status(404).send({ message: "Utilisateur inconnu."});
+      const user = await users.findOne({ where: { users_ID: req.userId } });
+      if (!user) {
+        return res.status(404).send({ message: "Utilisateur inconnu." });
       }
 
       const ok = await bcrypt.compare(old_password, user.users_password);
-      if(!ok){
-        return res.status(401).send({ message: "Mot de passe actuel incorrect."});
+      if (!ok) {
+        return res.status(401).send({ message: "Mot de passe actuel incorrect." });
       }
 
-      const hashed = bcrypt.hashSync(new_password, 8);
-      await user.update({users_password: hashed});
-
-      return res.status(200).send({message: "Mot de passe mis à jour."});
-    } catch (err){
-      return res.status(400).send({err: err.message});
+      await user.update({ users_password: bcrypt.hashSync(new_password, 12) });
+      return res.status(200).send({ message: "Mot de passe mis à jour." });
+    } catch (err) {
+      return serverError(res, err);
     }
   },
-  //   if (req.body) {
-  //     users
-  //       .findOne({
-  //         where: {
-  //           users_email: req.body.users_email,
-  //         },
-  //       })
-  //       .then((response) => {
-  //         if (!response) {
-  //           return res.status(404).send({ message: "Invalid Email Address" });
-  //         } else {
-  //           req.body.users_password = bcrypt.hashSync(
-  //             req.body.users_password,
-  //             8
-  //           );
-  //           response.update(req.body);
-  //           res.send(true);
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         return res.status(400).send({ err: err.message });
-  //       });
-  //   } else {
-  //     res.status(400).json({ message: "No data was provided." });
-  //   }
-  // },
-
-
 
   forgotPassword: async function (req, res) {
-    if (req.body && req.body.users_email) {
-      try {
-        const user = await users.findOne({
-          where: { users_email: req.body.users_email },
-        });
+    if (!req.body?.users_email) {
+      return res.status(400).json({ message: "Email manquant." });
+    }
+    try {
+      const user = await users.findOne({
+        where: { users_email: req.body.users_email },
+      });
 
-        if (!user) {
-        return res.status(200).send({
-          message: "Si cet email existe dans notre base, un lien de réinitialisation a été envoyé.",
-        });
-          // return res.status(404).send({ message: "Aucun utilisateur trouvé." });
-        }
+      const okMessage = "Si cet email existe dans notre base, un lien de réinitialisation a été envoyé.";
+      if (!user) return res.status(200).send({ message: okMessage });
 
-        // Génère un token random et date d'expiration 1h
-        const crypto = require("crypto");
-        const resetToken = crypto.randomBytes(32).toString("hex");
-        const resetExpires = new Date(Date.now() + 60 * 60 * 1000);
+      const resetToken = crypto.randomBytes(32).toString("hex");
+      const resetExpires = new Date(Date.now() + 60 * 60 * 1000);
 
-        await user.update({
-          users_reset_token: resetToken,
-          users_reset_expires: resetExpires,
-        });
+      await user.update({
+        users_reset_token: resetToken,
+        users_reset_expires: resetExpires,
+      });
 
-        const resetLink = `https://melaniedc-magical-universe.duckdns.org/reset-password/${resetToken}`;
-        await sendResetEmail(user.users_email, resetLink);
+      const baseUrl = process.env.APP_URL || "http://localhost:3000";
+      const resetLink = `${baseUrl}/reset-password/${resetToken}`;
+      await sendResetEmail(user.users_email, resetLink);
 
-        return res.status(200).send({
-          message:
-            "Si cet email existe dans notre base, un lien de réinitialisation a été envoyé.",
-        });
-      } catch (err) {
-        return res.status(500).send({ err: err.message });
-      }
-    } else {
-      res.status(400).json({ message: "Email manquant." });
+      return res.status(200).send({ message: okMessage });
+    } catch (err) {
+      return serverError(res, err);
     }
   },
 
@@ -228,13 +145,10 @@ module.exports = {
     const { users_password } = req.body;
 
     if (!token || !users_password) {
-      return res
-        .status(400)
-        .send({ message: "Token ou nouveau mot de passe manquant." });
+      return res.status(400).send({ message: "Token ou nouveau mot de passe manquant." });
     }
 
     try {
-      const { Op } = require("sequelize");
       const user = await users.findOne({
         where: {
           users_reset_token: token,
@@ -246,16 +160,15 @@ module.exports = {
         return res.status(400).send({ message: "Token invalide ou expiré." });
       }
 
-      const hashedPassword = bcrypt.hashSync(users_password, 8);
       await user.update({
-        users_password: hashedPassword,
+        users_password: bcrypt.hashSync(users_password, 12),
         users_reset_token: null,
         users_reset_expires: null,
       });
 
-      res.send({ message: "Mot de passe réinitialisé !" });
+      return res.send({ message: "Mot de passe réinitialisé !" });
     } catch (err) {
-      return res.status(500).send({ err: err.message });
+      return serverError(res, err);
     }
   },
 
@@ -263,9 +176,9 @@ module.exports = {
     try {
       req.session = null;
       res.clearCookie("MAGame-session");
-      res.status(200).send({ message: "Logged out successfully." });
+      return res.status(200).send({ message: "Logged out successfully." });
     } catch (err) {
-      res.status(500).send({ message: "Logout failed", error: err });
+      return serverError(res, err);
     }
   },
 };

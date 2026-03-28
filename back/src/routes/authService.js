@@ -2,14 +2,14 @@ const express = require("express");
 const router = express.Router();
 const { authService } = require("../controllers");
 const { user } = require("../controllers");
-const {verifyToken} = require("../middleware"); 
+const {verifyToken} = require("../middleware");
+const authRateLimit = require("../../utils/authRateLimit.js");
 
 router.post("/register", authService.create);
-router.post("/signIn", authService.signIn);
+router.post("/signIn", authRateLimit, authService.signIn);
 router.post("/logout", authService.logout);
-router.post("/verifyEmail", authService.verifyEmail);
-router.put("/updatePwd/:users_ID", authService.updatePassword);
-router.post('/forgot-password', authService.forgotPassword);
+router.put("/updatePwd", verifyToken, authService.updatePassword);
+router.post('/forgot-password', authRateLimit, authService.forgotPassword);
 router.post('/reset-password/:token', authService.resetPassword);
 
 

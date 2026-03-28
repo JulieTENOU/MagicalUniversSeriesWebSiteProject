@@ -18,7 +18,8 @@ app.use(express.static(__dirname + "/public"));
 
 // This is used to parse json post request in the body. It's essential to handle forms
 app.use(express.json());
-app.use(cors());
+const allowedOrigin = process.env.APP_URL || "http://localhost:3000";
+app.use(cors({ origin: allowedOrigin, credentials: true }));
 
 // We need body-Parser in order for this app to handle urlencoded POST requests properly
 app.use(
@@ -31,8 +32,6 @@ app.use(
 const authConfig = require("./src/config/authKey");
 const cookieSession = require("cookie-session");
 
-app.set("trust proxy", 1);
-
 app.use(
   cookieSession({
     name: "MAGame-session",
@@ -44,14 +43,6 @@ app.use(
   }),
 );
 
-app.use((req, _res, next) => {
-  console.log("SESSION:", {
-    url: req.method + " " + req.originalUrl,
-    hasCookieHeader: !!req.headers.cookie,
-    sessionKeys: req.session ? Object.keys(req.session) : null,
-  });
-  next();
-});
 
 // authenticate() commenté : utilisait l'instance orpheline ci-dessus.
 // La connexion effective est gérée par src/models/index.js (pool configuré).
