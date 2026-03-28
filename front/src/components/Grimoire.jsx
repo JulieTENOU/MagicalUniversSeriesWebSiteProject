@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 
 import { uploadImage, attachMediaToCharacter, deleteMedia, } from "../service/mediaApi";
@@ -18,6 +18,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 
 import Btn from "./Btn";
+import { useTranslation } from "react-i18next";
 
 
 const tornSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"><path d="
@@ -149,6 +150,7 @@ function Lightbox({ images, startIndex, onClose }) {
 
 
 export default function CustomizedDialogs(data) {
+  const { t } = useTranslation();
   const API_BASE = process.env.REACT_APP_API_BASE || window.location.origin;
   const Grimoire = `${API_BASE}/api/media/getOneMedia/57`;
   const character = data.data;
@@ -172,7 +174,8 @@ export default function CustomizedDialogs(data) {
 
   const { gallery, refresh } = useCharacterMedia(character?.ID_character);
 
-  const [pendingUploads, setPendingUploads] = useState([]); // [{file,label}]
+  const [pendingUploads, setPendingUploads] = useState([]); // [{file}]
+  const labelRefs = useRef([]); // refs vers les <input> non-contrôlés
 
   useEffect(() => {
     fetch(`/api/inventories/getOneInventories/${character.Name_character}`)
@@ -241,7 +244,7 @@ export default function CustomizedDialogs(data) {
       el.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [total, itemsPerView]);
+  }, [total, itemsPerView, open]);
 
   const scrollByPage = (dir) => {
     const el = railRef.current;
@@ -273,7 +276,7 @@ export default function CustomizedDialogs(data) {
 
     const cleaned = (editValue ?? "").trim();
     if (!cleaned) {
-      alert("Une note ne peut pas être vide.");
+      alert(t("grimoire.emptyNote"));
       return;
     }
 
@@ -315,7 +318,7 @@ export default function CustomizedDialogs(data) {
         PaperComponent={(props) => <GrimoirePaper {...props} />}
       >
         <DialogTitle onClose={handleClose} sx={{ outerWidth: "50vw" }}>
-          Grimoire
+          {t("grimoire.title")}
         </DialogTitle>
         <DialogContent
           sx={{
@@ -338,14 +341,14 @@ export default function CustomizedDialogs(data) {
               }}
             >
               <Btn
-                msg="Ma gallerie"
+                msg={t("grimoire.gallery")}
                 onClick={() => {
                   setGalleryPics(true);
                   setNotes(false);
                 }}
               />
               <Btn
-                msg="Notes"
+                msg={t("grimoire.notes")}
                 onClick={() => {
                   setGalleryPics(false);
                   setNotes(true);
@@ -380,16 +383,16 @@ export default function CustomizedDialogs(data) {
                   }));
                   setText("");
                 }}
-                msg="Save new notes"
+                msg={t("grimoire.saveNote")}
               />
 
               <Box sx={{ mt: 2 }}>
                 <Typography variant="h6" sx={{ mb: 1 }}>
-                  Notes saved
+                  {t("grimoire.savedNotes")}
                 </Typography>
 
                 {notesList.length === 0 ? (
-                  <Typography>Aucune note enregistrée</Typography>
+                  <Typography>{t("grimoire.noNotes")}</Typography>
                 ) : (
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                     {notesList.map((note, idx) => {
@@ -500,7 +503,7 @@ export default function CustomizedDialogs(data) {
                                 aria-label="supprimer note"
                                 size="small"
                                 onClick={() => {
-                                  if (window.confirm("Supprimer cette note ?"))
+                                  if (window.confirm(t("grimoire.deleteNoteConfirm")))
                                     deleteNote(idx);
                                 }}
                                 sx={{
@@ -541,7 +544,7 @@ export default function CustomizedDialogs(data) {
                   textTransform: "none",
                 }}
               >
-                Choisir des images
+                {t("grimoire.chooseImages")}
                 <input
                   hidden
                   type="file"
@@ -550,10 +553,8 @@ export default function CustomizedDialogs(data) {
                   onChange={(e) => {
                     const files = Array.from(e.target.files || []);
                     if (!files.length) return;
-
-                    setPendingUploads(
-                      files.map((file) => ({ file, label: "" })),
-                    );
+                    labelRefs.current = new Array(files.length).fill(null);
+                    setPendingUploads(files.map((file) => ({ file })));
                     e.target.value = "";
                   }}
                 />
@@ -568,7 +569,7 @@ export default function CustomizedDialogs(data) {
                   }}
                 >
                   <Typography sx={{ mb: 1, fontWeight: 700 }}>
-                    Légendes des nouvelles images
+                    {t("grimoire.imageCaptions")}
                   </Typography>
 
                   {pendingUploads.map((it, idx) => (
@@ -589,23 +590,27 @@ export default function CustomizedDialogs(data) {
                       <TextField
                         size="small"
                         label="Label"
-                        value={it.label}
+                        defaultValue=""
+                        inputRef={(el) => { labelRefs.current[idx] = el; }}
                         inputProps={{ style: { color: "black" } }}
                         InputLabelProps={{ style: { color: "black" } }}
-                        onChange={(ev) => {
-                          const v = ev.target.value;
-                          setPendingUploads((prev) =>
-                            prev.map((p, i) =>
-                              i === idx ? { ...p, label: v } : p,
-                            ),
-                          );
-                        }}
                         sx={{ width: "100%" }}
                       />
+
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          labelRefs.current = labelRefs.current.filter((_, i) => i !== idx);
+                          setPendingUploads((prev) => prev.filter((_, i) => i !== idx));
+                        }}
+                        sx={{ flexShrink: 0 }}
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
                     </Box>
                   ))}
                   <Btn
-                    msg="Envoyer"
+                    msg={t("grimoire.send")}
                     sx={{
                       bgcolor: "primary.main",
                       color: "primary.contrastText",
@@ -615,7 +620,9 @@ export default function CustomizedDialogs(data) {
                       if (!character?.ID_character) return;
 
                       try {
-                        for (const it of pendingUploads) {
+                        for (let i = 0; i < pendingUploads.length; i++) {
+                          const it = pendingUploads[i];
+                          const label = labelRefs.current[i]?.value || "";
                           const ID_media = await uploadImage(
                             it.file,
                             "gallery",
@@ -624,9 +631,10 @@ export default function CustomizedDialogs(data) {
                             character.ID_character,
                             ID_media,
                             "gallery",
-                            { label: it.label },
+                            { label },
                           );
                         }
+                        labelRefs.current = [];
                         setPendingUploads([]);
                         await refresh();
                       } catch (err) {
@@ -640,7 +648,7 @@ export default function CustomizedDialogs(data) {
 
               <Box sx={{ mt: 2, position: "relative" }}>
                 {total === 0 ? (
-                  <Typography>Aucune image.</Typography>
+                  <Typography>{t("grimoire.noImages")}</Typography>
                 ) : (
                   <>
                     {/* Flèche gauche */}
@@ -724,7 +732,7 @@ export default function CustomizedDialogs(data) {
                             onClick={async () => {
                               if (
                                 !window.confirm(
-                                  "Supprimer définitivement cette image ?",
+                                  t("grimoire.deleteImageConfirm"),
                                 )
                               )
                                 return;
@@ -800,7 +808,7 @@ export default function CustomizedDialogs(data) {
                               mt: 0.5,
                             }}
                           >
-                            {img.label || "No name"}
+                            {img.label || t("grimoire.noName")}
                           </Typography>
                         </Box>
                       ))}
