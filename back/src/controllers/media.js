@@ -4,6 +4,7 @@ const sequelize = require("../models").sequelize;
 const media = require("../models/media")(sequelize, DataTypes);
 
 const fs = require("fs");
+const serverError = require("../../utils/serverError.js");
 
 const ALLOWED_PREFIX = "/var/www/mus_storage/images/";
 
@@ -66,7 +67,7 @@ module.exports = {
       fs.createReadStream(item.disk_path).pipe(res);
     } catch (error) {
       console.error(error);
-      return res.status(500).send({ error: error.message });
+      return serverError(res, error);
     }
   },
 
@@ -77,6 +78,27 @@ module.exports = {
 
       if (!req.file) {
         return res.status(400).send({ message: "Aucun fichier reçu" });
+      }
+
+      // Vérification magic bytes
+      if (req.file.mimetype.startsWith("image/")) {
+        const buf = Buffer.alloc(12);
+        const fd = fs.openSync(req.file.path, "r");
+        fs.readSync(fd, buf, 0, 12, 0);
+        fs.closeSync(fd);
+        const isJpeg = buf[0] === 0xFF && buf[1] === 0xD8 && buf[2] === 0xFF;
+        const isPng  = buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47;
+        const isGif  = buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46;
+        const isWebp = buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46
+                    && buf[8] === 0x57 && buf[9] === 0x45 && buf[10] === 0x42 && buf[11] === 0x50;
+        const valid = (req.file.mimetype === "image/jpeg" && isJpeg)
+                   || (req.file.mimetype === "image/png"  && isPng)
+                   || (req.file.mimetype === "image/gif"  && isGif)
+                   || (req.file.mimetype === "image/webp" && isWebp);
+        if (!valid) {
+          fs.unlinkSync(req.file.path);
+          return res.status(400).send({ message: "Contenu du fichier incompatible avec le type déclaré" });
+        }
       }
 
       const created = await media.create({
@@ -97,7 +119,7 @@ module.exports = {
       });
     } catch (error) {
       console.error(error);
-      return res.status(500).send({ error: error.message });
+      return serverError(res, error);
     }
   },
 
@@ -175,7 +197,7 @@ module.exports = {
       return res.send({ ok: true });
     } catch (error) {
       console.error(error);
-      return res.status(500).send({ error: error.message });
+      return serverError(res, error);
     }
   },
 };
