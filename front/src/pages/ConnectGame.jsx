@@ -73,21 +73,21 @@ function ConnectGame() {
 
   const defaultCharacter = {
     ID_character: 0,
-    Name_character: "Visiteur",
-    Metier_character: "Aucun",
-    Race_character: "Inconnue",
-    Sexe_character: "Indéfini",
+    Name_character: t("jdr.defaultVisitor"),
+    Metier_character: t("jdr.defaultNone"),
+    Race_character: t("jdr.defaultUnknown"),
+    Sexe_character: t("jdr.defaultUndefined"),
     Planete_character: "N/A",
     Niveau_character: 1,
-    Agence_character: "Libre",
+    Agence_character: t("jdr.defaultFree"),
     Age_character: "??",
     Taille_character: "??",
     Poids_character: "??",
     OeilD_character: "??",
     OeilG_character: "??",
     Cheveux_character: "??",
-    Signes_character: "Aucun",
-    Traits_character: "Curieux / Observateur",
+    Signes_character: t("jdr.defaultNone"),
+    Traits_character: t("jdr.defaultTraits"),
     ManaAir_character: 30,
     ManaEau_character: 30,
     ManaTerre_character: 30,
@@ -580,6 +580,7 @@ function ConnectGame() {
                           width: "10vw",
                           borderRadius: "25px",
                           rotate: "-90deg",
+                          "& .MuiLinearProgress-bar": { backgroundColor: "#14b8a6" },
                         }}
                       />
                       <div className="mana-btns-air"
@@ -834,6 +835,8 @@ function ConnectGame() {
                         width: "10vw",
                         borderRadius: "25px ",
                         rotate: "-90deg",
+                        "& .MuiLinearProgress-bar": { backgroundColor: "#fb7185" },
+                        backgroundColor: "#991b1b",
                       }}
                     />
                     <div className="mana-btns-feu"
@@ -905,6 +908,7 @@ function ConnectGame() {
                       style={{ display: "felx", flexDirection: "row" }}
                     >
                       <LinearProgress
+                        color="primary"
                         id="manaVolonte"
                         variant="determinate"
                         value={clampedManaVolonte}
@@ -915,6 +919,8 @@ function ConnectGame() {
                           width: "10vw",
                           borderRadius: "25px ",
                           rotate: "-90deg",
+                          "& .MuiLinearProgress-bar": { backgroundColor: "#a855f7" },
+                          backgroundColor: "#6b21a8",
                         }}
                       />
                       <div className="mana-btns-volonte"
@@ -1046,7 +1052,7 @@ function ConnectGame() {
                       strokeLinecap: "butt",
                       textSize: "1.3em",
                       pathTransitionDuration: 0.3,
-                      pathColor: `#42d750`,
+                      pathColor: "#4caf50",
                       textColor: "#f88",
                       trailColor: "#cfe9d2",
                       backgroundColor: "#3e98c7",
@@ -1386,10 +1392,10 @@ function ConnectGame() {
             {/* Ligne 1 : Air, Eau, Terre */}
             <div style={{ display: "flex", justifyContent: "space-around" }}>
               {[
-                { label: "Air", icon: <AirIcon />, value: currentGauges.currentManaAir, clamped: clampedManaAir, color: "success", name: "currentManaAir" },
-                { label: "Eau", icon: <WaterDropIcon />, value: currentGauges.currentManaEau, clamped: clampedManaEau, color: "info", name: "currentManaEau" },
-                { label: "Terre", icon: <GrassIcon />, value: currentGauges.currentManaTerre, clamped: clampedManaTerre, color: "warning", name: "currentManaTerre" },
-              ].map(({ label, icon, value, clamped, color, name }) => (
+                { label: "Air", icon: <AirIcon />, value: currentGauges.currentManaAir, clamped: clampedManaAir, color: "success", name: "currentManaAir", barSx: { "& .MuiLinearProgress-bar": { backgroundColor: "#14b8a6" } } },
+                { label: "Eau", icon: <WaterDropIcon />, value: currentGauges.currentManaEau, clamped: clampedManaEau, color: "info", name: "currentManaEau", barSx: {} },
+                { label: "Terre", icon: <GrassIcon />, value: currentGauges.currentManaTerre, clamped: clampedManaTerre, color: "warning", name: "currentManaTerre", barSx: {} },
+              ].map(({ label, icon, value, clamped, color, name, barSx }) => (
                 <div key={label}
                   style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "30%" }}>
                   <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -1397,9 +1403,11 @@ function ConnectGame() {
                       <BtnAdd name={label} mana={value} manaName={name} character={character} onGaugeUpdate={handleGaugeUpdate} />
                       <BtnRm name={label} mana={value} manaName={name} character={character} onGaugeUpdate={handleGaugeUpdate} />
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 15, width: "50px" }}>
-                      <LinearProgress variant="determinate" value={clamped} color={color}
-                        sx={{ alignSelf: "center", width: "8px", height: "35dvw", borderRadius: "25px", rotate: "180deg", "& .MuiLinearProgress-bar": { transformOrigin: "bottom" } }} />
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 15 }}>
+                      <div style={{ position: "relative", width: "8px", height: "35dvw" }}>
+                        <LinearProgress variant="determinate" value={clamped} color={color}
+                          sx={{ position: "absolute", bottom: 0, left: 0, width: "35dvw", height: "8px", borderRadius: "25px", transformOrigin: "bottom left", transform: "rotate(-90deg)", ...barSx }} />
+                      </div>
                       <Typography sx={{
                         whiteSpace: "nowrap", color: "lightblue", fontSize: "0.8rem", textAlign: "center", width: "100%", fontSize: "1.2rem"
                       }}>{icon} <br />{`${value} pts`}</Typography>
@@ -1412,18 +1420,20 @@ function ConnectGame() {
             {/* Ligne 2 : Feu, Volonté */}
             <div style={{ display: "flex", justifyContent: "space-around" }}>
               {[
-                { label: "Feu", icon: <LocalFireDepartmentIcon />, value: currentGauges.currentManaFeu, clamped: clampedManaFeu, color: "error", name: "currentManaFeu" },
-                { label: "Volonté", icon: <SelfImprovementIcon />, value: currentGauges.currentManaVolonte, clamped: clampedManaVolonte, color: "primary", name: "currentManaVolonte" },
-              ].map(({ label, icon, value, clamped, color, name }) => (
+                { label: "Feu", icon: <LocalFireDepartmentIcon />, value: currentGauges.currentManaFeu, clamped: clampedManaFeu, color: "error", name: "currentManaFeu", barSx: { "& .MuiLinearProgress-bar": { backgroundColor: "#fb7185" }, backgroundColor: "#991b1b" } },
+                { label: "Volonté", icon: <SelfImprovementIcon />, value: currentGauges.currentManaVolonte, clamped: clampedManaVolonte, color: "primary", name: "currentManaVolonte", barSx: { "& .MuiLinearProgress-bar": { backgroundColor: "#a855f7" }, backgroundColor: "#6b21a8" } },
+              ].map(({ label, icon, value, clamped, color, name, barSx }) => (
                 <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "30%" }}>
                   <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 6 }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: 1, width: "30px" }}>
                       <BtnAdd name={label} mana={value} manaName={name} character={character} onGaugeUpdate={handleGaugeUpdate} />
                       <BtnRm name={label} mana={value} manaName={name} character={character} onGaugeUpdate={handleGaugeUpdate} />
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 15, width: "50px" }}>
-                      <LinearProgress variant="determinate" value={clamped} color={color}
-                        sx={{ alignSelf: "center", width: "8px", height: "35dvw", borderRadius: "25px", rotate: "180deg" }} />
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 15 }}>
+                      <div style={{ position: "relative", width: "8px", height: "35dvw" }}>
+                        <LinearProgress variant="determinate" value={clamped} color={color}
+                          sx={{ position: "absolute", bottom: 0, left: 0, width: "35dvw", height: "8px", borderRadius: "25px", transformOrigin: "bottom left", transform: "rotate(-90deg)", ...barSx }} />
+                      </div>
                       <Typography sx={{
                         whiteSpace: "nowrap", color: "lightblue", fontSize: "0.8rem", textAlign: "center", width: "100%", fontSize: "1.2rem"
                       }}>{icon} <br />{`${value} pts`}</Typography>

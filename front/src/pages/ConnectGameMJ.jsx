@@ -9,7 +9,8 @@ import "react-circular-progressbar/dist/styles.css";
 import { ConnexionContext } from "../components/provider";
 import { useTheme } from "@mui/material/styles";
 import MenuItem from "@mui/material/MenuItem";
-import { LinearProgress, Typography, TableRow, TableCell, Table, TableBody, TableHead, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
+import { LinearProgress, Typography, TableRow, TableCell, Table, TableBody, TableHead, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, useMediaQuery } from "@mui/material";
+import "../../src/styles/responsive.css";
 
 import BG from "../components/Background";
 import Top from "../components/Header";
@@ -66,6 +67,17 @@ function ConnectGameMJ() {
     setSelected(new Set(characters.map((c) => c.ID_character)));
   const clearAll = () => setSelected(new Set());
 
+  const openEndDialog = () => {
+    // Si rien n'est sélectionné, on prend tout le monde
+    const targets = selected.size > 0
+      ? [...selected]
+      : characters.map((c) => c.ID_character);
+    if (selected.size === 0) setSelected(new Set(targets));
+    // Initialise une vraie ligne dans l'état pour chaque personnage concerné
+    targets.forEach((id) => ensureRewardRows(id));
+    setEndOpen(true);
+  };
+
   const openAlertDialogFor = (targets) => {
     setSelected(new Set(targets));
     setAlertOpen(true);
@@ -116,6 +128,9 @@ function ConnectGameMJ() {
 
   const [gaugesByCharId, setGaugesByCharId] = useState({});
 
+  // snapshot persisté en base : { [charId]: { ...statsAvant } } ou null si aucun scénar en cours
+  const [scenarioSnapshot, setScenarioSnapshot] = useState(null);
+
   useEffect(() => {
     if (!characters.length) return;
 
@@ -161,6 +176,20 @@ function ConnectGameMJ() {
     return () => {
       cancelled = true;
     };
+  }, [characters]);
+
+  // Chargement des snapshots de début de scénario (persistés en base)
+  useEffect(() => {
+    if (!characters.length) return;
+    const ids = characters.map((c) => c.ID_character).join(",");
+    fetch(`/api/scenario/snapshots?ids=${ids}`)
+      .then((r) => r.json())
+      .then((json) => {
+        if (json?.ok && Object.keys(json.data).length) {
+          setScenarioSnapshot(json.data);
+        }
+      })
+      .catch(console.error);
   }, [characters]);
 
   useEffect(() => {
@@ -245,6 +274,8 @@ function ConnectGameMJ() {
 
   const STAT_OPTIONS = [...BASE_STAT_OPTIONS, ...COMP_OPTIONS];
 
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   const [endOpen, setEndOpen] = useState(false);
 
   // { [charId]: [{ field: string, delta: number }, ...] }
@@ -281,6 +312,24 @@ function ConnectGameMJ() {
   const buildFieldLabel = (field) => {
     const found = STAT_OPTIONS.find((o) => o.field === field);
     return found?.label || field;
+  };
+
+  const handleStartScenario = async () => {
+    const targets = characters.map((c) => c.ID_character);
+    const res = await fetch("/api/scenario/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ targets }),
+    });
+    const json = await res.json().catch(() => null);
+    if (res.ok && json?.ok) {
+      // Construire le snapshot local depuis les données déjà chargées
+      const snapshot = {};
+      for (const char of characters) {
+        snapshot[char.ID_character] = { ...char };
+      }
+      setScenarioSnapshot(snapshot);
+    }
   };
 
   const handleEndScenario = async () => {
@@ -328,8 +377,14 @@ function ConnectGameMJ() {
 
     socket.emit("mj:scenarioEnd", { targets, summaryByTarget });
 
-    // Option: reset UI
     setEndOpen(false);
+    // Effacement local du snapshot (le backend l'a déjà supprimé en base)
+    setScenarioSnapshot((prev) => {
+      if (!prev) return null;
+      const next = { ...prev };
+      for (const id of targets) delete next[id];
+      return Object.keys(next).length ? next : null;
+    });
     // setRewardsByCharId({}); // si tu veux tout vider
   };
 
@@ -343,22 +398,221 @@ function ConnectGameMJ() {
     return null;
   }
 
+  const getCharGauges = (char) => {
+    const gauges = gaugesByCharId[char.ID_character];
+    const n = (v) => Number(v);
+    const clamp = (v) => Math.min(100, Math.max(0, v));
+    const currentManaVital = n(gauges?.currentManaVital ?? char.ManaVital_character);
+    const currentStamina = n(gauges?.currentStamina ?? char.Stamina_character);
+    const currentManaAir = n(gauges?.currentManaAir ?? char.ManaAir_character);
+    const currentManaEau = n(gauges?.currentManaEau ?? char.ManaEau_character);
+    const currentManaTerre = n(gauges?.currentManaTerre ?? char.ManaTerre_character);
+    const currentManaFeu = n(gauges?.currentManaFeu ?? char.ManaFeu_character);
+    const currentManaVolonte = n(gauges?.currentManaVolonte ?? char.ManaVolonte_character);
+    return {
+      currentManaVital, currentStamina, currentManaAir, currentManaEau,
+      currentManaTerre, currentManaFeu, currentManaVolonte,
+      clampedManaVital: clamp((currentManaVital / char.ManaVital_character) * 100),
+      clampedStamina: clamp((currentStamina / char.Stamina_character) * 100),
+      clampedManaAir: clamp((currentManaAir / char.ManaAir_character) * 100),
+      clampedManaEau: clamp((currentManaEau / char.ManaEau_character) * 100),
+      clampedManaTerre: clamp((currentManaTerre / char.ManaTerre_character) * 100),
+      clampedManaFeu: clamp((currentManaFeu / char.ManaFeu_character) * 100),
+      clampedManaVolonte: clamp((currentManaVolonte / char.ManaVolonte_character) * 100),
+    };
+  };
+
   if (loading) return <PageLoader />;
+
+  const actionButtons = (
+    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", marginBottom: 10 }}>
+      <Btn msg="Tout sélectionner" onClick={selectAll} />
+      <Btn msg="Vider sélection" onClick={clearAll} />
+      <Btn msg="Alerte sélection" onClick={() => setAlertOpen(true)} />
+      <Btn msg="Alerte à tous" onClick={() => openAlertDialogFor(characters.map((c) => c.ID_character))} />
+    </div>
+  );
 
   return (
     <div className="main">
       <BG />
       <Top started={currentUser} />
-      <div
-        id="holocom"
-        style={{
-          padding: "10px",
-          display: "flex",
-          flexDirection: "column",
-          textAlign: "center",
-          justifyContent: "space-around",
-        }}
-      >
+      {isMobile ? (
+        <>
+          <div style={{
+            position: "fixed",
+            top: "56px",
+            left: 0,
+            right: 0,
+            zIndex: 50,
+            background: "rgba(10,10,20,0.92)",
+            backdropFilter: "blur(6px)",
+            WebkitBackdropFilter: "blur(6px)",
+            padding: "8px 12px",
+            display: "flex",
+            gap: 8,
+            flexWrap: "wrap",
+            justifyContent: "center",
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
+          }}>
+            <Btn msg="Tout sélectionner" onClick={selectAll} />
+            <Btn msg="Vider sélection" onClick={clearAll} />
+            <Btn msg="Alerte sélection" onClick={() => setAlertOpen(true)} />
+            <Btn msg="Alerte à tous" onClick={() => openAlertDialogFor(characters.map((c) => c.ID_character))} />
+          </div>
+          <div style={{ padding: "130px 12px 100px", display: "flex", flexDirection: "column", gap: 16 }}>
+          {characters.map((char) => {
+            const {
+              currentManaVital, currentStamina, currentManaAir, currentManaEau,
+              currentManaTerre, currentManaFeu, currentManaVolonte,
+              clampedManaVital, clampedStamina, clampedManaAir, clampedManaEau,
+              clampedManaTerre, clampedManaFeu, clampedManaVolonte,
+            } = getCharGauges(char);
+            return (
+              <div
+                key={char.ID_character}
+                style={{
+                  border: selected.has(char.ID_character)
+                    ? "2px solid #90caf9"
+                    : "1px solid rgba(255,255,255,0.2)",
+                  borderRadius: 10,
+                  padding: 12,
+                  background: selected.has(char.ID_character)
+                    ? "rgba(144,202,249,0.1)"
+                    : "rgba(0,0,0,0.3)",
+                  transition: "border 0.2s, background 0.2s",
+                  position: "relative",
+                  zIndex: 1,
+                }}
+              >
+                {/* En-tête : nom + checkbox */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                  <p style={{ color: "lightblue", fontSize: "1.1rem", fontWeight: "bold", margin: 0 }}>
+                    {char.Name_character}
+                  </p>
+                  <label style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer" }}>
+                    <span style={{ color: "lightblue", fontSize: "0.85rem" }}>
+                      {selected.has(char.ID_character) ? "Sélectionné ✓" : "Sélectionner"}
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={selected.has(char.ID_character)}
+                      onChange={() => toggleSelected(char.ID_character)}
+                      style={{ width: 22, height: 22, cursor: "pointer" }}
+                    />
+                  </label>
+                </div>
+
+                {/* Barres verticales - ligne 1 : Air, Eau, Terre */}
+                <div style={{ display: "flex", justifyContent: "space-around", marginBottom: 8 }}>
+                  {[
+                    { label: "Air", value: currentManaAir, clamped: clampedManaAir, color: "success", barSx: { "& .MuiLinearProgress-bar": { backgroundColor: "#14b8a6" } } },
+                    { label: "Eau", value: currentManaEau, clamped: clampedManaEau, color: "info", barSx: {} },
+                    { label: "Terre", value: currentManaTerre, clamped: clampedManaTerre, color: "warning", barSx: {} },
+                  ].map(({ label, value, clamped, color, barSx }) => (
+                    <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 15, width: "30%" }}>
+                      <div style={{ position: "relative", width: "8px", height: "25vw" }}>
+                        <LinearProgress variant="determinate" value={clamped} color={color}
+                          sx={{ position: "absolute", bottom: 0, left: "8px", width: "25vw", height: "8px", borderRadius: "25px", transformOrigin: "bottom left", transform: "rotate(-90deg)", ...barSx }} />
+                      </div>
+                      <p style={{ color: "lightblue", fontSize: "0.85rem", textAlign: "center", margin: 0, whiteSpace: "nowrap" }}>
+                        {label}<br />{value} pts
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Barres verticales - ligne 2 : Feu, Volonté */}
+                <div style={{ display: "flex", justifyContent: "space-around", marginBottom: 20 }}>
+                  {[
+                    { label: "Feu", value: currentManaFeu, clamped: clampedManaFeu, color: "error", barSx: { "& .MuiLinearProgress-bar": { backgroundColor: "#fb7185" }, backgroundColor: "#991b1b" } },
+                    { label: "Volonté", value: currentManaVolonte, clamped: clampedManaVolonte, color: "primary", barSx: { "& .MuiLinearProgress-bar": { backgroundColor: "#a855f7" }, backgroundColor: "#6b21a8" } },
+                  ].map(({ label, value, clamped, color, barSx }) => (
+                    <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 15, width: "30%" }}>
+                      <div style={{ position: "relative", width: "8px", height: "25vw" }}>
+                        <LinearProgress variant="determinate" value={clamped} color={color}
+                          sx={{ position: "absolute", bottom: 0, left: "8px", width: "25vw", height: "8px", borderRadius: "25px", transformOrigin: "bottom left", transform: "rotate(-90deg)", ...barSx }} />
+                      </div>
+                      <p style={{ color: "lightblue", fontSize: "0.85rem", textAlign: "center", margin: 0, whiteSpace: "nowrap" }}>
+                        {label}<br />{value} pts
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CircularProgressbar Vital + Stamina */}
+                <div style={{ display: "flex", justifyContent: "space-around", alignItems: "flex-start", marginBottom: 12 }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+                    <p style={{ color: "lightblue", fontSize: "0.9rem", margin: 0 }}>Mana Vital</p>
+                    <div style={{ width: "40dvw" }}>
+                      <CircularProgressbar
+                        value={clampedManaVital}
+                        circleRatio={0.5}
+                        text={`${currentManaVital} pts`}
+                        styles={buildStyles({ rotation: 0.75, strokeLinecap: "butt", textSize: "1em", pathTransitionDuration: 0.5, pathColor: "red", textColor: "#f88", trailColor: "#af8c8d" })}
+                      />
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+                    <p style={{ color: "lightblue", fontSize: "0.9rem", margin: 0 }}>Stamina</p>
+                    <div style={{ width: "40dvw" }}>
+                      <CircularProgressbar
+                        value={clampedStamina}
+                        circleRatio={0.5}
+                        text={`${currentStamina} pts`}
+                        styles={buildStyles({ rotation: 0.75, strokeLinecap: "butt", textSize: "1em", pathTransitionDuration: 0.5, pathColor: "#42d750", textColor: "#f88", trailColor: "#cfe9d2" })}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions : Compétence + Alerte */}
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginTop: 8 }}>
+                  <Btn
+                    onClick={() => setSelectorVisibleFor(selectorVisibleFor === char.ID_character ? null : char.ID_character)}
+                    msg="Compétence"
+                  />
+                  <Btn msg="Alerte" onClick={() => openAlertDialogFor([char.ID_character])} />
+                </div>
+
+                {selectorVisibleFor === char.ID_character && (
+                  <DynamicSkillSelector
+                    onFinalSelect={(path) => handleFinalSelection(char.ID_character, path)}
+                  />
+                )}
+                {skillScores[char.ID_character] && (
+                  <p style={{ marginTop: 8, fontSize: "1.1rem", color: "lightblue" }}>
+                    {skillScores[char.ID_character].label} : {skillScores[char.ID_character].valeur}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+          <Button
+            variant="contained"
+            color={scenarioSnapshot ? "success" : "primary"}
+            onClick={handleStartScenario}
+            disabled={!!scenarioSnapshot}
+            sx={{ position: "fixed", left: 16, bottom: 16, zIndex: 9999 }}
+          >
+            {scenarioSnapshot ? "Scénario en cours" : "Début de scénario"}
+          </Button>
+          <Button variant="contained" onClick={openEndDialog} sx={{ position: "fixed", right: 16, bottom: 16, zIndex: 9999 }}>
+            Fin de scénario
+          </Button>
+        </div>
+        </>
+      ) : (
+        <div
+          id="holocom"
+          style={{
+            padding: "10px",
+            display: "flex",
+            flexDirection: "column",
+            textAlign: "center",
+            justifyContent: "space-around",
+          }}
+        >
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
             style={{
@@ -700,7 +954,7 @@ function ConnectGameMJ() {
                                     rotation: 0.75,
                                     strokeLinecap: "butt",
                                     pathTransitionDuration: 0.5,
-                                    pathColor: `#42d750`,
+                                    pathColor: "#4caf50",
                                     textColor: "#f88",
                                     trailColor: "#cfe9d2",
                                     backgroundColor: "#3e98c7",
@@ -727,6 +981,7 @@ function ConnectGameMJ() {
                                   width: "60px",
                                   borderRadius: "25px",
                                   transform: "rotate(-90deg)",
+                                  "& .MuiLinearProgress-bar": { backgroundColor: "#14b8a6" },
                                 }}
                               />
                               <Typography
@@ -799,6 +1054,8 @@ function ConnectGameMJ() {
                                   width: "60px",
                                   borderRadius: "25px",
                                   transform: "rotate(-90deg)",
+                                  "& .MuiLinearProgress-bar": { backgroundColor: "#fb7185" },
+                                  backgroundColor: "#991b1b",
                                 }}
                               />
                               <Typography
@@ -814,6 +1071,7 @@ function ConnectGameMJ() {
                             </TableCell>
                             <TableCell sx={{ border: "none" }}>
                               <LinearProgress
+                                color="primary"
                                 id="manaVolonte"
                                 variant="determinate"
                                 value={clampedManaVolonte}
@@ -822,6 +1080,8 @@ function ConnectGameMJ() {
                                   width: "60px",
                                   borderRadius: "25px",
                                   transform: "rotate(-90deg)",
+                                  "& .MuiLinearProgress-bar": { backgroundColor: "#a855f7" },
+                                  backgroundColor: "#6b21a8",
                                 }}
                               />
                               <Typography
@@ -897,7 +1157,16 @@ function ConnectGameMJ() {
 
                   <Button
                     variant="contained"
-                    onClick={() => setEndOpen(true)}
+                    color={scenarioSnapshot ? "success" : "primary"}
+                    onClick={handleStartScenario}
+                    disabled={!!scenarioSnapshot}
+                    sx={{ position: "fixed", left: 16, bottom: 16, zIndex: 9999 }}
+                  >
+                    {scenarioSnapshot ? "Scénario en cours" : "Début de scénario"}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={openEndDialog}
                     sx={{ position: "fixed", right: 16, bottom: 16, zIndex: 9999 }}
                   >
                     Fin de scénario
@@ -908,6 +1177,7 @@ function ConnectGameMJ() {
           </div>
         </div>
       </div>
+      )}
 
       <Dialog
         open={alertOpen}
@@ -977,41 +1247,58 @@ function ConnectGameMJ() {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 10 }}>
-                    {(rows.length ? rows : [{ field: "", delta: 0 }]).map((row, idx) => (
-                      <div key={idx} style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                        <TextField
-                          select
-                          fullWidth
-                          label="Stat / Compétence"
-                          value={row.field || ""}
-                          onChange={(e) => updateRewardRow(charId, idx, { field: e.target.value })}
-                        >
-                          <MenuItem value="">— Choisir —</MenuItem>
-                          {STAT_OPTIONS.map((opt) => (
-                            <MenuItem key={opt.field} value={opt.field}>
-                              {opt.label}
-                            </MenuItem>
-                          ))}
-                        </TextField>
+                    {rows.map((row, idx) => {
+                      const snap = scenarioSnapshot?.[charId];
+                      const valAvant = row.field && snap ? snap[row.field] : undefined;
+                      const valApres = valAvant !== undefined ? valAvant + (row.delta ?? 0) : undefined;
+                      return (
+                        <div key={idx} style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                          <TextField
+                            select
+                            fullWidth
+                            label="Stat / Compétence"
+                            value={row.field || ""}
+                            onChange={(e) => updateRewardRow(charId, idx, { field: e.target.value })}
+                            sx={{ minWidth: 180, flex: 1 }}
+                          >
+                            <MenuItem value="">— Choisir —</MenuItem>
+                            {STAT_OPTIONS.map((opt) => (
+                              <MenuItem key={opt.field} value={opt.field}>
+                                {opt.label}
+                                {scenarioSnapshot?.[charId]?.[opt.field] !== undefined && (
+                                  <span style={{ opacity: 0.55, fontSize: "0.8em", marginLeft: 6 }}>
+                                    (avant : {scenarioSnapshot[charId][opt.field]})
+                                  </span>
+                                )}
+                              </MenuItem>
+                            ))}
+                          </TextField>
 
-                        <TextField
-                          label="+"
-                          type="number"
-                          value={row.delta ?? 0}
-                          onChange={(e) => updateRewardRow(charId, idx, { delta: Number(e.target.value) })}
-                          sx={{ width: 120 }}
-                        />
+                          {valAvant !== undefined && (
+                            <Typography variant="body2" sx={{ whiteSpace: "nowrap", opacity: 0.7, minWidth: 90 }}>
+                              {valAvant} → {valApres}
+                            </Typography>
+                          )}
 
-                        <Button
-                          size="small"
-                          color="error"
-                          onClick={() => removeRewardRow(charId, idx)}
-                          disabled={(rewardsByCharId[charId] || []).length <= 1}
-                        >
-                          Supprimer
-                        </Button>
-                      </div>
-                    ))}
+                          <TextField
+                            label="delta"
+                            type="number"
+                            value={row.delta ?? 0}
+                            onChange={(e) => updateRewardRow(charId, idx, { delta: Number(e.target.value) })}
+                            sx={{ width: 100 }}
+                          />
+
+                          <Button
+                            size="small"
+                            color="error"
+                            onClick={() => removeRewardRow(charId, idx)}
+                            disabled={(rewardsByCharId[charId] || []).length <= 1}
+                          >
+                            Supprimer
+                          </Button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               );
