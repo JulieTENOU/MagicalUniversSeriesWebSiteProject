@@ -1,0 +1,18 @@
+services:
+  front-dev:
+    build:
+      context: ./front
+      dockerfile: Dockerfile.dev
+    container_name: frontDevMA
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./front/src:/app/src
+      - ./front/public:/app/public
+    networks:
+      - mu-network
+
+networks:
+  mu-network:
+    external: true
+    name: mus-website_mu-network
