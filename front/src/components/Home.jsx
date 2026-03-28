@@ -9,10 +9,11 @@ export default function HomeCompo() {
   const API_BASE = process.env.REACT_APP_API_BASE || window.location.origin;
   const logoMA = `${API_BASE}/api/media/getOneMedia/5`;
   const Pile = `${API_BASE}/api/media/getOneMedia/7`;
+  // ⚠️ Remplacer XX par l'ID retourné après avoir lancé back/scripts/insert_signature_media.sql
+  const signature = `${API_BASE}/api/media/getOneMedia/60`;
 
   const {
     state: currentUser,
-    setState: setCurrentUser,
     loading,
   } = useContext(ConnexionContext);
 
@@ -53,8 +54,7 @@ export default function HomeCompo() {
           </div>
         </div>
       ) : (
-        <div className="home-guest"
-        >
+        <div className="home-guest" style={{ position: "relative", paddingBottom: "15rem" }}>
           <p>
             {t("home.welcomeGuest")
               .split("\n")
@@ -65,6 +65,17 @@ export default function HomeCompo() {
                 </span>
               ))}
           </p>
+          <div style={{ position: "absolute", bottom: "0", right: "0" }}>
+            <img
+              src={signature}
+              alt="signature de l'autrice"
+              style={{
+                height: "80px",
+                filter: "invert(1)",
+                opacity: 0.9,
+              }}
+            />
+          </div>
         </div>
       )}
     </div>

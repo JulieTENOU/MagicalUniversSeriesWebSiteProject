@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import axios from "axios";
 
@@ -44,7 +45,6 @@ function ReadBook() {
 
   const {
     state: isConnected,
-    setState: setIsConnected,
     loading,
   } = useContext(ConnexionContext);
 
@@ -59,8 +59,19 @@ function ReadBook() {
   const [navigationInfo, setNavigationInfo] = useState({ prev: null, next: null });
 
   const scrollRef = useRef(null);
+  const currentChapterRef = useRef(null);
 
   const theme = useTheme();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (chaptersDrawerOpen && Object.keys(chaptersParts).length > 0 && currentChapterRef.current) {
+      requestAnimationFrame(() => {
+        currentChapterRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    }
+  }, [chaptersDrawerOpen, chaptersParts]);
+
 
   useEffect(() => {
     changeTheme(localReadingMode);
@@ -136,7 +147,7 @@ function ReadBook() {
         window.location.reload();
       } else {
         setAttempts((prev) => prev + 1);
-        setAwakeningError("Réponse incorrecte.");
+        setAwakeningError(t("read.wrongAnswer"));
 
         if (res.data?.near && res.data?.near_hint) {
           setNearHint(res.data.near_hint); // ✅ affichage direct
@@ -146,7 +157,7 @@ function ReadBook() {
       }
     } catch (err) {
       console.error(err);
-      setAwakeningError("Erreur serveur.");
+      setAwakeningError(t("read.serverError"));
     } finally {
       setAwakeningLoading(false);
     }
@@ -240,7 +251,7 @@ function ReadBook() {
 
         const grouped = {};
         chaptersData.forEach((chap) => {
-          const partName = chap.part?.part_name || "Autres";
+          const partName = chap.part?.part_name || t("read.otherPart");
           if (!grouped[partName]) grouped[partName] = [];
           grouped[partName].push(chap);
         });
@@ -307,18 +318,23 @@ function ReadBook() {
       >
         <div style={{ padding: "12px 16px" }}>
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            Chapitres
+            {t("read.chaptersTitle")}
           </Typography>
           <Typography sx={{ opacity: 0.8, fontSize: 13 }}>
-            {serie} /  {bookInfos?.name || serie}
+            {serie} / {bookInfos?.name || book}
           </Typography>
+          <Btn
+            path={`/read/${serie}`}
+            msg={t("read.backToList")}
+            sx={{ color: theme.custom.mycustomblur.text, mt: 1, fontSize: 13 }}
+          />
         </div>
 
         <Divider />
 
         {chaptersListLoading ? (
           <div style={{ padding: 16 }}>
-            <Typography sx={{ opacity: 0.8 }}>Chargement...</Typography>
+            <Typography sx={{ opacity: 0.8 }}>{t("common.loading")}</Typography>
           </div>
         ) : (
           <List
@@ -341,6 +357,7 @@ function ReadBook() {
                   {chaptersParts[partName].map((chap) => (
                     <ListItemButton
                       key={chap.ID_chapter}
+                      ref={chap.path === chapter ? currentChapterRef : null}
                       selected={chap.path === chapter}
                       onClick={() => {
                         setChaptersDrawerOpen(false);
@@ -366,15 +383,6 @@ function ReadBook() {
           </List>
         )}
 
-        <Divider />
-
-        <div style={{ padding: 12 }}>
-          <Btn
-            path={`/read/${serie}/${book}`}
-            msg="Retour au sommaire"
-            sx={{ color: "whitesmoke", width: "100%" }}
-          />
-        </div>
       </Drawer>
 
       <div
@@ -401,8 +409,8 @@ function ReadBook() {
             onClick={() => setChaptersDrawerOpen(true)}
             sx={{
               color: theme.custom.mycustomblur.text,
-              border: theme.custom.mycustomblur.border,
               backgroundColor: theme.custom.mycustomblur.main,
+              boxShadow: theme.custom.mycustomblur.boxShadow,
               width: 40,
               height: 40,
             }}
@@ -436,7 +444,7 @@ function ReadBook() {
         </div>
 
         {/* ── Box de lecture ── */}
-        <div className="read-glass-shell" style={{ flex: 1, minHeight: 0 }}>
+        <div className="read-glass-shell" style={{ flex: 1, minHeight: 0, boxShadow: theme.custom.mycustomblur.boxShadow }}>
           <div
             className="read-scroll"
             ref={scrollRef}
@@ -446,8 +454,6 @@ function ReadBook() {
               flexDirection: "column",
               gap: "1rem",
               backgroundColor: theme.custom.mycustomblur.main,
-              boxShadow: theme.custom.mycustomblur.boxShadow,
-              border: theme.custom.mycustomblur.border,
               padding: "20px",
               borderRadius: "10px",
               maxWidth: "900px",
@@ -462,7 +468,7 @@ function ReadBook() {
               style={{ textAlign: "center", userSelect: "none" }}
             >
               {gate
-                ? "Accès verrouillé"
+                ? t("read.lockedTitle")
                 :
                 <>
                   <span style={{ fontFamily: "'Lettrine', serif", fontSize: "1.4em" }}>
@@ -473,7 +479,7 @@ function ReadBook() {
                   </span>
                 </>
 
-                || "Chargement..."}
+                || t("common.loading")}
             </Typography>
 
             {/* Gate Éveil */}
@@ -484,15 +490,14 @@ function ReadBook() {
                   color={theme.custom.mycustomblur.text}
                   sx={{ mb: 2 }}
                 >
-                  {gate.question ||
-                    "Pour accéder à cette information tu devras d'abord Eveiller tes pouvoirs."}
+                  {gate.question || t("read.lockedFallback")}
                 </Typography>
 
                 {attempts >= (gate?.hint_after_attemps ?? 3) && gate?.hint && (
                   <div style={{ marginTop: 20 }}>
                     <Btn
                       onClick={() => setShowHint((prev) => !prev)}
-                      msg={showHint ? "Masquer l'indice" : "Révéler un indice"}
+                      msg={showHint ? t("read.hideHint") : t("read.showHint")}
                       sx={{ color: "whitesmoke" }}
                     />
                     {showHint && (
@@ -519,14 +524,13 @@ function ReadBook() {
                   color={theme.custom.mycustomblur.text}
                   sx={{ mb: 2 }}
                 >
-                  Niveau requis : {gate.required_level} — Ton niveau :{" "}
-                  {gate.current_level}
+                  {t("read.requiredLevel", { required: gate.required_level, current: gate.current_level })}
                 </Typography>
 
                 <input
                   value={awakeningAnswer}
                   onChange={(e) => setAwakeningAnswer(e.target.value)}
-                  placeholder="Entre la réponse…"
+                  placeholder={t("read.answerPlaceholder")}
                   style={{
                     padding: "10px 12px",
                     borderRadius: 8,
@@ -540,7 +544,7 @@ function ReadBook() {
                 <div style={{ marginTop: 12 }}>
                   <Btn
                     onClick={submitAwakening}
-                    msg={awakeningLoading ? "Validation..." : "Déverrouiller"}
+                    msg={awakeningLoading ? t("read.validating") : t("read.unlock")}
                     sx={{ color: "whitesmoke" }}
                   />
                 </div>
@@ -577,7 +581,7 @@ function ReadBook() {
                 ? `/read/${serie}/${book}/${navigationInfo.prev}`
                 : `/read/${serie}/${book}`
             }
-            msg="Chapitre précédent"
+            msg={t("read.prevChapter")}
             src={LogoReturn}
             height="50px"
             sx={{ textDecoration: "none", color: "whitesmoke" }}
@@ -589,7 +593,7 @@ function ReadBook() {
                 : `/read/${serie}/${book}`
             }
             msg={
-              navigationInfo?.next ? "Chapitre suivant" : "Retour au sommaire"
+              navigationInfo?.next ? t("read.nextChapter") : t("read.backToSummary")
             }
             src={LogoNext}
             height="50px"

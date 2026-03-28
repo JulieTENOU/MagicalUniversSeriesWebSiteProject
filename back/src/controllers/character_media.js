@@ -112,7 +112,7 @@ module.exports = {
         slot: it.slot,
         label: it.label,
         order_index: it.order_index,
-        url: `${req.protocol}://${req.get("host")}/api/media/getOneMedia/${it.ID_media}`,
+        url: `/api/media/getOneMedia/${it.ID_media}`,
       }));
 
       return res.send(mapped);

@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import "../index.css";
 import "../general.css";
@@ -16,6 +17,7 @@ import PageLoader from "../components/PageLoader.jsx";
 
 function ReadSeries() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { serie } = useParams(); // ← récupère "xalyt" ou "ma", etc.
   const { state: isConnected, loading } = useContext(ConnexionContext);
   const [books, setBooks] = useState([]);
@@ -94,7 +96,7 @@ function ReadSeries() {
 
       <div className="page-content-wrapper">
 
-        <BtnRtn msg={"Go back"}
+        <BtnRtn msg={t("read.goBack")}
           path={`/read/`}
         />
 

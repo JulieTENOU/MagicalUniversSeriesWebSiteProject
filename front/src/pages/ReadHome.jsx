@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import "../index.css";
 import "../general.css";
@@ -14,6 +15,7 @@ import BtnRtn from "../components/BtnRtn.jsx";
 
 function ReadHome() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { state: isConnected, loading } = useContext(ConnexionContext);
 
   const [seriesList, setSeriesList] = useState([]);
@@ -44,7 +46,7 @@ function ReadHome() {
       <Top started={isConnected} />
 
       <div className="readHomeGridWrap">
-        <BtnRtn msg={"Go back"} path={`/`} />
+        <BtnRtn msg={t("read.goBack")} path={`/`} />
 
         <div className="readHomeGrid">
           {seriesList.map((serie) => {

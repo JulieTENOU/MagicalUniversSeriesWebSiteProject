@@ -1,8 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 
 import { Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 
 import "../index.css";
@@ -18,6 +20,8 @@ import BtnRtn from "../components/BtnRtn.jsx";
 import PageLoader from "../components/PageLoader.jsx";
 
 function ChaptersList() {
+  const theme = useTheme();
+  const { t } = useTranslation();
   const { state: isConnected } = useContext(ConnexionContext);
   const [chapters, setChapters] = useState([]);
   const [parts, setParts] = useState({});
@@ -38,7 +42,7 @@ function ChaptersList() {
         // Classe les chapitres par partie (optionnel)
         const grouped = {};
         chaptersData.forEach((chap) => {
-          const partName = chap.part?.part_name || "Autres";
+          const partName = chap.part?.part_name || t("read.otherPart");
           if (!grouped[partName]) grouped[partName] = [];
           grouped[partName].push(chap);
         });
@@ -69,7 +73,7 @@ function ChaptersList() {
       <div className="btn-return-wrapper"
       >
 
-        <BtnRtn msg={"Go back"} path={`/read/${serie}`} />
+        <BtnRtn msg={t("read.goBack")} path={`/read/${serie}`} />
       </div>
       <div className="chapters-container"
         style={{
@@ -83,7 +87,11 @@ function ChaptersList() {
           padding: "1rem",
           overflowY: "auto",
           height: "80vh",
-          backdropFilter: "blur(20px)",
+          backgroundColor: theme.custom.mycustomblur.main,
+          backdropFilter: theme.custom.mycustomblur.blur,
+          WebkitBackdropFilter: theme.custom.mycustomblur.blur,
+          boxShadow: theme.custom.mycustomblur.boxShadow,
+          borderRadius: "10px",
           gap: "2rem",
         }}
       >
@@ -103,7 +111,7 @@ function ChaptersList() {
               <Typography
                 variant="h5"
                 sx={{
-                  color: "whitesmoke",
+                  color: theme.custom.mycustomblur.text,
                   marginBottom: "1rem",
                   fontWeight: "bold",
                 }}

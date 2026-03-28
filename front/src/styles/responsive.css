@@ -258,11 +258,9 @@ input {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 3rem;
   min-height: 100svh;
-  padding-top: 25vh;
-  padding-bottom: 2rem;
   padding-inline: 1rem;
   box-sizing: border-box;
   position: relative;
@@ -305,7 +303,8 @@ input {
 
   .home-content {
     position: fixed;
-    bottom: 40vh;
+    top: 60%;
+    transform: translateY(-50%);
     left: 0;
     right: 0;
     min-height: unset;

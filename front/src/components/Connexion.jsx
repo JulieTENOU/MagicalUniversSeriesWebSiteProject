@@ -48,7 +48,7 @@ export default function Connexion() {
       .then((data) => {
         console.log("data after co", data);
         if (data.message) {
-          alert("Invalid email or password!");
+          alert(data.message);
           return;
         }
         const user = data.login;

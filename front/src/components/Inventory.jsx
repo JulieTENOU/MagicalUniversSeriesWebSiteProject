@@ -27,6 +27,7 @@ import ModifierDialogs from "./ModifierInventory";
 import { } from "@mui/material";
 
 function InventoryRow({ label, nameKey, quantityKey, data, theme, onInventoryUpdate }) {
+  const { t } = useTranslation();
   const name = data?.[nameKey] ?? "—";
   const quantity = quantityKey ? (data?.[quantityKey] ?? "—") : null;
   return (
@@ -48,7 +49,7 @@ function InventoryRow({ label, nameKey, quantityKey, data, theme, onInventoryUpd
             inventaire={data}
             name={quantityKey}
             left="40%"
-            dataToUpdate={`quantité de ${label}`}
+            dataToUpdate={t("inventory.quantityOf", { label })}
             onInventoryUpdate={onInventoryUpdate}
           />
         </TableCell>
@@ -206,15 +207,22 @@ export default function Inventory(props) {
                 {t("inventory.currency")}
               </Button>
               {argent && (
-                <Grid
-                  container
-                  spacing={2}
+                // <Grid
+                //   container
+                //   spacing={2}
+                //   style={{
+                //     textAlign: "left",
+                //     color: theme.custom.mycustomblur.text,
+                //     marginLeft: "5px",
+                //   }}
+                //   direction={isMobile ? "column" : "row"}
+                // >
+                <div
                   style={{
                     textAlign: "left",
                     color: theme.custom.mycustomblur.text,
-                    marginLeft: "5px",
+                    marginInline: "5px",
                   }}
-                  direction={isMobile ? "column" : "row"}
                 >
                   <Table>
                     <TableBody>
@@ -260,7 +268,8 @@ export default function Inventory(props) {
                       </TableRow>
                     </TableBody>
                   </Table>
-                </Grid>
+                </div>
+                // </Grid>
               )}
             </List>
             <Divider orientation="vertical" flexItem />

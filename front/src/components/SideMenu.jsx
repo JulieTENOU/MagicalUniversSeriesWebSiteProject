@@ -2516,15 +2516,22 @@ export default function SideMenu(props) {
                 {t("side.magies")}
               </Button>
               {isMagic && (
-                <Grid
-                  container
-                  spacing={2}
+                // <Grid
+                //   container
+                //   spacing={2}
+                //   style={{
+                //     textAlign: "center",
+                //     color: theme.custom.mycustomblur.text,
+                //     marginLeft: "5px",
+                //   }}
+                //   direction={isMobile ? "column" : "row"}
+                // >
+                <div
                   style={{
                     textAlign: "center",
                     color: theme.custom.mycustomblur.text,
-                    marginLeft: "5px",
+                    marginInline: "5px",
                   }}
-                  direction={isMobile ? "column" : "row"}
                 >
                   <List>
                     <Button
@@ -3173,7 +3180,8 @@ export default function SideMenu(props) {
                       </div>
                     )}
                   </List>
-                </Grid>
+                </div>
+                // </Grid>
               )}
             </List>
           </Grid>
