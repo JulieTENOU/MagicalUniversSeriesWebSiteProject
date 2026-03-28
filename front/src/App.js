@@ -22,6 +22,7 @@ import ForgottenPassWord from "./pages/ForgottenPassWord.jsx";
 import ResetPassWord from "./pages/ResetPassWord.jsx";
 import NewCharacterAdmin from "./pages/NewCharacterAdmin.jsx";
 import DiceChoice from "./components/DiceChoice.jsx";
+import About from "./pages/About.jsx";
 import { useParams } from "react-router-dom";
 
 // function ReadBookWrapper() {
@@ -67,6 +68,7 @@ function App() {
             element={<ConnectGameMJ />}
           />
           <Route path="/diceRoll" element={<DiceChoice />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </Router>
     // </MyProvider>

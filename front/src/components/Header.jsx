@@ -8,6 +8,7 @@ import { useTheme } from "@mui/material/styles";
 import { AppBar, Toolbar } from "@mui/material";
 
 import HomeIcon from "@mui/icons-material/Home";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsIcon from "@mui/icons-material/Settings";
 import SmartWatchIcon from "./icons/SmartWatchIcon";
@@ -56,10 +57,9 @@ export default function Top() {
       >
         <Toolbar
           style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "left",
-            justifyContent: "space-between",
+            display: "grid",
+            gridTemplateColumns: "auto 1fr auto",
+            alignItems: "center",
           }}
         >
           <Btn
@@ -67,68 +67,37 @@ export default function Top() {
             msg={<HomeIcon sx={{ color: theme.custom.myheader.text }} />}
           />
           <h2 className="header-title"
-            style={{
-              color: theme.custom.myheader.text,
-              backgroundColor: "none",
-            }}
+            style={{ color: theme.custom.myheader.text, backgroundColor: "none", textAlign: "center", margin: 0 }}
           >
             {t("home.welcomeHeader")}
           </h2>
           {isConnected ? (
-            <>
-              <Btn
-                path="/read"
-                msg={<BooksIcon sx={{ color: theme.custom.myheader.text }} />}
-                sx={{
-                  textDecoration: "none",
-                  color: theme.custom.myheader.text,
-                }}
-              />
-              <Btn
-                path="/jdr"
-                msg={<SmartWatchIcon sx={{ color: theme.custom.myheader.text }} />}
-                sx={{
-                  textDecoration: "none",
-                  color: theme.custom.myheader.text,
-                }}
-              />
-              {/* <Btn path='/read/Lexicon' msg={"Lexique Magique"} sx={{ textDecoration: 'none', color: theme.custom.myheader.text }} />
-              <Btn path='/read/Bestiary' msg={"Bestiaire"} sx={{ textDecoration: 'none', color: theme.custom.myheader.text }} />
-              <Btn path='/read/Characters' msg={"Les secrets"} msg2={"des personnages"} sx={{ textDecoration: 'none', color: theme.custom.myheader.text }} />
-              <Btn path='/read/Magic_history' msg={"Histoire"} msg2={"de la magie"} sx={{ textDecoration: 'none', color: theme.custom.myheader.text }} />
-              <Btn path='/read/Magical_Academy' msg={"M.A. Stories"} sx={{ textDecoration: 'none', color: theme.custom.myheader.text }} /> */}
-
-              <Btn
-                path="/settings"
-                msg={
-                  <SettingsIcon sx={{ color: theme.custom.myheader.text }} />
-                }
-              />
-
+            <div style={{ display: "flex", alignItems: "center", gap: "20px", padding: "0 12px" }}>
+              <Btn path="/read" msg={<BooksIcon sx={{ color: theme.custom.myheader.text }} />} sx={{ textDecoration: "none", color: theme.custom.myheader.text }} style={{ flex: "none", margin: "0 10px" }} />
+              <Btn path="/jdr" msg={<SmartWatchIcon sx={{ color: theme.custom.myheader.text }} />} sx={{ textDecoration: "none", color: theme.custom.myheader.text }} style={{ flex: "none", margin: "0 10px" }} />
+              <Btn path="/about" msg={<InfoOutlinedIcon sx={{ color: theme.custom.myheader.text }} />} style={{ flex: "none", margin: "0 10px" }} />
+              <Btn path="/settings" msg={<SettingsIcon sx={{ color: theme.custom.myheader.text }} />} style={{ flex: "none", margin: "0 10px" }} />
               <Btn
                 onClick={() => {
-                  fetch("/api/logout", {
-                    method: "POST",
-                    credentials: "include",
-                  }).then(() => {
+                  fetch("/api/logout", { method: "POST", credentials: "include" }).then(() => {
                     localStorage.removeItem("token");
                     setUser(null);
                     navigate("/");
                   });
                 }}
                 msg={<LogoutIcon sx={{ color: theme.custom.myheader.text }} />}
-                sx={{
-                  textDecoration: "none",
-                  color: theme.custom.myheader.text,
-                }}
+                sx={{ textDecoration: "none", color: theme.custom.myheader.text }}
+                style={{ flex: "none", margin: "0 10px", minWidth: "90px" }}
               />
-            </>
+            </div>
           ) : (
-            <Btn
-              path={"/connexion"}
-              msg={t("buttons.login")}
-              msg2={t("buttons.signup")}
-            />
+            <div style={{ display: "flex", alignItems: "center", gap: "20px", padding: "0 12px" }}>
+              <BooksIcon sx={{ visibility: "hidden", margin: "0 10px" }} />
+              <SmartWatchIcon sx={{ visibility: "hidden", margin: "0 10px" }} />
+              <Btn path="/about" msg={<InfoOutlinedIcon sx={{ color: theme.custom.myheader.text }} />} style={{ flex: "none", margin: "0 10px" }} />
+              <SettingsIcon sx={{ visibility: "hidden", margin: "0 10px" }} />
+              <Btn path={"/connexion"} msg={t("buttons.login")} msg2={t("buttons.signup")} style={{ flex: "none", margin: "0 10px", minWidth: "90px" }} />
+            </div>
           )}
         </Toolbar>
       </AppBar>
