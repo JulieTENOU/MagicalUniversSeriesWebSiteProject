@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ConnexionContext } from "./components/provider.jsx";
 
 import PageLoader from "./components/PageLoader.jsx";
@@ -23,7 +23,13 @@ import ResetPassWord from "./pages/ResetPassWord.jsx";
 import NewCharacterAdmin from "./pages/NewCharacterAdmin.jsx";
 import DiceChoice from "./components/DiceChoice.jsx";
 import About from "./pages/About.jsx";
+import MaintenanceBanner from "./components/MaintenanceBanner.jsx";
 import { useParams } from "react-router-dom";
+
+function RedirectToMaintenance() {
+  useEffect(() => { window.location.href = '/maintenance.html'; }, []);
+  return null;
+}
 
 // function ReadBookWrapper() {
 //   const { serie, book, chapter } = useParams();
@@ -41,6 +47,7 @@ function App() {
   return (
     // <MyProvider>
       <Router>
+        <MaintenanceBanner />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/connexion" element={<Connexion />} />
@@ -69,6 +76,7 @@ function App() {
           />
           <Route path="/diceRoll" element={<DiceChoice />} />
           <Route path="/about" element={<About />} />
+          <Route path="/maintenance" element={<RedirectToMaintenance />} />
         </Routes>
       </Router>
     // </MyProvider>

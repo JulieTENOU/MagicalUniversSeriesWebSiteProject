@@ -299,6 +299,12 @@
     "noName": "No name"
   },
 
+  "maintenance": {
+    "banner_title": "Planned maintenance",
+    "banner_text": "On {{date}}, from {{startTime}} to {{endTime}}, the site will be unavailable for maintenance.",
+    "dismiss": "Got it"
+  },
+
   "errors": {
     "required": "This field is required",
     "unauthorized": "You are not authorized to access this content"

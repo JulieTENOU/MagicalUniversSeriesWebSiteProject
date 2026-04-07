@@ -301,6 +301,12 @@
     "noName": "Sans nom"
   },
 
+  "maintenance": {
+    "banner_title": "Maintenance prévue",
+    "banner_text": "Le {{date}}, de {{startTime}} à {{endTime}}, le site sera inaccessible pour maintenance.",
+    "dismiss": "Compris"
+  },
+
   "errors": {
     "required": "Ce champ est obligatoire",
     "unauthorized": "Tu n’as pas accès à ce contenu"

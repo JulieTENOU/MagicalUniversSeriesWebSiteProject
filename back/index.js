@@ -82,6 +82,7 @@ const awakening = require("./src/routes/awakening");
 const media = require("./src/routes/media");
 const character_media = require("./src/routes/character_media");
 const scenario = require("./src/routes/scenario");
+const maintenance = require("./src/routes/maintenance");
 
 // This actually calls the route!
 app.use("/users", user);
@@ -110,6 +111,7 @@ app.use("/api/awakening", awakening);
 app.use("/api/media", media);
 app.use("/api/character_media", character_media);
 app.use("/api/scenario", scenario);
+app.use("/api/maintenance", maintenance);
 // app.listen(port, "0.0.0.0", () => {
 //   console.log(`Server running on http://localhost:${port}`);
 // });
