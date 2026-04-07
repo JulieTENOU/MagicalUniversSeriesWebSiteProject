@@ -258,6 +258,17 @@
         </div>`;
     }
 
+    /* ── Retry redirect : toutes les 2s jusqu'à ce que le backend confirme fin maintenance ── */
+    function waitForEnd() {
+      fetch('/api/maintenance')
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (data && !data.enabled) window.location.href = '/';
+          else setTimeout(waitForEnd, 2000);
+        })
+        .catch(() => setTimeout(waitForEnd, 2000));
+    }
+
     fetch('/maintenance.json')
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(data => {
@@ -268,7 +279,7 @@
           if (end - Date.now() <= 0) {
             clearInterval(tick);
             area.innerHTML = `<p class="soon-msg">${t.soon}</p>`;
-            setTimeout(() => { window.location.href = '/'; }, 5000);
+            waitForEnd();
           } else {
             renderCountdown(end);
           }
@@ -278,14 +289,11 @@
         area.innerHTML = `<p class="soon-msg">${t.soon}</p>`;
       });
 
-    /* ── Polling : redirige vers / dès que la maintenance est terminée ── */
+    /* ── Polling de fond : redirige si la maintenance est désactivée manuellement ── */
     setInterval(() => {
-      fetch('/', { redirect: 'follow' })
-        .then(r => {
-          if (!r.url.includes('maintenance.html')) {
-            window.location.href = '/';
-          }
-        })
+      fetch('/api/maintenance')
+        .then(r => r.ok ? r.json() : null)
+        .then(data => { if (data && !data.enabled) window.location.href = '/'; })
         .catch(() => {});
     }, 10000);
   </script>

@@ -72,19 +72,19 @@ if [ -n "$SCHEDULED_END" ]; then
   fi
 fi
 
-# 7. Désactiver la maintenance — les clients connectés sont notifiés via socket
+# 7. Redémarrer nginx avec la nouvelle image (flag encore présent → continue de servir maintenance.html)
+echo ""
+echo "→ Mise à jour du frontend..."
+$COMPOSE up -d nginx
+echo "  ✓ Frontend mis à jour"
+
+# 8. Désactiver la maintenance — nginx est déjà up, les clients sont redirigés sans 502
 echo ""
 echo "→ Désactivation de la maintenance..."
 curl -s -X POST http://localhost:3333/api/maintenance/disable \
   -H "x-maintenance-secret: $MAINTENANCE_SECRET" > /dev/null || true
 rm -f "$MAINTENANCE_DIR/maintenance.enabled"
 echo "  ✓ Site de nouveau accessible"
-
-# 8. Redémarrer nginx en dernier avec la nouvelle image (brève coupure ~1 s, maintenance déjà désactivée)
-echo ""
-echo "→ Mise à jour du frontend..."
-$COMPOSE up -d nginx
-echo "  ✓ Frontend mis à jour"
 
 echo ""
 echo "======================================"
