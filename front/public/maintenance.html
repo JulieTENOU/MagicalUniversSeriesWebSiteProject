@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maintenance — Magical Universe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: "Times New Roman", Times, serif;
+      color: #fff;
+      background: #000 url('/api/media/getOneMedia/3') center / cover no-repeat fixed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Voile sombre identique au site */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 0;
+    }
+
+    #tsparticles {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .card {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 3rem 2.5rem;
+      max-width: 520px;
+      width: 90%;
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      backdrop-filter: blur(6px);
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin-bottom: 1.5rem;
+      filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.25));
+    }
+
+    h1 {
+      font-family: 'Cinzel', "Times New Roman", serif;
+      font-size: 1.55rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.8rem;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 2rem;
+    }
+
+    .divider {
+      width: 50px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.2);
+      margin: 0 auto 2rem;
+    }
+
+    .countdown-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 1rem;
+    }
+
+    .countdown {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .time-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 64px;
+    }
+
+    .time-block .value {
+      font-family: 'Cinzel', serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      line-height: 1;
+      color: #fff;
+      text-shadow: 0 0 24px rgba(255, 255, 255, 0.4);
+    }
+
+    .time-block .unit {
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 0.4rem;
+    }
+
+    .separator {
+      font-family: 'Cinzel', serif;
+      font-size: 2.2rem;
+      color: rgba(255, 255, 255, 0.25);
+      line-height: 1;
+    }
+
+    .soon-msg {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.6);
+      font-style: italic;
+    }
+
+    .footer-note {
+      margin-top: 2.5rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    @media (max-width: 400px) {
+      .time-block .value { font-size: 2rem; }
+      .time-block { min-width: 50px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="tsparticles"></div>
+
+  <div class="card">
+    <img class="logo"
+         src="/api/media/getOneMedia/5"
+         alt="Magical Universe"
+         onerror="this.style.display='none'" />
+    <h1 id="title">Site en cours de maintenance</h1>
+    <p class="subtitle" id="subtitle">Nous revenons très bientôt.<br>Merci de votre patience.</p>
+    <div class="divider"></div>
+    <div id="countdown-area"></div>
+    <p class="footer-note" id="footer">La page se rechargera automatiquement à la fin de la maintenance.</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+  <script>
+    /* ── Particles (même config que le site) ── */
+    tsParticles.load("tsparticles", {
+      fullScreen: { enable: false },
+      particles: {
+        number: { value: 300, density: { enable: false, value_area: 800 } },
+        color: { value: "#fff" },
+        shape: { type: "circle" },
+        stroke: { width: 0.5, color: "whitesmoke" },
+        opacity: { value: 1, random: false },
+        size: { value: 1, random: true },
+        links: { enable: false },
+        move: {
+          enable: true,
+          speed: 2,
+          direction: "none",
+          random: false,
+          straight: false,
+          outModes: { default: "out" },
+          bounce: false
+        }
+      },
+      interactivity: {
+        detectsOn: "canvas",
+        events: {
+          onHover: { enable: false },
+          onClick: { enable: true, mode: "push" },
+          resize: true
+        },
+        modes: { push: { quantity: 4 } }
+      },
+      retina_detect: true
+    });
+
+    /* ── i18n minimal ── */
+    const lang = (navigator.language || 'fr').startsWith('fr') ? 'fr' : 'en';
+    const T = {
+      fr: {
+        title:    'Site en cours de maintenance',
+        subtitle: 'Nous revenons très bientôt.\nMerci de votre patience.',
+        back_in:  'Retour dans',
+        hours: 'heures', minutes: 'min', seconds: 'sec',
+        soon:   "Le site devrait être de retour d'ici peu.",
+        footer: 'La page se rechargera automatiquement à la fin de la maintenance.',
+      },
+      en: {
+        title:    'Site under maintenance',
+        subtitle: "We'll be back very soon.\nThank you for your patience.",
+        back_in:  'Back in',
+        hours: 'hours', minutes: 'min', seconds: 'sec',
+        soon:   'The site should be back shortly.',
+        footer: 'This page will reload automatically when maintenance ends.',
+      }
+    };
+    const t = T[lang];
+
+    document.getElementById('title').textContent    = t.title;
+    document.getElementById('subtitle').textContent = t.subtitle;
+    document.getElementById('footer').textContent   = t.footer;
+
+    /* ── Countdown ── */
+    const area = document.getElementById('countdown-area');
+
+    function renderCountdown(endTime) {
+      const diff = endTime - Date.now();
+      if (diff <= 0) {
+        area.innerHTML = `<p class="soon-msg">${t.soon}</p>`;
+        setTimeout(() => location.reload(), 15000);
+        return;
+      }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+
+      area.innerHTML = `
+        <p class="countdown-label">${t.back_in}</p>
+        <div class="countdown">
+          ${h > 0 ? `
+          <div class="time-block">
+            <span class="value">${String(h).padStart(2,'0')}</span>
+            <span class="unit">${t.hours}</span>
+          </div>
+          <span class="separator">:</span>` : ''}
+          <div class="time-block">
+            <span class="value">${String(m).padStart(2,'0')}</span>
+            <span class="unit">${t.minutes}</span>
+          </div>
+          <span class="separator">:</span>
+          <div class="time-block">
+            <span class="value">${String(s).padStart(2,'0')}</span>
+            <span class="unit">${t.seconds}</span>
+          </div>
+        </div>`;
+    }
+
+    fetch('/maintenance.json')
+      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+      .then(data => {
+        if (!data.scheduledEnd) return;
+        const end = new Date(data.scheduledEnd).getTime();
+        renderCountdown(end);
+        setInterval(() => renderCountdown(end), 1000);
+      })
+      .catch(() => {
+        area.innerHTML = `<p class="soon-msg">${t.soon}</p>`;
+      });
+
+    /* ── Polling : redirige vers / dès que la maintenance est terminée ── */
+    setInterval(() => {
+      fetch('/', { redirect: 'follow' })
+        .then(r => {
+          if (!r.url.includes('maintenance.html')) {
+            window.location.href = '/';
+          }
+        })
+        .catch(() => {});
+    }, 10000);
+  </script>
+</body>
+</html>

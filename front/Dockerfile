@@ -16,3 +16,6 @@ RUN rm -f /etc/nginx/conf.d/default.conf
 
 # Les fichiers statiques compilés
 COPY --from=build /app/build /usr/share/nginx/html
+
+# Page de maintenance statique (toujours dispo même sans volume)
+COPY maintenance.html /usr/share/nginx/html/maintenance.html

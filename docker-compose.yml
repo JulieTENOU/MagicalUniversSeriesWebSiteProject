@@ -45,6 +45,7 @@ services:
       - ./back:/app
       - /app/node_modules
       - /var/www/mus_storage:/var/www/mus_storage
+      - /data/docker/mus-maintenance:/var/maintenance
     # Ancien depends_on (insuffisant : attend le démarrage du conteneur, pas que MySQL soit ready)
     # depends_on:
     #   - db
@@ -75,6 +76,7 @@ services:
       - back
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - /data/docker/mus-maintenance:/var/maintenance:ro
     restart: unless-stopped
     networks:
       - mu-network
