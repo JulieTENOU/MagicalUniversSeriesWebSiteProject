@@ -306,6 +306,52 @@ export default function CreationPersonnage() {
   };
 
   const dieRef = useRef(null);
+
+  // -- État des lancers de dés et jokers --
+  const [rolledStats, setRolledStats] = useState({});
+  const [jokerUsed, setJokerUsed] = useState({ attributs: false, ressources: false });
+
+  const handleRoll = (item, pageKey) => {
+    const roll = Math.ceil(Math.random() * item.die);
+    item.setValue(roll);
+    dieRef.current?.roll(roll);
+    if (!rolledStats[item.label]) {
+      setRolledStats(prev => ({ ...prev, [item.label]: true }));
+    } else {
+      setJokerUsed(prev => ({ ...prev, [pageKey]: true }));
+    }
+  };
+
+  const renderDiceButton = (item, pageKey) => {
+    const hasRolled = !!rolledStats[item.label];
+    const jokerAvailable = !jokerUsed[pageKey];
+
+    if (!hasRolled) {
+      return (
+        <Button variant="outlined" onClick={() => handleRoll(item, pageKey)}>
+          {`Lancer D${item.die}`}
+        </Button>
+      );
+    }
+    if (jokerAvailable) {
+      return (
+        <Button
+          variant="outlined"
+          color="warning"
+          onClick={() => handleRoll(item, pageKey)}
+          title="Joker : relancer ce dé une seule fois"
+        >
+          ↺ Relancer
+        </Button>
+      );
+    }
+    return (
+      <Box sx={{ width: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Typography variant="caption" sx={{ color: "#888" }}>🔒 Fixé</Typography>
+      </Box>
+    );
+  };
+
   // --- RENDER ---
   return (
     <Box
@@ -606,9 +652,20 @@ export default function CreationPersonnage() {
           {(isMobile ? currentStep === 1 : activeTab === "attributs") && (
             // {activeTab === "attributs" && (
             <Box>
-              <Typography variant="h6" gutterBottom>
-                Attributs (jet de dé 20)
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
+                <Typography variant="h6">
+                  Attributs (jet de dé 20)
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: jokerUsed.attributs ? "#888" : "#ffa726",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {jokerUsed.attributs ? "✓ Joker utilisé" : "🎯 1 relance disponible"}
+                </Typography>
+              </Box>
               {attributs.map((attr) => (
                 <Box
                   key={attr.label}
@@ -621,16 +678,7 @@ export default function CreationPersonnage() {
                     sx={{ width: 80 }}
                     disabled
                   />
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      const roll = Math.ceil(Math.random() * attr.die);
-                      attr.setValue(roll);
-                      dieRef.current?.roll(roll);
-                    }}
-                  >
-                    {`Lancer D${attr.die}`}
-                  </Button>
+                  {renderDiceButton(attr, "attributs")}
                 </Box>
               ))}
             </Box>
@@ -640,9 +688,20 @@ export default function CreationPersonnage() {
           {(isMobile ? currentStep === 2 : activeTab === "ressources") && (
             // {activeTab === "ressources" && (
             <Box>
-              <Typography variant="h6" gutterBottom>
-                Ressources (jet de dé 100)
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
+                <Typography variant="h6">
+                  Ressources (jet de dé 100)
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: jokerUsed.ressources ? "#888" : "#ffa726",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {jokerUsed.ressources ? "✓ Joker utilisé" : "🎯 1 relance disponible"}
+                </Typography>
+              </Box>
               {ressources.map((res) => (
                 <Box
                   key={res.label}
@@ -655,16 +714,7 @@ export default function CreationPersonnage() {
                     sx={{ width: 80 }}
                     disabled
                   />
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      const roll = Math.ceil(Math.random() * res.die);
-                      res.setValue(roll);
-                      dieRef.current?.roll(roll);
-                    }}
-                  >
-                    {`Lancer D${res.die}`}
-                  </Button>
+                  {renderDiceButton(res, "ressources")}
                 </Box>
               ))}
             </Box>

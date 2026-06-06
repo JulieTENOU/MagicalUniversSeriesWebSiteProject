@@ -5,7 +5,7 @@ const users = require("../models/users")(sequelize, DataTypes);
 
 module.exports = {  
   create: async function (req, res){
-    console.log(req.body);
+    if (process.env.NODE_ENV !== 'production') console.log(req.body);
     if(req.body){
       try{
         let{

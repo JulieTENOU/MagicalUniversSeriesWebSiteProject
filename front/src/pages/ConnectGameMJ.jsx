@@ -9,7 +9,9 @@ import "react-circular-progressbar/dist/styles.css";
 import { ConnexionContext } from "../components/provider";
 import { useTheme } from "@mui/material/styles";
 import MenuItem from "@mui/material/MenuItem";
-import { LinearProgress, Typography, TableRow, TableCell, Table, TableBody, TableHead, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, useMediaQuery } from "@mui/material";
+import { LinearProgress, Typography, TableRow, TableCell, Table, TableBody, TableHead, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, useMediaQuery, Box, Chip, IconButton } from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import "../../src/styles/responsive.css";
 
 import BG from "../components/Background";
@@ -18,6 +20,32 @@ import Btn from "../components/Btn";
 import DynamicSkillSelector from "../components/DynamicSkillSelector";
 import PageLoader from "../components/PageLoader";
 
+
+// ── Kanzy / MOB / PNJ ──────────────────────────────────────────
+const KANZY_ID = 8;
+const isKanzyChar = (char) => Number(char?.users_ID) === KANZY_ID;
+const isMobChar   = (char) => char?.Name_character?.slice(0, 3).toUpperCase() === "MOB";
+
+const GAUGE_FIELDS = [
+  { key: "currentStamina",     label: "Stamina",       maxKey: "Stamina_character",      color: "#4caf50" },
+  { key: "currentManaVital",   label: "Mana Vital",    maxKey: "ManaVital_character",    color: "#f87171" },
+  { key: "currentManaAir",     label: "Mana Air",      maxKey: "ManaAir_character",      color: "#14b8a6" },
+  { key: "currentManaEau",     label: "Mana Eau",      maxKey: "ManaEau_character",      color: "#60a5fa" },
+  { key: "currentManaTerre",   label: "Mana Terre",    maxKey: "ManaTerre_character",    color: "#fb923c" },
+  { key: "currentManaFeu",     label: "Mana Feu",      maxKey: "ManaFeu_character",      color: "#fb7185" },
+  { key: "currentManaVolonte", label: "Mana Volonté",  maxKey: "ManaVolonte_character",  color: "#a855f7" },
+];
+
+const CARAC_FIELDS = [
+  { key: "Force_character",      label: "Force" },
+  { key: "Dexte_character",      label: "Dextérité" },
+  { key: "Resistance_character", label: "Résistance" },
+  { key: "Resilience_character", label: "Résilience" },
+  { key: "Intell_character",     label: "Intelligence" },
+  { key: "Charisme_character",   label: "Charisme" },
+  { key: "Chance_character",     label: "Chance" },
+];
+// ───────────────────────────────────────────────────────────────
 
 function ConnectGameMJ() {
   const { ids } = useParams();
@@ -53,7 +81,12 @@ function ConnectGameMJ() {
   const [selected, setSelected] = useState(() => new Set());
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertText, setAlertText] = useState("");
-  const [alertSeverity, setAlertSeverity] = useState("info"); // tu peux garder "info" fixe au début
+  const [alertSeverity, setAlertSeverity] = useState("info");
+
+  // ── Édition directe des jauges Kanzy par le MJ ──
+  const [mjEditDialog, setMjEditDialog] = useState(null);
+  // { charName, charId, field, label, current, max, sign }
+  const [mjEditDelta, setMjEditDelta] = useState("");
 
   const toggleSelected = (id) => {
     setSelected((prev) => {
@@ -388,6 +421,46 @@ function ConnectGameMJ() {
     // setRewardsByCharId({}); // si tu veux tout vider
   };
 
+  // ── Handlers édition jauges Kanzy ──────────────────────────────
+  const openMJEdit = (char, gaugeField, sign) => {
+    const gauges = gaugesByCharId[char.ID_character] || {};
+    const current = Number(gauges[gaugeField.key] ?? char[gaugeField.maxKey]);
+    const max = Number(char[gaugeField.maxKey]);
+    setMjEditDelta("");
+    setMjEditDialog({
+      charName: char.Name_character,
+      charId:   char.ID_character,
+      field:    gaugeField.key,
+      label:    gaugeField.label,
+      current,
+      max,
+      sign,
+    });
+  };
+
+  const confirmMJEdit = async () => {
+    if (!mjEditDialog || mjEditDelta === "") return;
+    const { charName, charId, field, current, max, sign } = mjEditDialog;
+    const newValue = Math.max(0, Math.min(max, current + Math.abs(Number(mjEditDelta)) * sign));
+    try {
+      const res = await fetch(`/api/gauges/updateGauges/${encodeURIComponent(charName)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [field]: newValue }),
+      });
+      if (res.ok) {
+        setGaugesByCharId((prev) => ({
+          ...prev,
+          [charId]: { ...(prev[charId] || {}), [field]: newValue },
+        }));
+      }
+    } catch (e) {
+      console.error("MJ gauge update error:", e);
+    }
+    setMjEditDialog(null);
+  };
+  // ───────────────────────────────────────────────────────────────
+
   const isInvalidUser =
     !currentUser ||
     (Array.isArray(currentUser) && currentUser.length === 0) ||
@@ -423,6 +496,141 @@ function ConnectGameMJ() {
   };
 
   if (loading) return <PageLoader />;
+
+  // Sépare les joueurs des entités Kanzy (MOB / PNJ)
+  const kanzyChars  = characters.filter(isKanzyChar);
+  const playerChars = characters.filter((c) => !isKanzyChar(c));
+
+  // Section "Entités en jeu" (MOB / PNJ) — réutilisée mobile + desktop
+  const kanzySection = kanzyChars.length > 0 && (
+    <Box sx={{ mt: 3, pt: 2, borderTop: "1px dashed rgba(255,165,0,0.35)" }}>
+      <Typography variant="h6" sx={{ color: "#ffa726", mb: 2, textAlign: "center" }}>
+        ⚔️ Entités en jeu
+      </Typography>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "center" }}>
+        {kanzyChars.map((char) => {
+          const mob    = isMobChar(char);
+          const gauges = gaugesByCharId[char.ID_character] || {};
+          const activeGauges = GAUGE_FIELDS.filter((f) => Number(char[f.maxKey]) > 0);
+          const activeCaracs = CARAC_FIELDS.filter((f) => Number(char[f.key])    > 0);
+
+          return (
+            <Box
+              key={char.ID_character}
+              sx={{
+                border: "1px solid rgba(255,165,0,0.4)",
+                borderRadius: 2,
+                p: 2,
+                minWidth: 280,
+                maxWidth: 380,
+                flex: "1 1 280px",
+                background: "rgba(255,100,0,0.05)",
+              }}
+            >
+              {/* En-tête */}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+                <Typography variant="h6" sx={{ color: "#ffa726", flex: 1 }}>
+                  {char.Name_character}
+                </Typography>
+                <Chip
+                  label={mob ? "MOB" : "PNJ"}
+                  size="small"
+                  sx={{ background: mob ? "#7f1d1d" : "#1e3a5f", color: "white", fontWeight: "bold" }}
+                />
+              </Box>
+
+              {/* Caractéristiques */}
+              {activeCaracs.length > 0 && (
+                <>
+                  <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.45)", display: "block", mb: 0.5, letterSpacing: 1 }}>
+                    CARACTÉRISTIQUES
+                  </Typography>
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+                    {activeCaracs.map((f) => (
+                      <Box key={f.key} sx={{ textAlign: "center", minWidth: 56, background: "rgba(255,255,255,0.06)", borderRadius: 1, p: "4px 8px" }}>
+                        <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.45)", display: "block" }}>
+                          {f.label}
+                        </Typography>
+                        <Typography sx={{ color: "white", fontWeight: "bold", fontSize: "1rem" }}>
+                          {char[f.key]}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                </>
+              )}
+
+              {/* Jauges éditables */}
+              {activeGauges.length > 0 && (
+                <>
+                  <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.45)", display: "block", mb: 1, letterSpacing: 1 }}>
+                    JAUGES
+                  </Typography>
+                  {activeGauges.map((f) => {
+                    const current = Number(gauges[f.key] ?? char[f.maxKey]);
+                    const max     = Number(char[f.maxKey]);
+                    const pct     = Math.min(100, Math.max(0, (current / max) * 100));
+                    return (
+                      <Box key={f.key} sx={{ mb: 1.5 }}>
+                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 0.25 }}>
+                          <Typography variant="caption" sx={{ color: f.color, fontWeight: "bold" }}>
+                            {f.label}
+                          </Typography>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 0.25 }}>
+                            <IconButton size="small" onClick={() => openMJEdit(char, f, -1)} sx={{ color: "#f87171", p: "2px" }}>
+                              <RemoveCircleOutlineIcon fontSize="small" />
+                            </IconButton>
+                            <Typography variant="body2" sx={{ color: "white", minWidth: 72, textAlign: "center", fontSize: "0.85rem" }}>
+                              {current} / {max}
+                            </Typography>
+                            <IconButton size="small" onClick={() => openMJEdit(char, f, 1)} sx={{ color: "#4ade80", p: "2px" }}>
+                              <AddCircleOutlineIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        </Box>
+                        <LinearProgress
+                          variant="determinate"
+                          value={pct}
+                          sx={{
+                            height: 6,
+                            borderRadius: 3,
+                            backgroundColor: "rgba(255,255,255,0.1)",
+                            "& .MuiLinearProgress-bar": { backgroundColor: f.color },
+                          }}
+                        />
+                      </Box>
+                    );
+                  })}
+                </>
+              )}
+
+              {/* Compétences — PNJ uniquement */}
+              {!mob && (
+                <Box sx={{ mt: 1.5, borderTop: "1px solid rgba(255,255,255,0.1)", pt: 1 }}>
+                  <Btn
+                    onClick={() => setSelectorVisibleFor(
+                      selectorVisibleFor === char.ID_character ? null : char.ID_character
+                    )}
+                    msg="Compétence"
+                  />
+                  {selectorVisibleFor === char.ID_character && (
+                    <DynamicSkillSelector
+                      onFinalSelect={(path) => handleFinalSelection(char.ID_character, path)}
+                    />
+                  )}
+                  {skillScores[char.ID_character] && (
+                    <Typography sx={{ mt: 1, fontSize: "1.05rem", color: "lightblue" }}>
+                      {skillScores[char.ID_character].label} : {skillScores[char.ID_character].valeur}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+            </Box>
+          );
+        })}
+      </Box>
+    </Box>
+  );
 
   const actionButtons = (
     <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", marginBottom: 10 }}>
@@ -461,7 +669,7 @@ function ConnectGameMJ() {
             <Btn msg="Alerte à tous" onClick={() => openAlertDialogFor(characters.map((c) => c.ID_character))} />
           </div>
           <div style={{ padding: "130px 12px 100px", display: "flex", flexDirection: "column", gap: 16 }}>
-          {characters.map((char) => {
+          {playerChars.map((char) => {
             const {
               currentManaVital, currentStamina, currentManaAir, currentManaEau,
               currentManaTerre, currentManaFeu, currentManaVolonte,
@@ -588,6 +796,9 @@ function ConnectGameMJ() {
               </div>
             );
           })}
+          {/* Entités Kanzy — mobile */}
+          <Box sx={{ px: 1, pb: "100px" }}>{kanzySection}</Box>
+
           <Button
             variant="contained"
             color={scenarioSnapshot ? "success" : "primary"}
@@ -802,7 +1013,7 @@ function ConnectGameMJ() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {characters.map((char) => {
+                      {playerChars.map((char) => {
                         // 1) je récupère les gauges courantes de CE perso
                         const gauges = gaugesByCharId[char.ID_character];
                         // console.log("char:", char);
@@ -1155,6 +1366,9 @@ function ConnectGameMJ() {
                     </TableBody>
                   </Table>
 
+                  {/* Entités Kanzy — desktop */}
+                  <Box sx={{ mt: 2, mb: "80px" }}>{kanzySection}</Box>
+
                   <Button
                     variant="contained"
                     color={scenarioSnapshot ? "success" : "primary"}
@@ -1315,6 +1529,38 @@ function ConnectGameMJ() {
           <Button onClick={() => setEndOpen(false)}>Annuler</Button>
           <Button variant="contained" onClick={handleEndScenario} disabled={selected.size === 0}>
             Valider fin de scénario
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog édition jauge MJ (entités Kanzy) */}
+      <Dialog open={!!mjEditDialog} onClose={() => setMjEditDialog(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>
+          {mjEditDialog?.sign === 1 ? "➕ Gain" : "➖ Perte"} — {mjEditDialog?.label}
+          <Typography variant="caption" sx={{ display: "block", opacity: 0.6 }}>
+            {mjEditDialog?.charName} · actuel : {mjEditDialog?.current} / {mjEditDialog?.max}
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            fullWidth
+            label="Nombre de points (valeur absolue)"
+            type="number"
+            inputProps={{ min: 0 }}
+            value={mjEditDelta}
+            onChange={(e) => setMjEditDelta(e.target.value)}
+            sx={{ mt: 1 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setMjEditDialog(null)}>Annuler</Button>
+          <Button
+            variant="contained"
+            onClick={confirmMJEdit}
+            disabled={mjEditDelta === "" || Number(mjEditDelta) < 0}
+          >
+            Valider
           </Button>
         </DialogActions>
       </Dialog>
