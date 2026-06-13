@@ -20,6 +20,20 @@ import Btn from "../components/Btn";
 import DynamicSkillSelector from "../components/DynamicSkillSelector";
 import PageLoader from "../components/PageLoader";
 
+// ── Composants extraits ─────────────────────────────────────────
+import { GAUGE_FIELDS as _GAUGE_FIELDS, isKanzyChar as _isKanzyChar, isMobChar as _isMobChar } from "../components/jdrConstants";
+import MjKanzyEntityCard      from "../components/MjKanzyEntityCard";
+import MjPlayerCharacterCard  from "../components/MjPlayerCharacterCard";
+import MjPlayerTableRow       from "../components/MjPlayerTableRow";
+import MjInitiativeSidebar    from "../components/MjInitiativeSidebar";
+import MjSuccessSidebar       from "../components/MjSuccessSidebar";
+import MjAlertDialog          from "../components/MjAlertDialog";
+import MjGaugeEditDialog      from "../components/MjGaugeEditDialog";
+import MjMobGaugeSetupDialog  from "../components/MjMobGaugeSetupDialog";
+import MjConfirmInactiveDialog from "../components/MjConfirmInactiveDialog";
+import MjScenarioEndDialog    from "../components/MjScenarioEndDialog";
+// ───────────────────────────────────────────────────────────────
+
 
 // ── Kanzy / MOB / PNJ ──────────────────────────────────────────
 const KANZY_ID = 8;
@@ -88,6 +102,23 @@ function ConnectGameMJ() {
   // { charName, charId, field, label, current, max, sign }
   const [mjEditDelta, setMjEditDelta] = useState("");
 
+  // ── Initiative / Combat ─────────────────────────────────────────
+  const [initiativeOrder, setInitiativeOrder] = useState({});
+  const [combatInactives, setCombatInactives] = useState(new Set());
+  const [combatActive, setCombatActive] = useState(false);
+  const [currentTurnIdx, setCurrentTurnIdx] = useState(0);
+  const [mobKoGauge, setMobKoGauge] = useState({});
+  const [mobDeathGauge, setMobDeathGauge] = useState({});
+  const [mobGaugeSetup, setMobGaugeSetup] = useState([]);
+  const [mobGaugeSetupOpen, setMobGaugeSetupOpen] = useState(false);
+  const [confirmInactiveChars, setConfirmInactiveChars] = useState([]);
+  const [confirmInactiveOpen, setConfirmInactiveOpen] = useState(false);
+  // ── Suivi des réussites ─────────────────────────────────────────
+  const [successLog, setSuccessLog] = useState({});       // { [charId]: { [fieldKey]: { r, c } } }
+  const [successCharFocus, setSuccessCharFocus] = useState(null);
+  const [successSearchTerm, setSuccessSearchTerm] = useState({}); // { [charId]: string }
+  // ───────────────────────────────────────────────────────────────
+
   const toggleSelected = (id) => {
     setSelected((prev) => {
       const next = new Set(prev);
@@ -101,13 +132,27 @@ function ConnectGameMJ() {
   const clearAll = () => setSelected(new Set());
 
   const openEndDialog = () => {
-    // Si rien n'est sélectionné, on prend tout le monde
     const targets = selected.size > 0
       ? [...selected]
       : characters.map((c) => c.ID_character);
     if (selected.size === 0) setSelected(new Set(targets));
-    // Initialise une vraie ligne dans l'état pour chaque personnage concerné
-    targets.forEach((id) => ensureRewardRows(id));
+
+    targets.forEach((id) => {
+      const log = successLog[id] || {};
+      const autoRows = Object.entries(log)
+        .filter(([, counts]) => counts.r >= 3 || counts.c >= 1)
+        .map(([fieldKey]) => ({ field: fieldKey, delta: 1 }));
+
+      setRewardsByCharId((prev) => {
+        // Ne pas écraser des données déjà saisies manuellement
+        if (prev[id]?.some((r) => r.field)) return prev;
+        return {
+          ...prev,
+          [id]: autoRows.length > 0 ? autoRows : [{ field: "", delta: 0 }],
+        };
+      });
+    });
+
     setEndOpen(true);
   };
 
@@ -461,6 +506,92 @@ function ConnectGameMJ() {
   };
   // ───────────────────────────────────────────────────────────────
 
+  // ── KO / Mort ───────────────────────────────────────────────────
+  const isKO = (char) => {
+    const gauges = gaugesByCharId[char.ID_character] || {};
+    if (isMobChar(char)) {
+      const koKey = mobKoGauge[char.ID_character];
+      if (!koKey) return false;
+      const gf = GAUGE_FIELDS.find((f) => f.key === koKey);
+      return Number(gauges[koKey] ?? char[gf?.maxKey]) === 0;
+    }
+    return Number(gauges.currentStamina ?? char.Stamina_character) === 0;
+  };
+
+  const isDead = (char) => {
+    const gauges = gaugesByCharId[char.ID_character] || {};
+    if (isMobChar(char)) {
+      const deathKey = mobDeathGauge[char.ID_character];
+      if (!deathKey) return false;
+      const gf = GAUGE_FIELDS.find((f) => f.key === deathKey);
+      return Number(gauges[deathKey] ?? char[gf?.maxKey]) === 0;
+    }
+    return Number(gauges.currentManaVital ?? char.ManaVital_character) === 0;
+  };
+
+  // ── Cycle d'initiative ──────────────────────────────────────────
+  const getActiveTurnOrder = () =>
+    characters
+      .filter((c) => !combatInactives.has(c.ID_character) && initiativeOrder[c.ID_character])
+      .sort((a, b) => Number(initiativeOrder[a.ID_character]) - Number(initiativeOrder[b.ID_character]));
+
+  const handleStartCombat = () => {
+    const activeChars = characters.filter((c) => !combatInactives.has(c.ID_character));
+    const missingInit = activeChars.filter((c) => !initiativeOrder[c.ID_character]);
+    if (missingInit.length > 0) {
+      setConfirmInactiveChars(missingInit);
+      setConfirmInactiveOpen(true);
+      return;
+    }
+    const needSetup = activeChars
+      .filter(isMobChar)
+      .filter((c) => !mobKoGauge[c.ID_character] || !mobDeathGauge[c.ID_character]);
+    if (needSetup.length > 0) {
+      setMobGaugeSetup(needSetup.map((c) => ({
+        charId: c.ID_character, charName: c.Name_character,
+        ko: mobKoGauge[c.ID_character] || "", death: mobDeathGauge[c.ID_character] || "",
+      })));
+      setMobGaugeSetupOpen(true);
+      return;
+    }
+    setCurrentTurnIdx(0);
+    setCombatActive(true);
+  };
+
+  const handleNextTurn = () => {
+    const order = getActiveTurnOrder();
+    if (!order.length) return;
+    let next = (currentTurnIdx + 1) % order.length;
+    for (let i = 0; i < order.length; i++) {
+      if (!isKO(order[next]) && !isDead(order[next])) break;
+      next = (next + 1) % order.length;
+    }
+    setCurrentTurnIdx(next);
+  };
+
+  const handleEndCombat = () => { setCombatActive(false); setCurrentTurnIdx(0); };
+
+  const logSuccess = (charId, fieldKey, isCritique) => {
+    setSuccessLog((prev) => ({
+      ...prev,
+      [charId]: {
+        ...prev[charId],
+        [fieldKey]: {
+          r: (prev[charId]?.[fieldKey]?.r || 0) + (isCritique ? 0 : 1),
+          c: (prev[charId]?.[fieldKey]?.c || 0) + (isCritique ? 1 : 0),
+        },
+      },
+    }));
+  };
+  const removeSuccess = (charId, fieldKey) => {
+    setSuccessLog((prev) => {
+      const updated = { ...prev[charId] };
+      delete updated[fieldKey];
+      return { ...prev, [charId]: updated };
+    });
+  };
+  // ───────────────────────────────────────────────────────────────
+
   const isInvalidUser =
     !currentUser ||
     (Array.isArray(currentUser) && currentUser.length === 0) ||
@@ -500,9 +631,15 @@ function ConnectGameMJ() {
   // Sépare les joueurs des entités Kanzy (MOB / PNJ)
   const kanzyChars  = characters.filter(isKanzyChar);
   const playerChars = characters.filter((c) => !isKanzyChar(c));
+  const pnjChars    = kanzyChars.filter((c) => !isMobChar(c));
 
-  // Section "Entités en jeu" (MOB / PNJ) — réutilisée mobile + desktop
-  const kanzySection = kanzyChars.length > 0 && (
+  const activeTurnOrder = getActiveTurnOrder();
+  const currentTurnCharId = combatActive && activeTurnOrder.length > 0
+    ? activeTurnOrder[currentTurnIdx % activeTurnOrder.length]?.ID_character
+    : null;
+
+  // Section "Entités en jeu" — ↓ ancienne version inline commentée, remplacée par MjKanzyEntityCard
+  /* const kanzySection = kanzyChars.length > 0 && (
     <Box sx={{ mt: 3, pt: 2, borderTop: "1px dashed rgba(255,165,0,0.35)" }}>
       <Typography variant="h6" sx={{ color: "#ffa726", mb: 2, textAlign: "center" }}>
         ⚔️ Entités en jeu
@@ -518,16 +655,29 @@ function ConnectGameMJ() {
             <Box
               key={char.ID_character}
               sx={{
-                border: "1px solid rgba(255,165,0,0.4)",
+                border: currentTurnCharId === char.ID_character
+                  ? "2px solid #ffa726"
+                  : "1px solid rgba(255,165,0,0.4)",
                 borderRadius: 2,
                 p: 2,
                 minWidth: 280,
                 maxWidth: 380,
                 flex: "1 1 280px",
-                background: "rgba(255,100,0,0.05)",
+                background: currentTurnCharId === char.ID_character
+                  ? "rgba(255,167,38,0.12)"
+                  : "rgba(255,100,0,0.05)",
+                opacity: isKO(char) && !isDead(char) ? 0.4 : 1,
+                position: "relative",
+                transition: "border 0.3s, background 0.3s",
               }}
             >
-              {/* En-tête */}
+              {isDead(char) && (
+                <Box sx={{ position: "absolute", inset: 0, borderRadius: 2, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.78)", zIndex: 2, gap: 0.5, pointerEvents: "none" }}>
+                  <Typography sx={{ fontSize: "2.5rem", lineHeight: 1 }}>💀</Typography>
+                  <Typography sx={{ color: "#f87171", fontWeight: "bold", letterSpacing: "0.3em", fontSize: "1.2rem" }}>MORT</Typography>
+                </Box>
+              )}
+              // En-tête
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
                 <Typography variant="h6" sx={{ color: "#ffa726", flex: 1 }}>
                   {char.Name_character}
@@ -539,7 +689,7 @@ function ConnectGameMJ() {
                 />
               </Box>
 
-              {/* Caractéristiques */}
+              // Caractéristiques
               {activeCaracs.length > 0 && (
                 <>
                   <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.45)", display: "block", mb: 0.5, letterSpacing: 1 }}>
@@ -560,7 +710,7 @@ function ConnectGameMJ() {
                 </>
               )}
 
-              {/* Jauges éditables */}
+              // Jauges éditables
               {activeGauges.length > 0 && (
                 <>
                   <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.45)", display: "block", mb: 1, letterSpacing: 1 }}>
@@ -604,7 +754,7 @@ function ConnectGameMJ() {
                 </>
               )}
 
-              {/* Compétences — PNJ uniquement */}
+              // Compétences — PNJ uniquement
               {!mob && (
                 <Box sx={{ mt: 1.5, borderTop: "1px solid rgba(255,255,255,0.1)", pt: 1 }}>
                   <Btn
@@ -630,6 +780,28 @@ function ConnectGameMJ() {
         })}
       </Box>
     </Box>
+  ); */
+  // ── Nouvelle version avec composant ────────────────────────────
+  const kanzySection = kanzyChars.length > 0 && (
+    <Box sx={{ mt: 3, pt: 2, borderTop: "1px dashed rgba(255,165,0,0.35)" }}>
+      <Typography variant="h6" sx={{ color: "#ffa726", mb: 2, textAlign: "center" }}>⚔️ Entités en jeu</Typography>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "center" }}>
+        {kanzyChars.map((char) => (
+          <MjKanzyEntityCard
+            key={char.ID_character}
+            char={char}
+            gauges={gaugesByCharId[char.ID_character] || {}}
+            currentTurnCharId={currentTurnCharId}
+            isKO={isKO} isDead={isDead}
+            openMJEdit={openMJEdit}
+            selectorVisibleFor={selectorVisibleFor}
+            setSelectorVisibleFor={setSelectorVisibleFor}
+            handleFinalSelection={handleFinalSelection}
+            skillScores={skillScores}
+          />
+        ))}
+      </Box>
+    </Box>
   );
 
   const actionButtons = (
@@ -640,6 +812,202 @@ function ConnectGameMJ() {
       <Btn msg="Alerte à tous" onClick={() => openAlertDialogFor(characters.map((c) => c.ID_character))} />
     </div>
   );
+
+  // ── Panneau réussites (droite) — ↓ inline commenté, remplacé par MjSuccessSidebar ──
+  /* const successSidebar = (
+    <Box sx={{ position: "fixed", right: 8, top: "72px", width: 220, maxHeight: "70vh", overflowY: "auto", background: "rgba(8,8,18,0.93)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 2, zIndex: 40, p: 1.5, display: "flex", flexDirection: "column", gap: 0.75 }}>
+      <Typography variant="subtitle2" sx={{ color: "#a78bfa", textAlign: "center", fontWeight: "bold", borderBottom: "1px solid rgba(255,255,255,0.1)", pb: 0.75 }}>
+        📋 Réussites
+      </Typography>
+
+      <TextField
+        select size="small" label="Personnage"
+        value={successCharFocus ?? ""}
+        onChange={(e) => setSuccessCharFocus(Number(e.target.value))}
+        SelectProps={{ MenuProps: { PaperProps: { sx: { maxHeight: 200 } } } }}
+        sx={{ "& .MuiInputBase-input": { fontSize: "0.78rem", py: 0.5 } }}
+      >
+        {[...playerChars, ...pnjChars].map((c) => (
+          <MenuItem key={c.ID_character} value={c.ID_character} sx={{ fontSize: "0.8rem" }}>
+            {c.Name_character}
+          </MenuItem>
+        ))}
+      </TextField>
+
+      {successCharFocus != null && (() => {
+        const log = successLog[successCharFocus] || {};
+        const search = successSearchTerm[successCharFocus] || "";
+        const matches = search.length >= 1
+          ? STAT_OPTIONS.filter((o) => o.label.toLowerCase().includes(search.toLowerCase())).slice(0, 5)
+          : [];
+        return (
+          <>
+            <TextField
+              size="small" placeholder="Rechercher une compétence..."
+              value={search}
+              onChange={(e) => setSuccessSearchTerm((prev) => ({ ...prev, [successCharFocus]: e.target.value }))}
+              sx={{ "& .MuiInputBase-input": { fontSize: "0.75rem", py: 0.5 } }}
+            />
+
+            {matches.map((opt) => (
+              <Box key={opt.field} sx={{ display: "flex", alignItems: "center", gap: 0.5, p: "2px 6px", background: "rgba(255,255,255,0.05)", borderRadius: 1 }}>
+                <Typography sx={{ flex: 1, color: "rgba(255,255,255,0.8)", fontSize: "0.72rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {opt.label}
+                </Typography>
+                <Button size="small" sx={{ minWidth: 0, p: "1px 6px", fontSize: "0.65rem", color: "#90caf9" }}
+                  onClick={() => { logSuccess(successCharFocus, opt.field, false); setSuccessSearchTerm((prev) => ({ ...prev, [successCharFocus]: "" })); }}>
+                  R
+                </Button>
+                <Button size="small" sx={{ minWidth: 0, p: "1px 6px", fontSize: "0.65rem", color: "#fbbf24" }}
+                  onClick={() => { logSuccess(successCharFocus, opt.field, true); setSuccessSearchTerm((prev) => ({ ...prev, [successCharFocus]: "" })); }}>
+                  ★
+                </Button>
+              </Box>
+            ))}
+
+            {Object.entries(log).length > 0 && (
+              <>
+                <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.35)", mt: 0.25, display: "block" }}>
+                  Enregistré :
+                </Typography>
+                {Object.entries(log).map(([fieldKey, counts]) => {
+                  const flagged = counts.r >= 3 || counts.c >= 1;
+                  return (
+                    <Box key={fieldKey} sx={{ display: "flex", alignItems: "center", gap: 0.5, p: "2px 4px", borderRadius: 1, background: flagged ? "rgba(255,167,38,0.12)" : "rgba(255,255,255,0.04)", border: flagged ? "1px solid rgba(255,167,38,0.35)" : "1px solid transparent" }}>
+                      <Typography sx={{ flex: 1, color: "white", fontSize: "0.7rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {buildFieldLabel(fieldKey)}
+                      </Typography>
+                      <Typography sx={{ color: "#90caf9", fontSize: "0.65rem" }}>{counts.r}R</Typography>
+                      <Typography sx={{ color: "#fbbf24", fontSize: "0.65rem", ml: 0.25 }}>{counts.c}★</Typography>
+                      {flagged && <Typography sx={{ fontSize: "0.7rem" }}>⬆</Typography>}
+                      <IconButton size="small" sx={{ p: 0, color: "rgba(255,255,255,0.3)", ml: 0.25 }}
+                        onClick={() => removeSuccess(successCharFocus, fieldKey)}>
+                        <Typography sx={{ fontSize: "0.65rem", lineHeight: 1 }}>✕</Typography>
+                      </IconButton>
+                    </Box>
+                  );
+                })}
+              </>
+            )}
+            {Object.entries(log).length === 0 && search.length === 0 && (
+              <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.25)", textAlign: "center", display: "block" }}>
+                Aucune réussite enregistrée
+              </Typography>
+            )}
+          </>
+        );
+      })()}
+    </Box>
+  ); */
+  const successSidebar = (
+    <MjSuccessSidebar
+      playerChars={playerChars} pnjChars={pnjChars}
+      successCharFocus={successCharFocus} setSuccessCharFocus={setSuccessCharFocus}
+      successSearchTerm={successSearchTerm} setSuccessSearchTerm={setSuccessSearchTerm}
+      successLog={successLog} logSuccess={logSuccess} removeSuccess={removeSuccess}
+      statOptions={COMP_OPTIONS}
+    />
+  );
+
+  // ── Panneau initiative ──────────────────────────────────────────
+  // ↓ inline commenté, remplacé par MjInitiativeSidebar
+  /* const initiativeSidebar = (
+    <Box sx={{ position: "fixed", left: "10vh", top: "20vw", width: 200, maxHeight: "70vh", overflowY: "auto", background: "rgba(8,8,18,0.93)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 2, zIndex: 40, p: 1.5, display: "flex", flexDirection: "column", gap: 0.75 }}>
+      <Typography variant="subtitle1" sx={{ color: "#90caf9", textAlign: "center", fontWeight: "bold", mb: 0.5, borderBottom: "1px solid rgba(255,255,255,0.1)", pb: 0.75 }}>
+        ⚔️ Initiative
+      </Typography>
+
+      {!combatActive && (
+        <>
+          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.35)", textAlign: "center", display: "block", mb: 0.5 }}>
+            Ordre · Actif/Inactif
+          </Typography>
+          {characters.map((char) => {
+            const inactive = combatInactives.has(char.ID_character);
+            return (
+              <Box key={char.ID_character} sx={{ display: "flex", alignItems: "center", gap: 0.75, opacity: inactive ? 0.35 : 1 }}>
+                <input
+                  type="number" min="1" max={characters.length}
+                  value={initiativeOrder[char.ID_character] || ""}
+                  disabled={inactive}
+                  onChange={(e) => setInitiativeOrder((prev) => ({ ...prev, [char.ID_character]: e.target.value }))}
+                  style={{ width: 36, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 4, color: "white", textAlign: "center", padding: "2px 4px", fontSize: "0.85rem" }}
+                />
+                <Typography variant="body2" sx={{ flex: 1, color: "white", fontSize: "0.78rem", lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {char.Name_character}
+                </Typography>
+                <Chip
+                  label={inactive ? "Off" : "On"}
+                  size="small"
+                  onClick={() => setCombatInactives((prev) => {
+                    const next = new Set(prev);
+                    next.has(char.ID_character) ? next.delete(char.ID_character) : next.add(char.ID_character);
+                    return next;
+                  })}
+                  sx={{ cursor: "pointer", fontSize: "0.6rem", height: 16, px: 0.25, background: inactive ? "rgba(255,255,255,0.08)" : "rgba(76,175,80,0.25)", color: inactive ? "rgba(255,255,255,0.4)" : "#4caf50" }}
+                />
+              </Box>
+            );
+          })}
+          <Button variant="contained" color="warning" size="small" onClick={handleStartCombat} sx={{ mt: 1.5 }} disabled={characters.length === 0}>
+            ▶ Démarrer combat
+          </Button>
+        </>
+      )}
+
+      {combatActive && (
+        <>
+          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.35)", textAlign: "center", display: "block", mb: 0.5 }}>
+            Tour en cours
+          </Typography>
+          {activeTurnOrder.map((char, idx) => {
+            const ko   = isKO(char);
+            const dead = isDead(char);
+            const isCurrent = idx === currentTurnIdx % activeTurnOrder.length;
+            return (
+              <Box key={char.ID_character} sx={{ display: "flex", alignItems: "center", gap: 0.75, p: "3px 6px", borderRadius: 1, border: isCurrent ? "1px solid #ffa726" : "1px solid transparent", background: isCurrent ? "rgba(255,167,38,0.15)" : "transparent", opacity: (ko || dead) ? 0.35 : 1 }}>
+                <Typography sx={{ color: "#ffa726", fontWeight: "bold", minWidth: 16, fontSize: "0.78rem" }}>
+                  {initiativeOrder[char.ID_character]}
+                </Typography>
+                <Typography sx={{ flex: 1, color: dead ? "#f87171" : "white", fontSize: "0.78rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textDecoration: dead ? "line-through" : "none" }}>
+                  {char.Name_character}
+                </Typography>
+                {dead && <Typography sx={{ color: "#f87171", fontSize: "0.6rem", fontWeight: "bold" }}>💀</Typography>}
+                {ko && !dead && <Typography sx={{ color: "#fb923c", fontSize: "0.6rem", fontWeight: "bold" }}>KO</Typography>}
+              </Box>
+            );
+          })}
+          {characters.filter((c) => combatInactives.has(c.ID_character)).map((char) => (
+            <Box key={char.ID_character} sx={{ display: "flex", alignItems: "center", gap: 0.75, p: "3px 6px", opacity: 0.25 }}>
+              <Typography sx={{ color: "rgba(255,255,255,0.3)", minWidth: 16, fontSize: "0.78rem" }}>—</Typography>
+              <Typography sx={{ flex: 1, color: "rgba(255,255,255,0.3)", fontSize: "0.78rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {char.Name_character}
+              </Typography>
+              <Typography sx={{ color: "rgba(255,255,255,0.3)", fontSize: "0.6rem" }}>inactif</Typography>
+            </Box>
+          ))}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75, mt: 1.5 }}>
+            <Button variant="contained" color="warning" size="small" onClick={handleNextTurn}>
+              Suivant →
+            </Button>
+            <Button variant="outlined" color="error" size="small" onClick={handleEndCombat}>
+              Fin de combat
+            </Button>
+          </Box>
+        </>
+      )}
+    </Box>
+  ); */
+  const initiativeSidebar = (
+    <MjInitiativeSidebar
+      characters={characters} combatInactives={combatInactives} initiativeOrder={initiativeOrder}
+      combatActive={combatActive} activeTurnOrder={activeTurnOrder} currentTurnIdx={currentTurnIdx}
+      isKO={isKO} isDead={isDead}
+      setCombatInactives={setCombatInactives} setInitiativeOrder={setInitiativeOrder}
+      handleStartCombat={handleStartCombat} handleNextTurn={handleNextTurn} handleEndCombat={handleEndCombat}
+    />
+  );
+  // ───────────────────────────────────────────────────────────────
 
   return (
     <div className="main">
@@ -669,133 +1037,19 @@ function ConnectGameMJ() {
             <Btn msg="Alerte à tous" onClick={() => openAlertDialogFor(characters.map((c) => c.ID_character))} />
           </div>
           <div style={{ padding: "130px 12px 100px", display: "flex", flexDirection: "column", gap: 16 }}>
-          {playerChars.map((char) => {
-            const {
-              currentManaVital, currentStamina, currentManaAir, currentManaEau,
-              currentManaTerre, currentManaFeu, currentManaVolonte,
-              clampedManaVital, clampedStamina, clampedManaAir, clampedManaEau,
-              clampedManaTerre, clampedManaFeu, clampedManaVolonte,
-            } = getCharGauges(char);
-            return (
-              <div
-                key={char.ID_character}
-                style={{
-                  border: selected.has(char.ID_character)
-                    ? "2px solid #90caf9"
-                    : "1px solid rgba(255,255,255,0.2)",
-                  borderRadius: 10,
-                  padding: 12,
-                  background: selected.has(char.ID_character)
-                    ? "rgba(144,202,249,0.1)"
-                    : "rgba(0,0,0,0.3)",
-                  transition: "border 0.2s, background 0.2s",
-                  position: "relative",
-                  zIndex: 1,
-                }}
-              >
-                {/* En-tête : nom + checkbox */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                  <p style={{ color: "lightblue", fontSize: "1.1rem", fontWeight: "bold", margin: 0 }}>
-                    {char.Name_character}
-                  </p>
-                  <label style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer" }}>
-                    <span style={{ color: "lightblue", fontSize: "0.85rem" }}>
-                      {selected.has(char.ID_character) ? "Sélectionné ✓" : "Sélectionner"}
-                    </span>
-                    <input
-                      type="checkbox"
-                      checked={selected.has(char.ID_character)}
-                      onChange={() => toggleSelected(char.ID_character)}
-                      style={{ width: 22, height: 22, cursor: "pointer" }}
-                    />
-                  </label>
-                </div>
-
-                {/* Barres verticales - ligne 1 : Air, Eau, Terre */}
-                <div style={{ display: "flex", justifyContent: "space-around", marginBottom: 8 }}>
-                  {[
-                    { label: "Air", value: currentManaAir, clamped: clampedManaAir, color: "success", barSx: { "& .MuiLinearProgress-bar": { backgroundColor: "#14b8a6" } } },
-                    { label: "Eau", value: currentManaEau, clamped: clampedManaEau, color: "info", barSx: {} },
-                    { label: "Terre", value: currentManaTerre, clamped: clampedManaTerre, color: "warning", barSx: {} },
-                  ].map(({ label, value, clamped, color, barSx }) => (
-                    <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 15, width: "30%" }}>
-                      <div style={{ position: "relative", width: "8px", height: "25vw" }}>
-                        <LinearProgress variant="determinate" value={clamped} color={color}
-                          sx={{ position: "absolute", bottom: 0, left: "8px", width: "25vw", height: "8px", borderRadius: "25px", transformOrigin: "bottom left", transform: "rotate(-90deg)", ...barSx }} />
-                      </div>
-                      <p style={{ color: "lightblue", fontSize: "0.85rem", textAlign: "center", margin: 0, whiteSpace: "nowrap" }}>
-                        {label}<br />{value} pts
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Barres verticales - ligne 2 : Feu, Volonté */}
-                <div style={{ display: "flex", justifyContent: "space-around", marginBottom: 20 }}>
-                  {[
-                    { label: "Feu", value: currentManaFeu, clamped: clampedManaFeu, color: "error", barSx: { "& .MuiLinearProgress-bar": { backgroundColor: "#fb7185" }, backgroundColor: "#991b1b" } },
-                    { label: "Volonté", value: currentManaVolonte, clamped: clampedManaVolonte, color: "primary", barSx: { "& .MuiLinearProgress-bar": { backgroundColor: "#a855f7" }, backgroundColor: "#6b21a8" } },
-                  ].map(({ label, value, clamped, color, barSx }) => (
-                    <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 15, width: "30%" }}>
-                      <div style={{ position: "relative", width: "8px", height: "25vw" }}>
-                        <LinearProgress variant="determinate" value={clamped} color={color}
-                          sx={{ position: "absolute", bottom: 0, left: "8px", width: "25vw", height: "8px", borderRadius: "25px", transformOrigin: "bottom left", transform: "rotate(-90deg)", ...barSx }} />
-                      </div>
-                      <p style={{ color: "lightblue", fontSize: "0.85rem", textAlign: "center", margin: 0, whiteSpace: "nowrap" }}>
-                        {label}<br />{value} pts
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* CircularProgressbar Vital + Stamina */}
-                <div style={{ display: "flex", justifyContent: "space-around", alignItems: "flex-start", marginBottom: 12 }}>
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-                    <p style={{ color: "lightblue", fontSize: "0.9rem", margin: 0 }}>Mana Vital</p>
-                    <div style={{ width: "40dvw" }}>
-                      <CircularProgressbar
-                        value={clampedManaVital}
-                        circleRatio={0.5}
-                        text={`${currentManaVital} pts`}
-                        styles={buildStyles({ rotation: 0.75, strokeLinecap: "butt", textSize: "1em", pathTransitionDuration: 0.5, pathColor: "red", textColor: "#f88", trailColor: "#af8c8d" })}
-                      />
-                    </div>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-                    <p style={{ color: "lightblue", fontSize: "0.9rem", margin: 0 }}>Stamina</p>
-                    <div style={{ width: "40dvw" }}>
-                      <CircularProgressbar
-                        value={clampedStamina}
-                        circleRatio={0.5}
-                        text={`${currentStamina} pts`}
-                        styles={buildStyles({ rotation: 0.75, strokeLinecap: "butt", textSize: "1em", pathTransitionDuration: 0.5, pathColor: "#42d750", textColor: "#f88", trailColor: "#cfe9d2" })}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Actions : Compétence + Alerte */}
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginTop: 8 }}>
-                  <Btn
-                    onClick={() => setSelectorVisibleFor(selectorVisibleFor === char.ID_character ? null : char.ID_character)}
-                    msg="Compétence"
-                  />
-                  <Btn msg="Alerte" onClick={() => openAlertDialogFor([char.ID_character])} />
-                </div>
-
-                {selectorVisibleFor === char.ID_character && (
-                  <DynamicSkillSelector
-                    onFinalSelect={(path) => handleFinalSelection(char.ID_character, path)}
-                  />
-                )}
-                {skillScores[char.ID_character] && (
-                  <p style={{ marginTop: 8, fontSize: "1.1rem", color: "lightblue" }}>
-                    {skillScores[char.ID_character].label} : {skillScores[char.ID_character].valeur}
-                  </p>
-                )}
-              </div>
-            );
-          })}
+          {/* ── Cartes joueurs mobile — remplacées par MjPlayerCharacterCard ── */}
+          {playerChars.map((char) => (
+            <MjPlayerCharacterCard
+              key={char.ID_character}
+              char={char}
+              gauges={gaugesByCharId[char.ID_character]}
+              isKO={isKO} isDead={isDead}
+              selected={selected} toggleSelected={toggleSelected} currentTurnCharId={currentTurnCharId}
+              selectorVisibleFor={selectorVisibleFor} setSelectorVisibleFor={setSelectorVisibleFor}
+              handleFinalSelection={handleFinalSelection} skillScores={skillScores}
+              openAlertDialogFor={openAlertDialogFor}
+            />
+          ))}
           {/* Entités Kanzy — mobile */}
           <Box sx={{ px: 1, pb: "100px" }}>{kanzySection}</Box>
 
@@ -824,6 +1078,8 @@ function ConnectGameMJ() {
             justifyContent: "space-around",
           }}
         >
+        {initiativeSidebar}
+        {successSidebar}
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
             style={{
@@ -864,7 +1120,7 @@ function ConnectGameMJ() {
                   style={{
                     position: "fixed",
                     display: "flex",
-                    left: "15vw",
+                    left: "22vw",
                     top: "15vh",
                     flexDirection: "column",
                     justifyContent: "center",
@@ -1013,8 +1269,21 @@ function ConnectGameMJ() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {playerChars.map((char) => {
-                        // 1) je récupère les gauges courantes de CE perso
+                      {playerChars.map((char) => (
+                        <MjPlayerTableRow
+                          key={char.ID_character}
+                          char={char}
+                          gauges={gaugesByCharId[char.ID_character]}
+                          theme={theme}
+                          isKO={isKO} isDead={isDead}
+                          selected={selected} toggleSelected={toggleSelected} currentTurnCharId={currentTurnCharId}
+                          selectorVisibleFor={selectorVisibleFor} setSelectorVisibleFor={setSelectorVisibleFor}
+                          handleFinalSelection={handleFinalSelection} skillScores={skillScores}
+                          openAlertDialogFor={openAlertDialogFor}
+                        />
+                      ))}
+                      {false && playerChars.map((char) => {
+                        // ancien code inline — conservé inactif, logique déplacée dans MjPlayerTableRow.jsx
                         const gauges = gaugesByCharId[char.ID_character];
                         // console.log("char:", char);
                         // 2) je crée des valeurs "courantes" avec fallback si pas encore chargé
@@ -1110,7 +1379,31 @@ function ConnectGameMJ() {
                         return (
                           <TableRow
                             key={char.ID_character}
-                            sx={{ border: "none" }}
+                            sx={{
+                              border: "none",
+                              position: "relative",
+                              opacity: isKO(char) && !isDead(char) ? 0.35 : 1,
+                              outline: currentTurnCharId === char.ID_character ? "2px solid #ffa726" : "none",
+                              background: currentTurnCharId === char.ID_character ? "rgba(255,167,38,0.1)" : "transparent",
+                              transition: "background 0.3s",
+                              ...(isDead(char) && {
+                                "&::after": {
+                                  content: '"💀  MORT"',
+                                  position: "absolute",
+                                  inset: 0,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  background: "rgba(0,0,0,0.72)",
+                                  color: "#f87171",
+                                  fontWeight: "bold",
+                                  letterSpacing: "0.35em",
+                                  fontSize: "1rem",
+                                  zIndex: 2,
+                                  pointerEvents: "none",
+                                },
+                              }),
+                            }}
                           >
                             <TableCell sx={{ border: "none" }}>
                               {char.Name_character}
@@ -1363,6 +1656,7 @@ function ConnectGameMJ() {
                           </TableRow>
                         );
                       })}
+                      {/* fin ancien code inline */}
                     </TableBody>
                   </Table>
 
@@ -1393,177 +1687,44 @@ function ConnectGameMJ() {
       </div>
       )}
 
-      <Dialog
-        open={alertOpen}
-        onClose={() => setAlertOpen(false)}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>Envoyer une alerte</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            fullWidth
-            multiline
-            minRows={3}
-            label="Message"
-            value={alertText}
-            onChange={(e) => setAlertText(e.target.value)}
-            sx={{ marginTop: 1 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setAlertOpen(false)}>Annuler</Button>
-          <Button
-            onClick={sendAlert}
-            disabled={!alertText.trim() || selected.size === 0}
-          >
-            Envoyer ({selected.size})
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={endOpen} onClose={() => setEndOpen(false)} fullWidth maxWidth="md">
-        <DialogTitle>Fin de scénario</DialogTitle>
+      <MjAlertDialog
+        open={alertOpen} onClose={() => setAlertOpen(false)}
+        alertText={alertText} setAlertText={setAlertText}
+        alertSeverity={alertSeverity} setAlertSeverity={setAlertSeverity}
+        sendAlert={sendAlert} selectedCount={selected.size}
+      />
+      <MjScenarioEndDialog
+        open={endOpen} onClose={() => setEndOpen(false)}
+        characters={characters} selected={selected}
+        successLog={successLog} gaugesByCharId={gaugesByCharId} scenarioSnapshot={scenarioSnapshot}
+        rewardsByCharId={rewardsByCharId}
+        statOptions={STAT_OPTIONS} buildFieldLabel={buildFieldLabel}
+        ensureRewardRows={ensureRewardRows} addRewardRow={addRewardRow}
+        removeRewardRow={removeRewardRow} updateRewardRow={updateRewardRow}
+        onConfirm={handleEndScenario}
+      />
 
-        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <Typography variant="body2" sx={{ opacity: 0.8 }}>
-            Les joueurs concernés = ta sélection actuelle. Ajoute les gains, puis valide.
-            Les jauges seront remises au max (après augmentation éventuelle des max).
-          </Typography>
+      <MjGaugeEditDialog
+        dialog={mjEditDialog} onClose={() => setMjEditDialog(null)}
+        delta={mjEditDelta} setDelta={setMjEditDelta} onConfirm={confirmMJEdit}
+      />
 
-          {characters
-            .filter((c) => selected.has(c.ID_character))
-            .map((char) => {
-              const charId = char.ID_character;
-              const rows = rewardsByCharId[charId] || [];
+      <MjMobGaugeSetupDialog
+        open={mobGaugeSetupOpen} onClose={() => setMobGaugeSetupOpen(false)}
+        mobGaugeSetup={mobGaugeSetup} setMobGaugeSetup={setMobGaugeSetup}
+        mobKoGauge={mobKoGauge} setMobKoGauge={setMobKoGauge}
+        mobDeathGauge={mobDeathGauge} setMobDeathGauge={setMobDeathGauge}
+        onConfirmStart={() => { setMobGaugeSetupOpen(false); setCurrentTurnIdx(0); setCombatActive(true); }}
+      />
 
-              return (
-                <div
-                  key={charId}
-                  style={{
-                    border: "1px solid rgba(255,255,255,0.2)",
-                    borderRadius: 10,
-                    padding: 12,
-                  }}
-                >
-                  <Typography variant="h6">{char.Name_character}</Typography>
-
-                  <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-                    <Button
-                      size="small"
-                      onClick={() => {
-                        ensureRewardRows(charId);
-                        addRewardRow(charId);
-                      }}
-                    >
-                      + Ajouter une stat
-                    </Button>
-                  </div>
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 10 }}>
-                    {rows.map((row, idx) => {
-                      const snap = scenarioSnapshot?.[charId];
-                      const valAvant = row.field && snap ? snap[row.field] : undefined;
-                      const valApres = valAvant !== undefined ? valAvant + (row.delta ?? 0) : undefined;
-                      return (
-                        <div key={idx} style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-                          <TextField
-                            select
-                            fullWidth
-                            label="Stat / Compétence"
-                            value={row.field || ""}
-                            onChange={(e) => updateRewardRow(charId, idx, { field: e.target.value })}
-                            sx={{ minWidth: 180, flex: 1 }}
-                          >
-                            <MenuItem value="">— Choisir —</MenuItem>
-                            {STAT_OPTIONS.map((opt) => (
-                              <MenuItem key={opt.field} value={opt.field}>
-                                {opt.label}
-                                {scenarioSnapshot?.[charId]?.[opt.field] !== undefined && (
-                                  <span style={{ opacity: 0.55, fontSize: "0.8em", marginLeft: 6 }}>
-                                    (avant : {scenarioSnapshot[charId][opt.field]})
-                                  </span>
-                                )}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-
-                          {valAvant !== undefined && (
-                            <Typography variant="body2" sx={{ whiteSpace: "nowrap", opacity: 0.7, minWidth: 90 }}>
-                              {valAvant} → {valApres}
-                            </Typography>
-                          )}
-
-                          <TextField
-                            label="delta"
-                            type="number"
-                            value={row.delta ?? 0}
-                            onChange={(e) => updateRewardRow(charId, idx, { delta: Number(e.target.value) })}
-                            sx={{ width: 100 }}
-                          />
-
-                          <Button
-                            size="small"
-                            color="error"
-                            onClick={() => removeRewardRow(charId, idx)}
-                            disabled={(rewardsByCharId[charId] || []).length <= 1}
-                          >
-                            Supprimer
-                          </Button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-
-          {selected.size === 0 && (
-            <Typography sx={{ opacity: 0.8 }}>
-              Aucun joueur sélectionné. Coche des joueurs dans le tableau avant.
-            </Typography>
-          )}
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => setEndOpen(false)}>Annuler</Button>
-          <Button variant="contained" onClick={handleEndScenario} disabled={selected.size === 0}>
-            Valider fin de scénario
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Dialog édition jauge MJ (entités Kanzy) */}
-      <Dialog open={!!mjEditDialog} onClose={() => setMjEditDialog(null)} maxWidth="xs" fullWidth>
-        <DialogTitle>
-          {mjEditDialog?.sign === 1 ? "➕ Gain" : "➖ Perte"} — {mjEditDialog?.label}
-          <Typography variant="caption" sx={{ display: "block", opacity: 0.6 }}>
-            {mjEditDialog?.charName} · actuel : {mjEditDialog?.current} / {mjEditDialog?.max}
-          </Typography>
-        </DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            fullWidth
-            label="Nombre de points (valeur absolue)"
-            type="number"
-            inputProps={{ min: 0 }}
-            value={mjEditDelta}
-            onChange={(e) => setMjEditDelta(e.target.value)}
-            sx={{ mt: 1 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setMjEditDialog(null)}>Annuler</Button>
-          <Button
-            variant="contained"
-            onClick={confirmMJEdit}
-            disabled={mjEditDelta === "" || Number(mjEditDelta) < 0}
-          >
-            Valider
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <MjConfirmInactiveDialog
+        open={confirmInactiveOpen} onClose={() => setConfirmInactiveOpen(false)}
+        confirmInactiveChars={confirmInactiveChars} characters={characters}
+        combatInactives={combatInactives} setCombatInactives={setCombatInactives}
+        mobKoGauge={mobKoGauge} mobDeathGauge={mobDeathGauge}
+        setMobGaugeSetup={setMobGaugeSetup} setMobGaugeSetupOpen={setMobGaugeSetupOpen}
+        setCombatActive={setCombatActive} setCurrentTurnIdx={setCurrentTurnIdx}
+      />
 
     </div>
   );

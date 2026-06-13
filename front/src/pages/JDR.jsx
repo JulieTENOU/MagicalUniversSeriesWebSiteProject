@@ -3,21 +3,21 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 
-import { Typography } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-
 import "../index.css";
 import "../general.css";
-
 import { useAppContext } from "../context";
-
 import { ConnexionContext } from "../components/provider.jsx";
-
 import Btn from "../components/Btn";
 import Top from "../components/Header";
 import BG from "../components/Background";
 import BtnRtn from "../components/BtnRtn.jsx";
 import PageLoader from "../components/PageLoader.jsx";
+
+const KANZY_ID = 8;
+const isKanzyChar = (c) => Number(c?.users_ID) === KANZY_ID;
+const isMobChar   = (c) => c?.Name_character?.slice(0, 3).toUpperCase() === "MOB";
 
 function JDR() {
   const { t } = useTranslation();
@@ -115,20 +115,18 @@ function JDR() {
             }}
           />
         )}
-        {(stats ?? []).map((stat) => {
-          const player = `${stat?.Name_character}`;
-          if (
-            isConnected?.users_status === "p" &&
-            stat.users_ID === isConnected?.users_ID
-          ) {
-            return (
+        {/* Vue joueur : ses propres personnages */}
+        {isConnected?.users_status === "p" &&
+          (stats ?? [])
+            .filter((stat) => stat.users_ID === isConnected?.users_ID)
+            .map((stat) => (
               <Btn
                 key={stat.ID_character}
                 onClick={() => {
                   setCurrentCharacter(stat);
                   navigate(`/jdr/connectGame/${stat.ID_character}`);
                 }}
-                msg={`${player}`}
+                msg={stat.Name_character}
                 sx={{
                   color: theme.custom.mymodal.text,
                   backgroundColor: theme.custom.mymodal.button,
@@ -136,42 +134,61 @@ function JDR() {
                   fontWeight: "bold",
                 }}
               />
-            );
-          } else if (isConnected?.users_status === "a") {
-            const isSelected = selectedCharacters.some(
-              (c) => c.ID_character === stat.ID_character,
-            );
-            return (
-              <div
-                key={stat.ID_character}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: 8,
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => toggleCharacter(stat)}
-                  style={{ marginRight: 8 }}
-                />
-                <Btn
-                  msg={player}
-                  sx={{
-                    color: theme.custom.mymodal.text,
-                    backgroundColor: isSelected
-                      ? (theme.custom.mymodal.selected ??
-                        theme.custom.mymodal.button)
-                      : theme.custom.mymodal.button,
-                    marginBottom: 2,
-                    fontWeight: "bold",
-                  }}
-                />
-              </div>
-            );
-          }
-        })}
+            ))}
+
+        {/* Vue admin : 3 colonnes PJ / PNJ / MOB */}
+        {isConnected?.users_status === "a" && (() => {
+          const allStats = stats ?? [];
+          const pjList  = allStats.filter((s) => !isKanzyChar(s));
+          const pnjList = allStats.filter((s) => isKanzyChar(s) && !isMobChar(s));
+          const mobList = allStats.filter((s) => isKanzyChar(s) && isMobChar(s));
+
+          const renderColumn = (chars, title, accentColor) => (
+            <Box sx={{ flex: "1 1 220px", minWidth: 200 }}>
+              <Typography variant="h6" sx={{ color: accentColor, textAlign: "center", mb: 2, pb: 1, borderBottom: `1px solid ${accentColor}55` }}>
+                {title}
+              </Typography>
+              {chars.map((stat) => {
+                const isSelected = selectedCharacters.some((c) => c.ID_character === stat.ID_character);
+                return (
+                  <div key={stat.ID_character} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => toggleCharacter(stat)}
+                      style={{ marginRight: 8, width: 18, height: 18, cursor: "pointer" }}
+                    />
+                    <Btn
+                      msg={stat.Name_character}
+                      onClick={() => toggleCharacter(stat)}
+                      sx={{
+                        color: theme.custom.mymodal.text,
+                        backgroundColor: isSelected
+                          ? (theme.custom.mymodal.selected ?? theme.custom.mymodal.button)
+                          : theme.custom.mymodal.button,
+                        marginBottom: 0,
+                        fontWeight: "bold",
+                      }}
+                    />
+                  </div>
+                );
+              })}
+              {chars.length === 0 && (
+                <Typography sx={{ color: "rgba(255,255,255,0.3)", textAlign: "center", fontSize: "0.85rem" }}>
+                  Aucun
+                </Typography>
+              )}
+            </Box>
+          );
+
+          return (
+            <Box sx={{ display: "flex", gap: 4, alignItems: "flex-start", mt: 2, flexWrap: "wrap", justifyContent: "center" }}>
+              {renderColumn(pjList,  "👥 Joueurs (PJ)", "#90caf9")}
+              {renderColumn(pnjList, "🎭 PNJ",          "#ffa726")}
+              {renderColumn(mobList, "⚔️ MOB",          "#f87171")}
+            </Box>
+          );
+        })()}
         {isConnected?.users_status === "a" && selectedCharacters.length > 0 && (
           <Btn
             onClick={() => {
